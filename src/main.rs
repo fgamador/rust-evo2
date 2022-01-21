@@ -6,18 +6,23 @@ fn main() {
     }
 }
 
-pub struct World;
+pub struct World {
+    cells: Vec<Cell>,
+}
 
 impl World {
     pub fn new() -> Self {
-        World
+        World { cells: vec![Cell; 100] }
     }
 
-    pub fn num_alive(&self) -> i32 {
-        100
+    pub fn num_alive(&self) -> usize {
+        self.cells.len()
     }
 
     pub fn step(&mut self) -> (i32, i32) {
         (0, 0)
     }
 }
+
+#[derive(Clone)]
+pub struct Cell;
