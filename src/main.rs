@@ -1,5 +1,5 @@
 fn main() {
-    let mut world = World;
+    let mut world = World::new();
     loop {
         let (num_created, num_died) = world.step();
         println!("+{} -{} -> {}", num_created, num_died, world.num_alive());
@@ -9,6 +9,10 @@ fn main() {
 pub struct World;
 
 impl World {
+    pub fn new() -> Self {
+        World
+    }
+
     pub fn num_alive(&self) -> i32 {
         100
     }
