@@ -1,7 +1,8 @@
 fn main() {
+    let world = World;
     loop {
         let (num_created, num_died) = World::step();
-        let num_alive = World::num_alive();
+        let num_alive = world.num_alive();
         println!("+{} -{} -> {}", num_created, num_died, num_alive);
     }
 }
@@ -9,7 +10,7 @@ fn main() {
 pub struct World;
 
 impl World {
-    pub fn num_alive() -> i32 {
+    pub fn num_alive(&self) -> i32 {
         100
     }
 
