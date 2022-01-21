@@ -2,8 +2,7 @@ fn main() {
     let mut world = World;
     loop {
         let (num_created, num_died) = world.step();
-        let num_alive = world.num_alive();
-        println!("+{} -{} -> {}", num_created, num_died, num_alive);
+        println!("+{} -{} -> {}", num_created, num_died, world.num_alive());
     }
 }
 
