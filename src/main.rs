@@ -1,7 +1,7 @@
 fn main() {
-    let world = World;
+    let mut world = World;
     loop {
-        let (num_created, num_died) = World::step();
+        let (num_created, num_died) = world.step();
         let num_alive = world.num_alive();
         println!("+{} -{} -> {}", num_created, num_died, num_alive);
     }
@@ -14,7 +14,7 @@ impl World {
         100
     }
 
-    pub fn step() -> (i32, i32) {
+    pub fn step(&mut self) -> (i32, i32) {
         (0, 0)
     }
 }
