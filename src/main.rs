@@ -1,3 +1,5 @@
 fn main() {
-    println!("Hello, world!");
+    loop {
+        println!("+0 -0 -> 100");
+    }
 }
