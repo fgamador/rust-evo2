@@ -3,7 +3,7 @@ fn main() {
         energy_use_per_step: 5.0,
         ..CellParameters::DEFAULT
     });
-    loop {
+    while world.num_alive() > 0 {
         let (num_created, num_died) = world.step();
         println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
                  world.average_energy());
