@@ -1,5 +1,5 @@
 fn main() {
-    let mut world = World::new(100);
+    let mut world = World::new(100, 100.0);
     loop {
         let (num_created, num_died) = world.step();
         println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
@@ -13,9 +13,9 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(num_cells: usize) -> Self {
+    pub fn new(num_cells: usize, average_energy: f64) -> Self {
         World {
-            average_energy: 100.0,
+            average_energy,
             cells: vec![Cell; num_cells],
         }
     }
@@ -42,7 +42,7 @@ mod tests {
 
     #[test]
     fn world_cells_start_alive() {
-        let world = World::new(42);
+        let world = World::new(42, 100.0);
         assert_eq!(world.num_alive(), 42);
     }
 }
