@@ -112,7 +112,7 @@ mod tests {
     }
 
     #[test]
-    fn cells_without_energy_disappear() {
+    fn dead_cells_disappear() {
         let mut world = World::new(10, CellParameters {
             initial_energy: 10.0,
             energy_use_per_step: 11.0,
