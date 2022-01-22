@@ -12,9 +12,9 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(num_cells: usize, average_energy: f32) -> Self {
+    pub fn new(num_cells: usize, initial_energy: f32) -> Self {
         World {
-            cells: vec![Cell { energy: average_energy }; num_cells],
+            cells: vec![Cell { energy: initial_energy }; num_cells],
         }
     }
 
