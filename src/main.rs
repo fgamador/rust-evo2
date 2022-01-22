@@ -16,10 +16,10 @@ pub struct World {
 
 impl World {
     pub fn with_generated_cells(num_cells: usize, cell_params: CellParameters) -> Self {
-        Self::with_cells(generate_cells(num_cells, cell_params))
+        Self::new(generate_cells(num_cells, cell_params))
     }
 
-    pub fn with_cells(cells: Vec<Cell>) -> World {
+    pub fn new(cells: Vec<Cell>) -> World {
         World {
             cells,
         }
