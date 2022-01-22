@@ -14,7 +14,10 @@ pub struct World {
 impl World {
     pub fn new(num_cells: usize, cell_params: CellParameters) -> Self {
         World {
-            cells: vec![Cell { energy: cell_params.initial_energy }; num_cells],
+            cells: vec![Cell {
+                energy: cell_params.initial_energy,
+                energy_use_per_step: cell_params.energy_use_per_step,
+            }; num_cells],
         }
     }
 
@@ -34,6 +37,7 @@ impl World {
 #[derive(Clone)]
 pub struct Cell {
     pub energy: f32,
+    pub energy_use_per_step: f32,
 }
 
 pub struct CellParameters {
