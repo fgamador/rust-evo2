@@ -16,7 +16,7 @@ pub struct World {
 
 impl World {
     pub fn with_generated_cells(num_cells: usize, cell_params: CellParameters) -> Self {
-        let cells = Self::generate_cells(num_cells, cell_params);
+        let cells = generate_cells(num_cells, cell_params);
         Self::with_cells(cells)
     }
 
@@ -24,13 +24,6 @@ impl World {
         World {
             cells,
         }
-    }
-
-    fn generate_cells(num_cells: usize, cell_params: CellParameters) -> Vec<Cell> {
-        vec![Cell {
-            energy: cell_params.initial_energy,
-            energy_use_per_step: cell_params.energy_use_per_step,
-        }; num_cells]
     }
 
     pub fn num_alive(&self) -> usize {
@@ -58,6 +51,13 @@ impl World {
             self.cells.swap_remove(*index);
         }
     }
+}
+
+pub fn generate_cells(num_cells: usize, cell_params: CellParameters) -> Vec<Cell> {
+    vec![Cell {
+        energy: cell_params.initial_energy,
+        energy_use_per_step: cell_params.energy_use_per_step,
+    }; num_cells]
 }
 
 #[derive(Clone)]
