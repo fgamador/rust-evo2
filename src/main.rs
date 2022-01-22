@@ -32,7 +32,7 @@ impl World {
         if self.cells.is_empty() { 0.0 } else { self.cells[0].energy }
     }
 
-    pub fn step(&mut self) -> (i32, i32) {
+    pub fn step(&mut self) -> (usize, usize) {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
         for (index, cell) in self.cells.iter_mut().enumerate() {
             cell.step();
@@ -41,7 +41,7 @@ impl World {
             }
         }
         self.remove_cells(&mut dead_indexes);
-        (0, 0)
+        (0, dead_indexes.len())
     }
 
     fn remove_cells(&mut self, sorted_indexes: &mut Vec<usize>) {
@@ -120,5 +120,18 @@ mod tests {
         });
         world.step();
         assert_eq!(world.num_alive(), 0);
+    }
+
+    #[test]
+    fn world_step_reports_num_died() {
+        let mut world = World::new(10, CellParameters {
+            initial_energy: 10.0,
+            energy_use_per_step: 5.0,
+            ..CellParameters::DEFAULT
+        });
+        let (_, num_died) = world.step();
+        assert_eq!(num_died, 0);
+        let (_, num_died) = world.step();
+        assert_eq!(num_died, 10);
     }
 }
