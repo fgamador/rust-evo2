@@ -16,7 +16,7 @@ impl World {
     pub fn new(num_cells: usize, average_energy: f64) -> Self {
         World {
             average_energy,
-            cells: vec![Cell; num_cells],
+            cells: vec![Cell { energy: average_energy }; num_cells],
         }
     }
 
@@ -25,7 +25,7 @@ impl World {
     }
 
     pub fn average_energy(&self) -> f64 {
-        self.average_energy
+        self.cells[0].energy
     }
 
     pub fn step(&mut self) -> (i32, i32) {
@@ -34,7 +34,9 @@ impl World {
 }
 
 #[derive(Clone)]
-pub struct Cell;
+pub struct Cell {
+    pub energy: f64,
+}
 
 #[cfg(test)]
 mod tests {
