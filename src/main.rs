@@ -40,10 +40,14 @@ impl World {
                 dead_indexes.push(index);
             }
         }
-        for index in dead_indexes.iter().rev() {
+        self.remove_cells(&mut dead_indexes);
+        (0, 0)
+    }
+
+    fn remove_cells(&mut self, sorted_indexes: &mut Vec<usize>) {
+        for index in sorted_indexes.iter().rev() {
             self.cells.swap_remove(*index);
         }
-        (0, 0)
     }
 }
 
