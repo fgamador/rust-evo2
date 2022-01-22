@@ -32,13 +32,13 @@ impl World {
 #[derive(Clone)]
 pub struct Cell;
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//
-//     #[test]
-//     fn world_cells_start_alive() {
-//         let mut world = World::new(42);
-//         assert_eq!(world.num_alive(), 42);
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn world_cells_start_alive() {
+        let world = World::new(42);
+        assert_eq!(world.num_alive(), 42);
+    }
+}
