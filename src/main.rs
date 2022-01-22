@@ -1,5 +1,5 @@
 fn main() {
-    let mut world = World::new();
+    let mut world = World::new(100);
     loop {
         let (num_created, num_died) = world.step();
         println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
@@ -12,8 +12,8 @@ pub struct World {
 }
 
 impl World {
-    pub fn new() -> Self {
-        World { cells: vec![Cell; 100] }
+    pub fn new(num_cells: usize) -> Self {
+        World { cells: vec![Cell; num_cells] }
     }
 
     pub fn num_alive(&self) -> usize {
@@ -31,3 +31,14 @@ impl World {
 
 #[derive(Clone)]
 pub struct Cell;
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//
+//     #[test]
+//     fn world_cells_start_alive() {
+//         let mut world = World::new(42);
+//         assert_eq!(world.num_alive(), 42);
+//     }
+// }
