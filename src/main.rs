@@ -47,7 +47,7 @@ mod tests {
     }
 
     #[test]
-    fn average_energy_starts_as_specified() {
+    fn average_energy_starts_at_initial_energy() {
         let world = World::new(100, 39.5);
         assert_eq!(world.average_energy(), 39.5);
     }
