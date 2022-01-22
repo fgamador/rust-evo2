@@ -1,5 +1,5 @@
 fn main() {
-    let mut world = World::new(100, CellParameters {
+    let mut world = World::with_generated_cells(100, CellParameters {
         energy_use_per_step: 5.0,
         ..CellParameters::DEFAULT
     });
@@ -15,7 +15,7 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(num_cells: usize, cell_params: CellParameters) -> Self {
+    pub fn with_generated_cells(num_cells: usize, cell_params: CellParameters) -> Self {
         let cells = Self::generate_cells(num_cells, cell_params);
         World {
             cells,
@@ -86,13 +86,13 @@ mod tests {
 
     #[test]
     fn world_cells_start_alive() {
-        let world = World::new(42, CellParameters::DEFAULT);
+        let world = World::with_generated_cells(42, CellParameters::DEFAULT);
         assert_eq!(world.num_alive(), 42);
     }
 
     #[test]
     fn average_energy_starts_at_initial_energy() {
-        let world = World::new(100, CellParameters {
+        let world = World::with_generated_cells(100, CellParameters {
             initial_energy: 39.5,
             ..CellParameters::DEFAULT
         });
@@ -101,13 +101,13 @@ mod tests {
 
     #[test]
     fn average_energy_with_no_cells_is_zero() {
-        let world = World::new(0, CellParameters::DEFAULT);
+        let world = World::with_generated_cells(0, CellParameters::DEFAULT);
         assert_eq!(world.average_energy(), 0.0);
     }
 
     #[test]
     fn cells_use_energy() {
-        let mut world = World::new(100, CellParameters {
+        let mut world = World::with_generated_cells(100, CellParameters {
             initial_energy: 10.0,
             energy_use_per_step: 5.25,
             ..CellParameters::DEFAULT
@@ -118,7 +118,7 @@ mod tests {
 
     #[test]
     fn dead_cells_disappear() {
-        let mut world = World::new(10, CellParameters {
+        let mut world = World::with_generated_cells(10, CellParameters {
             initial_energy: 10.0,
             energy_use_per_step: 11.0,
             ..CellParameters::DEFAULT
@@ -129,7 +129,7 @@ mod tests {
 
     #[test]
     fn world_step_reports_num_died() {
-        let mut world = World::new(10, CellParameters {
+        let mut world = World::with_generated_cells(10, CellParameters {
             initial_energy: 10.0,
             energy_use_per_step: 5.0,
             ..CellParameters::DEFAULT
