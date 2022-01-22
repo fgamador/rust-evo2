@@ -8,12 +8,16 @@ fn main() {
 }
 
 pub struct World {
+    average_energy: f64,
     cells: Vec<Cell>,
 }
 
 impl World {
     pub fn new(num_cells: usize) -> Self {
-        World { cells: vec![Cell; num_cells] }
+        World {
+            average_energy: 100.0,
+            cells: vec![Cell; num_cells],
+        }
     }
 
     pub fn num_alive(&self) -> usize {
@@ -21,7 +25,7 @@ impl World {
     }
 
     pub fn average_energy(&self) -> f64 {
-        100.0
+        self.average_energy
     }
 
     pub fn step(&mut self) -> (i32, i32) {
