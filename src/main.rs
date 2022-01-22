@@ -16,8 +16,9 @@ pub struct World {
 
 impl World {
     pub fn new(num_cells: usize, cell_params: CellParameters) -> Self {
+        let cells = Self::create_cells(num_cells, cell_params);
         World {
-            cells: Self::create_cells(num_cells, cell_params),
+            cells,
         }
     }
 
