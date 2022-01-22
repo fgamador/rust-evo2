@@ -33,8 +33,15 @@ impl World {
     }
 
     pub fn step(&mut self) -> (i32, i32) {
-        for cell in &mut self.cells {
+        let mut dead_indexes = Vec::with_capacity(self.cells.len());
+        for (index, cell) in self.cells.iter_mut().enumerate() {
             cell.step();
+            if cell.energy <= 0.0 {
+                dead_indexes.push(index);
+            }
+        }
+        for index in dead_indexes.iter().rev() {
+            self.cells.swap_remove(*index);
         }
         (0, 0)
     }
@@ -92,5 +99,16 @@ mod tests {
         });
         world.step();
         assert_eq!(world.average_energy(), 4.75);
+    }
+
+    #[test]
+    fn cells_without_energy_disappear() {
+        let mut world = World::new(10, CellParameters {
+            initial_energy: 10.0,
+            energy_use_per_step: 11.0,
+            ..CellParameters::DEFAULT
+        });
+        world.step();
+        assert_eq!(world.num_alive(), 0);
     }
 }
