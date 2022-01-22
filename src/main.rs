@@ -1,5 +1,8 @@
 fn main() {
-    let mut world = World::new(100, CellParameters::DEFAULT);
+    let mut world = World::new(100, CellParameters {
+        energy_use_per_step: 5.0,
+        ..CellParameters::DEFAULT
+    });
     loop {
         let (num_created, num_died) = world.step();
         println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
