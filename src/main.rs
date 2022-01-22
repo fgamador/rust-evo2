@@ -45,4 +45,10 @@ mod tests {
         let world = World::new(42, 100.0);
         assert_eq!(world.num_alive(), 42);
     }
+
+    #[test]
+    fn average_energy_starts_as_specified() {
+        let world = World::new(100, 39.5);
+        assert_eq!(world.average_energy(), 39.5);
+    }
 }
