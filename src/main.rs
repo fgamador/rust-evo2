@@ -1,8 +1,10 @@
 fn main() {
-    let mut world = World::with_generated_cells(100, CellParameters {
+    let num_cells = 100;
+    let cell_params = CellParameters {
         energy_use_per_step: 5.0,
         ..CellParameters::DEFAULT
-    });
+    };
+    let mut world = World::new(generate_cells(num_cells, cell_params));
     while world.num_alive() > 0 {
         let (num_created, num_died) = world.step();
         println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
@@ -15,10 +17,6 @@ pub struct World {
 }
 
 impl World {
-    pub fn with_generated_cells(num_cells: usize, cell_params: CellParameters) -> Self {
-        Self::new(generate_cells(num_cells, cell_params))
-    }
-
     pub fn new(cells: Vec<Cell>) -> World {
         World {
             cells,
@@ -89,54 +87,66 @@ mod tests {
 
     #[test]
     fn world_cells_start_alive() {
-        let world = World::with_generated_cells(42, CellParameters::DEFAULT);
+        let num_cells = 42;
+        let cell_params = CellParameters::DEFAULT;
+        let world = World::new(generate_cells(num_cells, cell_params));
         assert_eq!(world.num_alive(), 42);
     }
 
     #[test]
     fn average_energy_starts_at_initial_energy() {
-        let world = World::with_generated_cells(100, CellParameters {
+        let num_cells = 100;
+        let cell_params = CellParameters {
             initial_energy: 39.5,
             ..CellParameters::DEFAULT
-        });
+        };
+        let world = World::new(generate_cells(num_cells, cell_params));
         assert_eq!(world.average_energy(), 39.5);
     }
 
     #[test]
     fn average_energy_with_no_cells_is_zero() {
-        let world = World::with_generated_cells(0, CellParameters::DEFAULT);
+        let num_cells = 0;
+        let cell_params = CellParameters::DEFAULT;
+        let world = World::new(generate_cells(num_cells, cell_params));
         assert_eq!(world.average_energy(), 0.0);
     }
 
     #[test]
     fn cells_use_energy() {
-        let mut world = World::with_generated_cells(100, CellParameters {
+        let num_cells = 100;
+        let cell_params = CellParameters {
             initial_energy: 10.0,
             energy_use_per_step: 5.25,
             ..CellParameters::DEFAULT
-        });
+        };
+        let mut world = World::new(generate_cells(num_cells, cell_params));
         world.step();
         assert_eq!(world.average_energy(), 4.75);
     }
 
     #[test]
     fn dead_cells_disappear() {
-        let mut world = World::with_generated_cells(10, CellParameters {
+        let num_cells = 10;
+        let cell_params = CellParameters {
             initial_energy: 10.0,
             energy_use_per_step: 11.0,
             ..CellParameters::DEFAULT
-        });
+        };
+        let mut world = World::new(generate_cells(num_cells, cell_params));
         world.step();
         assert_eq!(world.num_alive(), 0);
     }
 
     #[test]
     fn world_step_reports_num_died() {
-        let mut world = World::with_generated_cells(10, CellParameters {
+        let num_cells = 10;
+        let cell_params = CellParameters {
             initial_energy: 10.0,
             energy_use_per_step: 5.0,
             ..CellParameters::DEFAULT
-        });
+        };
+        let mut world = World::new(generate_cells(num_cells, cell_params));
         let (_, num_died) = world.step();
         assert_eq!(num_died, 0);
         let (_, num_died) = world.step();
