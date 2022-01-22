@@ -30,6 +30,9 @@ impl World {
     }
 
     pub fn step(&mut self) -> (i32, i32) {
+        for cell in &mut self.cells {
+            cell.step();
+        }
         (0, 0)
     }
 }
@@ -38,6 +41,12 @@ impl World {
 pub struct Cell {
     pub energy: f32,
     pub energy_use_per_step: f32,
+}
+
+impl Cell {
+    pub fn step(&mut self) {
+        self.energy -= self.energy_use_per_step;
+    }
 }
 
 pub struct CellParameters {
@@ -71,10 +80,14 @@ mod tests {
         assert_eq!(world.average_energy(), 39.5);
     }
 
-    // #[test]
-    // fn cells_use_energy() {
-    //     let mut world = World::new(100, 10.0, 5.25);
-    //     world.step();
-    //     assert_eq!(world.average_energy(), 4.75);
-    // }
+    #[test]
+    fn cells_use_energy() {
+        let mut world = World::new(100, CellParameters {
+            initial_energy: 10.0,
+            energy_use_per_step: 5.25,
+            ..CellParameters::DEFAULT
+        });
+        world.step();
+        assert_eq!(world.average_energy(), 4.75);
+    }
 }
