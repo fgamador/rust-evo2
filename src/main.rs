@@ -36,10 +36,14 @@ pub struct Cell {
     pub energy: f32,
 }
 
-pub struct CellParameters;
+pub struct CellParameters {
+    pub initial_energy: f32,
+}
 
 impl CellParameters {
-    pub const DEFAULT: CellParameters = CellParameters;
+    pub const DEFAULT: CellParameters = CellParameters {
+        initial_energy: 100.0,
+    };
 }
 
 #[cfg(test)]
