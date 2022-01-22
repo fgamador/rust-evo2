@@ -8,14 +8,12 @@ fn main() {
 }
 
 pub struct World {
-    average_energy: f64,
     cells: Vec<Cell>,
 }
 
 impl World {
     pub fn new(num_cells: usize, average_energy: f64) -> Self {
         World {
-            average_energy,
             cells: vec![Cell { energy: average_energy }; num_cells],
         }
     }
