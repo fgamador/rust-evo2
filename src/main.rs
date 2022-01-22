@@ -38,11 +38,13 @@ pub struct Cell {
 
 pub struct CellParameters {
     pub initial_energy: f32,
+    pub energy_use_per_step: f32,
 }
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
         initial_energy: 100.0,
+        energy_use_per_step: 0.0,
     };
 }
 
