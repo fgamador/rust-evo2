@@ -1,5 +1,5 @@
 fn main() {
-    let mut world = World::new(100, 100.0, CellParameters);
+    let mut world = World::new(100, 100.0, CellParameters::DEFAULT);
     loop {
         let (num_created, num_died) = world.step();
         println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
@@ -38,19 +38,23 @@ pub struct Cell {
 
 pub struct CellParameters;
 
+impl CellParameters {
+    pub const DEFAULT: CellParameters = CellParameters;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn world_cells_start_alive() {
-        let world = World::new(42, 100.0, CellParameters);
+        let world = World::new(42, 100.0, CellParameters::DEFAULT);
         assert_eq!(world.num_alive(), 42);
     }
 
     #[test]
     fn average_energy_starts_at_initial_energy() {
-        let world = World::new(100, 39.5, CellParameters);
+        let world = World::new(100, 39.5, CellParameters::DEFAULT);
         assert_eq!(world.average_energy(), 39.5);
     }
 
