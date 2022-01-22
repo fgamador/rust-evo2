@@ -12,7 +12,7 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(num_cells: usize, average_energy: f64) -> Self {
+    pub fn new(num_cells: usize, average_energy: f32) -> Self {
         World {
             cells: vec![Cell { energy: average_energy }; num_cells],
         }
@@ -22,7 +22,7 @@ impl World {
         self.cells.len()
     }
 
-    pub fn average_energy(&self) -> f64 {
+    pub fn average_energy(&self) -> f32 {
         self.cells[0].energy
     }
 
@@ -33,7 +33,7 @@ impl World {
 
 #[derive(Clone)]
 pub struct Cell {
-    pub energy: f64,
+    pub energy: f32,
 }
 
 #[cfg(test)]
