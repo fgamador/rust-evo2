@@ -17,11 +17,15 @@ pub struct World {
 impl World {
     pub fn new(num_cells: usize, cell_params: CellParameters) -> Self {
         World {
-            cells: vec![Cell {
-                energy: cell_params.initial_energy,
-                energy_use_per_step: cell_params.energy_use_per_step,
-            }; num_cells],
+            cells: Self::create_cells(num_cells, cell_params),
         }
+    }
+
+    fn create_cells(num_cells: usize, cell_params: CellParameters) -> Vec<Cell> {
+        vec![Cell {
+            energy: cell_params.initial_energy,
+            energy_use_per_step: cell_params.energy_use_per_step,
+        }; num_cells]
     }
 
     pub fn num_alive(&self) -> usize {
