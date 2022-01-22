@@ -29,7 +29,7 @@ impl World {
     }
 
     pub fn average_energy(&self) -> f32 {
-        self.cells[0].energy
+        if self.cells.is_empty() { 0.0 } else { self.cells[0].energy }
     }
 
     pub fn step(&mut self) -> (i32, i32) {
@@ -92,6 +92,12 @@ mod tests {
             ..CellParameters::DEFAULT
         });
         assert_eq!(world.average_energy(), 39.5);
+    }
+
+    #[test]
+    fn average_energy_with_no_cells_is_zero() {
+        let world = World::new(0, CellParameters::DEFAULT);
+        assert_eq!(world.average_energy(), 0.0);
     }
 
     #[test]
