@@ -12,9 +12,9 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(num_cells: usize, initial_energy: f32, _cell_params: CellParameters) -> Self {
+    pub fn new(num_cells: usize, _initial_energy: f32, cell_params: CellParameters) -> Self {
         World {
-            cells: vec![Cell { energy: initial_energy }; num_cells],
+            cells: vec![Cell { energy: cell_params.initial_energy }; num_cells],
         }
     }
 
@@ -58,7 +58,10 @@ mod tests {
 
     #[test]
     fn average_energy_starts_at_initial_energy() {
-        let world = World::new(100, 39.5, CellParameters::DEFAULT);
+        let world = World::new(100, 39.5, CellParameters {
+            initial_energy: 39.5,
+            ..CellParameters::DEFAULT
+        });
         assert_eq!(world.average_energy(), 39.5);
     }
 
