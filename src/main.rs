@@ -15,7 +15,10 @@ fn main() {
 
     while world.num_alive() > 0 {
         let (num_created, num_died) = world.step();
-        println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
+        println!("+{} -{} -> {} (e: {})",
+                 num_created,
+                 num_died,
+                 world.num_alive(),
                  world.mean_energy());
     }
 }
@@ -46,9 +49,7 @@ pub struct World<'a> {
 
 impl<'a> World<'a> {
     pub fn new(cells: Vec<Cell>) -> World {
-        World {
-            cells,
-        }
+        World { cells }
     }
 
     pub fn num_alive(&self) -> usize {
@@ -56,7 +57,9 @@ impl<'a> World<'a> {
     }
 
     pub fn mean_energy(&self) -> f32 {
-        if self.cells.is_empty() { return 0.0; }
+        if self.cells.is_empty() {
+            return 0.0;
+        }
 
         self.cells.iter()
             .map(|cell| cell.energy())
@@ -85,14 +88,14 @@ impl<'a> World<'a> {
 
 pub fn generate_cells(num_cells: usize, cell_params: &CellParameters) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
-    let normal = Normal::new(cell_params.mean_initial_energy, cell_params.stdev_initial_energy).unwrap();
+    let normal = Normal::new(
+        cell_params.mean_initial_energy,
+        cell_params.stdev_initial_energy,
+    ).unwrap();
 
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
-        cells.push(Cell::new(
-            cell_params,
-            normal.sample(&mut rng))
-        );
+        cells.push(Cell::new(cell_params, normal.sample(&mut rng)));
     }
     cells
 }
