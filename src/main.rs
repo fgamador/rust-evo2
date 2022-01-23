@@ -90,6 +90,7 @@ pub fn generate_cells(num_cells: usize, cell_params: &CellParameters) -> Vec<Cel
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
         cells.push(Cell::new(
+            cell_params,
             normal.sample(&mut rng),
             cell_params.energy_use_per_step)
         );
@@ -104,7 +105,7 @@ pub struct Cell {
 }
 
 impl Cell {
-    pub fn new(energy: f32, energy_use_per_step: f32) -> Self {
+    pub fn new(_cell_params: &CellParameters, energy: f32, energy_use_per_step: f32) -> Self {
         Cell {
             energy,
             energy_use_per_step,
@@ -163,8 +164,8 @@ mod tests {
     #[test]
     fn calculate_mean_energy() {
         let subject = World::new(vec![
-            Cell::new(1.0, 0.0),
-            Cell::new(2.0, 0.0),
+            Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
+            Cell::new(&CellParameters::DEFAULT, 2.0, 0.0),
         ]);
         assert_eq!(subject.mean_energy(), 1.5);
     }
