@@ -56,7 +56,9 @@ impl World {
     }
 
     pub fn mean_energy(&self) -> f32 {
-        if self.cells.is_empty() { 0.0 } else { self.cells[0].energy }
+        if self.cells.is_empty() { return 0.0; }
+
+        self.cells.iter().map(|cell| cell.energy).sum::<f32>() / self.cells.len() as f32
     }
 
     pub fn step(&mut self) -> (usize, usize) {
@@ -142,6 +144,15 @@ mod tests {
     fn mean_energy_with_no_cells_is_zero() {
         let subject = World::new(generate_cells(0, CellParameters::DEFAULT));
         assert_eq!(subject.mean_energy(), 0.0);
+    }
+
+    #[test]
+    fn calculate_mean_energy() {
+        let subject = World::new(vec![
+            Cell { energy: 1.0, energy_use_per_step: 0.0 },
+            Cell { energy: 2.0, energy_use_per_step: 0.0 },
+        ]);
+        assert_eq!(subject.mean_energy(), 1.5);
     }
 
     #[test]
