@@ -1,4 +1,5 @@
 use clap::Parser;
+use rand_distr::{Normal, Distribution};
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -73,10 +74,13 @@ impl World {
 }
 
 pub fn generate_cells(num_cells: usize, cell_params: CellParameters) -> Vec<Cell> {
+    let mut rng = rand::thread_rng();
+    let normal = Normal::new(cell_params.mean_initial_energy, cell_params.stdev_initial_energy).unwrap();
+
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
         cells.push(Cell {
-            energy: cell_params.mean_initial_energy,
+            energy: normal.sample(&mut rng),
             energy_use_per_step: cell_params.energy_use_per_step,
         });
     }
@@ -148,7 +152,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn generate_cells_from_normal_distribution() {
         let cell_params = CellParameters {
             mean_initial_energy: 100.0,
