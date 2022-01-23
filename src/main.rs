@@ -9,15 +9,15 @@ struct Args {
     cells: usize,
 
     /// Mean of cell initial energies
-    #[clap(short('e'), long, default_value_t = 100.0)]
+    #[clap(short('e'), long, default_value_t = CellParameters::DEFAULT.mean_initial_energy)]
     mean_energy: f32,
 
     /// Standard deviation of cell initial energies
-    #[clap(short('s'), long, default_value_t = 0.0)]
+    #[clap(short('s'), long, default_value_t = CellParameters::DEFAULT.stdev_initial_energy)]
     stdev_energy: f32,
 
     /// Cell energy use per time step
-    #[clap(short('u'), long, default_value_t = 5.0)]
+    #[clap(short('u'), long, default_value_t = CellParameters::DEFAULT.energy_use_per_step)]
     energy_use: f32,
 }
 
