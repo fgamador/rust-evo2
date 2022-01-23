@@ -1,6 +1,25 @@
 use clap::Parser;
 use rand_distr::{Normal, Distribution};
 
+fn main() {
+    let args = Args::parse();
+
+    let cell_params = CellParameters {
+        mean_initial_energy: args.mean_energy,
+        stdev_initial_energy: args.stdev_energy,
+        energy_use_per_step: args.energy_use,
+        ..CellParameters::DEFAULT
+    };
+
+    let mut world = World::new(generate_cells(args.cells, &cell_params));
+
+    while world.num_alive() > 0 {
+        let (num_created, num_died) = world.step();
+        println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
+                 world.mean_energy());
+    }
+}
+
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
@@ -19,25 +38,6 @@ struct Args {
     /// Cell energy use per time step
     #[clap(short('u'), long, default_value_t = CellParameters::DEFAULT.energy_use_per_step)]
     energy_use: f32,
-}
-
-fn main() {
-    let args = Args::parse();
-
-    let cell_params = CellParameters {
-        mean_initial_energy: args.mean_energy,
-        stdev_initial_energy: args.stdev_energy,
-        energy_use_per_step: args.energy_use,
-        ..CellParameters::DEFAULT
-    };
-
-    let mut world = World::new(generate_cells(args.cells, &cell_params));
-
-    while world.num_alive() > 0 {
-        let (num_created, num_died) = world.step();
-        println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
-                 world.mean_energy());
-    }
 }
 
 pub struct World {
