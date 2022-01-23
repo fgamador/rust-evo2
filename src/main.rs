@@ -104,6 +104,13 @@ pub struct Cell {
 }
 
 impl Cell {
+    pub fn new(energy: f32, energy_use_per_step: f32) -> Self {
+        Cell {
+            energy,
+            energy_use_per_step,
+        }
+    }
+
     pub fn step(&mut self) {
         self.energy -= self.energy_use_per_step;
     }
