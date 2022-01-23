@@ -1,10 +1,23 @@
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+#[clap(author, version, about, long_about = None)]
+struct Args {
+    /// Initial number of cells
+    #[clap(long, default_value_t = 100)]
+    num_cells: usize,
+}
+
 fn main() {
-    let num_cells = 100;
+    let args = Args::parse();
+
     let cell_params = CellParameters {
         energy_use_per_step: 5.0,
         ..CellParameters::DEFAULT
     };
-    let mut world = World::new(generate_cells(num_cells, cell_params));
+
+    let mut world = World::new(generate_cells(args.num_cells, cell_params));
+
     while world.num_alive() > 0 {
         let (num_created, num_died) = world.step();
         println!("+{} -{} -> {} (e: {})", num_created, num_died, world.num_alive(),
