@@ -12,6 +12,10 @@ struct Args {
     #[clap(short('e'), long, default_value_t = 100.0)]
     mean_energy: f32,
 
+    /// Standard deviation of cell initial energies
+    #[clap(short('s'), long, default_value_t = 0.0)]
+    stdev_energy: f32,
+
     /// Cell energy use per time step
     #[clap(short('u'), long, default_value_t = 5.0)]
     energy_use: f32,
@@ -22,6 +26,7 @@ fn main() {
 
     let cell_params = CellParameters {
         mean_initial_energy: args.mean_energy,
+        stdev_initial_energy: args.stdev_energy,
         energy_use_per_step: args.energy_use,
         ..CellParameters::DEFAULT
     };
