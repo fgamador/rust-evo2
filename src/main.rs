@@ -87,8 +87,8 @@ mod tests {
 
     #[test]
     fn world_cells_start_alive() {
-        let world = World::new(generate_cells(42, CellParameters::DEFAULT));
-        assert_eq!(world.num_alive(), 42);
+        let subject = World::new(generate_cells(42, CellParameters::DEFAULT));
+        assert_eq!(subject.num_alive(), 42);
     }
 
     #[test]
@@ -97,14 +97,14 @@ mod tests {
             initial_energy: 39.5,
             ..CellParameters::DEFAULT
         };
-        let world = World::new(generate_cells(100, cell_params));
-        assert_eq!(world.average_energy(), 39.5);
+        let subject = World::new(generate_cells(100, cell_params));
+        assert_eq!(subject.average_energy(), 39.5);
     }
 
     #[test]
     fn average_energy_with_no_cells_is_zero() {
-        let world = World::new(generate_cells(0, CellParameters::DEFAULT));
-        assert_eq!(world.average_energy(), 0.0);
+        let subject = World::new(generate_cells(0, CellParameters::DEFAULT));
+        assert_eq!(subject.average_energy(), 0.0);
     }
 
     #[test]
@@ -114,9 +114,9 @@ mod tests {
             energy_use_per_step: 5.25,
             ..CellParameters::DEFAULT
         };
-        let mut world = World::new(generate_cells(100, cell_params));
-        world.step();
-        assert_eq!(world.average_energy(), 4.75);
+        let mut subject = World::new(generate_cells(100, cell_params));
+        subject.step();
+        assert_eq!(subject.average_energy(), 4.75);
     }
 
     #[test]
@@ -126,9 +126,9 @@ mod tests {
             energy_use_per_step: 11.0,
             ..CellParameters::DEFAULT
         };
-        let mut world = World::new(generate_cells(10, cell_params));
-        world.step();
-        assert_eq!(world.num_alive(), 0);
+        let mut subject = World::new(generate_cells(10, cell_params));
+        subject.step();
+        assert_eq!(subject.num_alive(), 0);
     }
 
     #[test]
@@ -138,10 +138,10 @@ mod tests {
             energy_use_per_step: 5.0,
             ..CellParameters::DEFAULT
         };
-        let mut world = World::new(generate_cells(10, cell_params));
-        let (_, num_died) = world.step();
+        let mut subject = World::new(generate_cells(10, cell_params));
+        let (_, num_died) = subject.step();
         assert_eq!(num_died, 0);
-        let (_, num_died) = world.step();
+        let (_, num_died) = subject.step();
         assert_eq!(num_died, 10);
     }
 }
