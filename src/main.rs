@@ -40,11 +40,11 @@ struct Args {
     energy_use: f32,
 }
 
-pub struct World {
-    cells: Vec<Cell>,
+pub struct World<'a> {
+    cells: Vec<Cell<'a>>,
 }
 
-impl World {
+impl<'a> World<'a> {
     pub fn new(cells: Vec<Cell>) -> World {
         World {
             cells,
@@ -97,16 +97,16 @@ pub fn generate_cells(num_cells: usize, cell_params: &CellParameters) -> Vec<Cel
     cells
 }
 
-pub struct Cell {
+pub struct Cell<'a> {
+    cell_params: &'a CellParameters,
     energy: f32,
-    energy_use_per_step: f32,
 }
 
-impl Cell {
-    pub fn new(cell_params: &CellParameters, energy: f32) -> Self {
+impl<'a> Cell<'a> {
+    pub fn new(cell_params: &'a CellParameters, energy: f32) -> Self {
         Cell {
+            cell_params,
             energy,
-            energy_use_per_step: cell_params.energy_use_per_step,
         }
     }
 
@@ -115,7 +115,7 @@ impl Cell {
     }
 
     pub fn step(&mut self) {
-        self.energy -= self.energy_use_per_step;
+        self.energy -= self.cell_params.energy_use_per_step;
     }
 }
 
