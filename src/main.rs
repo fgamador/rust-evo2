@@ -103,8 +103,7 @@ mod tests {
 
     #[test]
     fn average_energy_with_no_cells_is_zero() {
-        let cell_params = CellParameters::DEFAULT;
-        let world = World::new(generate_cells(0, cell_params));
+        let world = World::new(generate_cells(0, CellParameters::DEFAULT));
         assert_eq!(world.average_energy(), 0.0);
     }
 
