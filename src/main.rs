@@ -105,10 +105,10 @@ pub struct Cell {
 }
 
 impl Cell {
-    pub fn new(_cell_params: &CellParameters, energy: f32, energy_use_per_step: f32) -> Self {
+    pub fn new(cell_params: &CellParameters, energy: f32, _energy_use_per_step: f32) -> Self {
         Cell {
             energy,
-            energy_use_per_step,
+            energy_use_per_step: cell_params.energy_use_per_step,
         }
     }
 
