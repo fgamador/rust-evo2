@@ -1,5 +1,5 @@
 use clap::Parser;
-use rand_distr::{Normal, Distribution};
+use rand_distr::{Distribution, Normal};
 
 fn main() {
     let args = Args::parse();
@@ -20,7 +20,7 @@ fn main() {
     }
 }
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
     /// Initial number of cells
@@ -97,7 +97,6 @@ pub fn generate_cells(num_cells: usize, cell_params: &CellParameters) -> Vec<Cel
     cells
 }
 
-#[derive(Clone)]
 pub struct Cell {
     energy: f32,
     energy_use_per_step: f32,
