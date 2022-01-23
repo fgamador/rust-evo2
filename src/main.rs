@@ -4,14 +4,19 @@ use clap::Parser;
 #[clap(author, version, about, long_about = None)]
 struct Args {
     /// Initial number of cells
-    #[clap(long, default_value_t = 100)]
+    #[clap(short, long, default_value_t = 100)]
     num_cells: usize,
+
+    /// Mean of cell initial energies
+    #[clap(short('e'), long, default_value_t = 100.0)]
+    mean_initial_energy: f32,
 }
 
 fn main() {
     let args = Args::parse();
 
     let cell_params = CellParameters {
+        mean_initial_energy: args.mean_initial_energy,
         energy_use_per_step: 5.0,
         ..CellParameters::DEFAULT
     };
