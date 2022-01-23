@@ -59,7 +59,7 @@ impl World {
         if self.cells.is_empty() { return 0.0; }
 
         self.cells.iter()
-            .map(|cell| cell.energy)
+            .map(|cell| cell.energy())
             .sum::<f32>()
             / self.cells.len() as f32
     }
@@ -68,7 +68,7 @@ impl World {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
         for (index, cell) in self.cells.iter_mut().enumerate() {
             cell.step();
-            if cell.energy <= 0.0 {
+            if cell.energy() <= 0.0 {
                 dead_indexes.push(index);
             }
         }
@@ -99,8 +99,8 @@ pub fn generate_cells(num_cells: usize, cell_params: &CellParameters) -> Vec<Cel
 
 #[derive(Clone)]
 pub struct Cell {
-    pub energy: f32,
-    pub energy_use_per_step: f32,
+    energy: f32,
+    energy_use_per_step: f32,
 }
 
 impl Cell {
@@ -109,6 +109,10 @@ impl Cell {
             energy,
             energy_use_per_step,
         }
+    }
+
+    pub fn energy(&self) -> f32 {
+        self.energy
     }
 
     pub fn step(&mut self) {
@@ -185,8 +189,8 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let cells = generate_cells(100, &cell_params);
-        assert!(cells.iter().map(|cell| cell.energy).any(|e| e < 100.0));
-        assert!(cells.iter().map(|cell| cell.energy).any(|e| e > 100.0));
+        assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
+        assert!(cells.iter().map(|cell| cell.energy()).any(|e| e > 100.0));
     }
 
     #[test]
