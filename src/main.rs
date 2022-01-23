@@ -4,12 +4,12 @@ use clap::Parser;
 #[clap(author, version, about, long_about = None)]
 struct Args {
     /// Initial number of cells
-    #[clap(short, long, default_value_t = 100)]
-    num_cells: usize,
+    #[clap(short('n'), long, default_value_t = 100)]
+    cells: usize,
 
     /// Mean of cell initial energies
     #[clap(short('e'), long, default_value_t = 100.0)]
-    mean_initial_energy: f32,
+    mean_energy: f32,
 
     /// Cell energy use per time step
     #[clap(short('u'), long, default_value_t = 5.0)]
@@ -20,12 +20,12 @@ fn main() {
     let args = Args::parse();
 
     let cell_params = CellParameters {
-        mean_initial_energy: args.mean_initial_energy,
+        mean_initial_energy: args.mean_energy,
         energy_use_per_step: args.energy_use,
         ..CellParameters::DEFAULT
     };
 
-    let mut world = World::new(generate_cells(args.num_cells, cell_params));
+    let mut world = World::new(generate_cells(args.cells, cell_params));
 
     while world.num_alive() > 0 {
         let (num_created, num_died) = world.step();
