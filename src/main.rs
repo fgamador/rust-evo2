@@ -73,10 +73,14 @@ impl World {
 }
 
 pub fn generate_cells(num_cells: usize, cell_params: CellParameters) -> Vec<Cell> {
-    vec![Cell {
-        energy: cell_params.mean_initial_energy,
-        energy_use_per_step: cell_params.energy_use_per_step,
-    }; num_cells]
+    let mut cells = Vec::with_capacity(num_cells);
+    for _ in 0..num_cells {
+        cells.push(Cell {
+            energy: cell_params.mean_initial_energy,
+            energy_use_per_step: cell_params.energy_use_per_step,
+        });
+    }
+    cells
 }
 
 #[derive(Clone)]
