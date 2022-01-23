@@ -58,7 +58,10 @@ impl World {
     pub fn mean_energy(&self) -> f32 {
         if self.cells.is_empty() { return 0.0; }
 
-        self.cells.iter().map(|cell| cell.energy).sum::<f32>() / self.cells.len() as f32
+        self.cells.iter()
+            .map(|cell| cell.energy)
+            .sum::<f32>()
+            / self.cells.len() as f32
     }
 
     pub fn step(&mut self) -> (usize, usize) {
