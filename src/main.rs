@@ -93,12 +93,14 @@ impl Cell {
 
 pub struct CellParameters {
     pub mean_initial_energy: f32,
+    pub stdev_initial_energy: f32,
     pub energy_use_per_step: f32,
 }
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
         mean_initial_energy: 100.0,
+        stdev_initial_energy: 0.0,
         energy_use_per_step: 0.0,
     };
 }
@@ -139,6 +141,19 @@ mod tests {
         let mut subject = World::new(generate_cells(100, cell_params));
         subject.step();
         assert_eq!(subject.mean_energy(), 4.75);
+    }
+
+    #[test]
+    #[ignore]
+    fn generate_cells_from_normal_distribution() {
+        let cell_params = CellParameters {
+            mean_initial_energy: 100.0,
+            stdev_initial_energy: 5.0,
+            ..CellParameters::DEFAULT
+        };
+        let cells = generate_cells(100, cell_params);
+        assert!(cells.iter().map(|cell| cell.energy).any(|e| e < 100.0));
+        assert!(cells.iter().map(|cell| cell.energy).any(|e| e > 100.0));
     }
 
     #[test]
