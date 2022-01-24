@@ -8,8 +8,6 @@ fn main() {
     let args = Args::parse();
 
     let cell_params = CellParameters {
-        mean_initial_energy: args.mean_energy,
-        std_dev_initial_energy: args.std_dev_energy,
         energy_use_per_step: args.energy_use,
         ..CellParameters::DEFAULT
     };
@@ -132,15 +130,11 @@ impl<'a> Cell<'a> {
 }
 
 pub struct CellParameters {
-    pub mean_initial_energy: f32,
-    pub std_dev_initial_energy: f32,
     pub energy_use_per_step: f32,
 }
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
-        mean_initial_energy: MEAN_INITIAL_ENERGY,
-        std_dev_initial_energy: STD_DEV_INITIAL_ENERGY,
         energy_use_per_step: 0.0,
     };
 }
