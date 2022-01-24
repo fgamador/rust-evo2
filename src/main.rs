@@ -202,6 +202,12 @@ mod tests {
     }
 
     #[test]
+    fn cell_with_no_energy_is_dead() {
+        let subject = Cell::new(&CellParameters::DEFAULT, 0.0);
+        assert!(!subject.is_alive());
+    }
+
+    #[test]
     fn generate_cells_from_normal_distribution() {
         let cells = generate_cells(
             100,
