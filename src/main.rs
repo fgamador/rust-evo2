@@ -224,16 +224,13 @@ mod tests {
             energy_use_per_step: 5.0,
             ..CellParameters::DEFAULT
         };
-        let mut subject = World::new(generate_cells(
-            10,
-            10.0,
-            DEFAULT_STD_DEV_INITIAL_ENERGY,
-            &cell_params,
-        ));
+        let mut subject = World::new(vec![
+            Cell::new(&cell_params, 10.0),
+            Cell::new(&cell_params, 5.0),
+            Cell::new(&cell_params, 5.0),
+        ]);
         let (_, num_died) = subject.step();
-        assert_eq!(num_died, 0);
-        let (_, num_died) = subject.step();
-        assert_eq!(num_died, 10);
+        assert_eq!(num_died, 2);
     }
 
     #[test]
