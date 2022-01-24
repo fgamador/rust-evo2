@@ -15,15 +15,22 @@ fn main() {
     let cell_params_argument = &cell_params;
     let mean_initial_energy = cell_params_argument.mean_initial_energy;
     let std_dev_initial_energy = cell_params_argument.std_dev_initial_energy;
-    let mut world = World::new(generate_cells(num_cells, mean_initial_energy, std_dev_initial_energy, cell_params_argument));
+    let mut world = World::new(generate_cells(
+        num_cells,
+        mean_initial_energy,
+        std_dev_initial_energy,
+        cell_params_argument,
+    ));
 
     while world.num_alive() > 0 {
         let (num_created, num_died) = world.step();
-        println!("+{} -{} -> {} (e: {})",
-                 num_created,
-                 num_died,
-                 world.num_alive(),
-                 world.mean_energy());
+        println!(
+            "+{} -{} -> {} (e: {})",
+            num_created,
+            num_died,
+            world.num_alive(),
+            world.mean_energy()
+        );
     }
 }
 
@@ -65,10 +72,7 @@ impl<'a> World<'a> {
             return 0.0;
         }
 
-        self.cells.iter()
-            .map(|cell| cell.energy())
-            .sum::<f32>()
-            / self.cells.len() as f32
+        self.cells.iter().map(|cell| cell.energy()).sum::<f32>() / self.cells.len() as f32
     }
 
     pub fn step(&mut self) -> (usize, usize) {
@@ -90,12 +94,14 @@ impl<'a> World<'a> {
     }
 }
 
-pub fn generate_cells(num_cells: usize, mean_initial_energy: f32, std_dev_initial_energy: f32, cell_params: &CellParameters) -> Vec<Cell> {
+pub fn generate_cells(
+    num_cells: usize,
+    mean_initial_energy: f32,
+    std_dev_initial_energy: f32,
+    cell_params: &CellParameters,
+) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
-    let normal = Normal::new(
-        mean_initial_energy,
-        std_dev_initial_energy,
-    ).unwrap();
+    let normal = Normal::new(mean_initial_energy, std_dev_initial_energy).unwrap();
 
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
@@ -150,7 +156,12 @@ mod tests {
         let cell_params = &CellParameters::DEFAULT;
         let mean_initial_energy = cell_params.mean_initial_energy;
         let std_dev_initial_energy = cell_params.std_dev_initial_energy;
-        let subject = World::new(generate_cells(num_cells, mean_initial_energy, std_dev_initial_energy, cell_params));
+        let subject = World::new(generate_cells(
+            num_cells,
+            mean_initial_energy,
+            std_dev_initial_energy,
+            cell_params,
+        ));
         assert_eq!(subject.num_alive(), 42);
     }
 
@@ -164,7 +175,12 @@ mod tests {
         let cell_params_argument = &cell_params;
         let mean_initial_energy = cell_params_argument.mean_initial_energy;
         let std_dev_initial_energy = cell_params_argument.std_dev_initial_energy;
-        let subject = World::new(generate_cells(num_cells, mean_initial_energy, std_dev_initial_energy, cell_params_argument));
+        let subject = World::new(generate_cells(
+            num_cells,
+            mean_initial_energy,
+            std_dev_initial_energy,
+            cell_params_argument,
+        ));
         assert_eq!(subject.mean_energy(), 39.5);
     }
 
@@ -174,7 +190,12 @@ mod tests {
         let cell_params = &CellParameters::DEFAULT;
         let mean_initial_energy = cell_params.mean_initial_energy;
         let std_dev_initial_energy = cell_params.std_dev_initial_energy;
-        let subject = World::new(generate_cells(num_cells, mean_initial_energy, std_dev_initial_energy, cell_params));
+        let subject = World::new(generate_cells(
+            num_cells,
+            mean_initial_energy,
+            std_dev_initial_energy,
+            cell_params,
+        ));
         assert_eq!(subject.mean_energy(), 0.0);
     }
 
@@ -210,7 +231,12 @@ mod tests {
         let cell_params_argument = &cell_params;
         let mean_initial_energy = cell_params_argument.mean_initial_energy;
         let std_dev_initial_energy = cell_params_argument.std_dev_initial_energy;
-        let cells = generate_cells(num_cells, mean_initial_energy, std_dev_initial_energy, cell_params_argument);
+        let cells = generate_cells(
+            num_cells,
+            mean_initial_energy,
+            std_dev_initial_energy,
+            cell_params_argument,
+        );
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e > 100.0));
     }
@@ -226,7 +252,12 @@ mod tests {
         let cell_params_argument = &cell_params;
         let mean_initial_energy = cell_params_argument.mean_initial_energy;
         let std_dev_initial_energy = cell_params_argument.std_dev_initial_energy;
-        let mut subject = World::new(generate_cells(num_cells, mean_initial_energy, std_dev_initial_energy, cell_params_argument));
+        let mut subject = World::new(generate_cells(
+            num_cells,
+            mean_initial_energy,
+            std_dev_initial_energy,
+            cell_params_argument,
+        ));
         subject.step();
         assert_eq!(subject.num_alive(), 0);
     }
@@ -242,7 +273,12 @@ mod tests {
         let cell_params_argument = &cell_params;
         let mean_initial_energy = cell_params_argument.mean_initial_energy;
         let std_dev_initial_energy = cell_params_argument.std_dev_initial_energy;
-        let mut subject = World::new(generate_cells(num_cells, mean_initial_energy, std_dev_initial_energy, cell_params_argument));
+        let mut subject = World::new(generate_cells(
+            num_cells,
+            mean_initial_energy,
+            std_dev_initial_energy,
+            cell_params_argument,
+        ));
         let (_, num_died) = subject.step();
         assert_eq!(num_died, 0);
         let (_, num_died) = subject.step();
