@@ -249,4 +249,19 @@ mod tests {
         let subject = Cell::new(&CellParameters::DEFAULT, 0.0);
         assert!(!subject.is_alive());
     }
+
+    // #[test]
+    // fn cell_absorbs_energy_from_compound_in_environment() {
+    //     let cell_params = CellParameters {
+    //         energy_use_per_step: 0.0,
+    //         compound_energy_absorption_factor: 2.0,
+    //         ..CellParameters::DEFAULT
+    //     };
+    //     let environment = Environment {
+    //         compound_concentration: 3.0,
+    //     };
+    //     let mut subject = Cell::new(&cell_params, 10.0, 2.5);
+    //     subject.step(&environment);
+    //     assert_eq!(subject.energy(), 10.0 + 2.5 * 2.0 * 3.0);
+    // }
 }
