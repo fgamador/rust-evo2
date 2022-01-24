@@ -166,7 +166,7 @@ mod tests {
         let subject = World::new(generate_cells(
             100,
             cell_params.mean_initial_energy,
-            cell_params.std_dev_initial_energy,
+            CellParameters::DEFAULT.std_dev_initial_energy,
             &cell_params,
         ));
         assert_eq!(subject.mean_energy(), 39.5);
@@ -231,7 +231,7 @@ mod tests {
         let mut subject = World::new(generate_cells(
             10,
             cell_params.mean_initial_energy,
-            cell_params.std_dev_initial_energy,
+            CellParameters::DEFAULT.std_dev_initial_energy,
             &cell_params,
         ));
         subject.step();
@@ -248,7 +248,7 @@ mod tests {
         let mut subject = World::new(generate_cells(
             10,
             cell_params.mean_initial_energy,
-            cell_params.std_dev_initial_energy,
+            CellParameters::DEFAULT.std_dev_initial_energy,
             &cell_params,
         ));
         let (_, num_died) = subject.step();
