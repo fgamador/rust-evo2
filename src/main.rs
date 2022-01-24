@@ -150,34 +150,19 @@ mod tests {
 
     #[test]
     fn world_cells_start_alive() {
-        let subject = World::new(generate_cells(
-            42,
-            10.0,
-            0.0,
-            &CellParameters::DEFAULT,
-        ));
+        let subject = World::new(generate_cells(42, 10.0, 0.0, &CellParameters::DEFAULT));
         assert_eq!(subject.num_alive(), 42);
     }
 
     #[test]
     fn mean_energy_starts_at_mean_initial_energy() {
-        let subject = World::new(generate_cells(
-            100,
-            39.5,
-            0.0,
-            &CellParameters::DEFAULT,
-        ));
+        let subject = World::new(generate_cells(100, 39.5, 0.0, &CellParameters::DEFAULT));
         assert_eq!(subject.mean_energy(), 39.5);
     }
 
     #[test]
     fn mean_energy_with_no_cells_is_zero() {
-        let subject = World::new(generate_cells(
-            0,
-            10.0,
-            0.0,
-            &CellParameters::DEFAULT,
-        ));
+        let subject = World::new(generate_cells(0, 10.0, 0.0, &CellParameters::DEFAULT));
         assert_eq!(subject.mean_energy(), 0.0);
     }
 
@@ -192,12 +177,7 @@ mod tests {
 
     #[test]
     fn generate_cells_from_normal_distribution() {
-        let cells = generate_cells(
-            100,
-            100.0,
-            5.0,
-            &CellParameters::DEFAULT,
-        );
+        let cells = generate_cells(100, 100.0, 5.0, &CellParameters::DEFAULT);
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e > 100.0));
     }
