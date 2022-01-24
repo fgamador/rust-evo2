@@ -1,8 +1,8 @@
 use clap::Parser;
 use rand_distr::{Distribution, Normal};
 
-const MEAN_INITIAL_ENERGY: f32 = 100.0;
-const STD_DEV_INITIAL_ENERGY: f32 = 0.0;
+const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
+const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
 
 fn main() {
     let args = Args::parse();
@@ -39,11 +39,11 @@ struct Args {
     cells: usize,
 
     /// Mean of cell initial energies
-    #[clap(short('e'), long, default_value_t = MEAN_INITIAL_ENERGY)]
+    #[clap(short('e'), long, default_value_t = DEFAULT_MEAN_INITIAL_ENERGY)]
     mean_energy: f32,
 
     /// Standard deviation of cell initial energies
-    #[clap(short('s'), long, default_value_t = STD_DEV_INITIAL_ENERGY)]
+    #[clap(short('s'), long, default_value_t = DEFAULT_STD_DEV_INITIAL_ENERGY)]
     std_dev_energy: f32,
 
     /// Cell energy use per time step
@@ -147,8 +147,8 @@ mod tests {
     fn world_cells_start_alive() {
         let subject = World::new(generate_cells(
             42,
-            MEAN_INITIAL_ENERGY,
-            STD_DEV_INITIAL_ENERGY,
+            DEFAULT_MEAN_INITIAL_ENERGY,
+            DEFAULT_STD_DEV_INITIAL_ENERGY,
             &CellParameters::DEFAULT,
         ));
         assert_eq!(subject.num_alive(), 42);
@@ -159,7 +159,7 @@ mod tests {
         let subject = World::new(generate_cells(
             100,
             39.5,
-            STD_DEV_INITIAL_ENERGY,
+            DEFAULT_STD_DEV_INITIAL_ENERGY,
             &CellParameters::DEFAULT,
         ));
         assert_eq!(subject.mean_energy(), 39.5);
@@ -169,8 +169,8 @@ mod tests {
     fn mean_energy_with_no_cells_is_zero() {
         let subject = World::new(generate_cells(
             0,
-            MEAN_INITIAL_ENERGY,
-            STD_DEV_INITIAL_ENERGY,
+            DEFAULT_MEAN_INITIAL_ENERGY,
+            DEFAULT_STD_DEV_INITIAL_ENERGY,
             &CellParameters::DEFAULT,
         ));
         assert_eq!(subject.mean_energy(), 0.0);
@@ -217,7 +217,7 @@ mod tests {
         let mut subject = World::new(generate_cells(
             10,
             10.0,
-            STD_DEV_INITIAL_ENERGY,
+            DEFAULT_STD_DEV_INITIAL_ENERGY,
             &cell_params,
         ));
         subject.step();
@@ -233,7 +233,7 @@ mod tests {
         let mut subject = World::new(generate_cells(
             10,
             10.0,
-            STD_DEV_INITIAL_ENERGY,
+            DEFAULT_STD_DEV_INITIAL_ENERGY,
             &cell_params,
         ));
         let (_, num_died) = subject.step();
