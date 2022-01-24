@@ -172,15 +172,15 @@ mod tests {
     }
 
     #[test]
-    fn cells_use_energy() {
+    fn cell_uses_energy() {
         let cell_params = CellParameters {
             mean_initial_energy: 10.0,
             energy_use_per_step: 5.25,
             ..CellParameters::DEFAULT
         };
-        let mut subject = World::new(generate_cells(100, &cell_params));
+        let mut subject = Cell::new(&cell_params, 10.0);
         subject.step();
-        assert_eq!(subject.mean_energy(), 4.75);
+        assert_eq!(subject.energy(), 4.75);
     }
 
     #[test]
