@@ -191,23 +191,6 @@ mod tests {
     }
 
     #[test]
-    fn cell_uses_energy() {
-        let cell_params = CellParameters {
-            energy_use_per_step: 5.25,
-            ..CellParameters::DEFAULT
-        };
-        let mut subject = Cell::new(&cell_params, 10.0);
-        subject.step();
-        assert_eq!(subject.energy(), 4.75);
-    }
-
-    #[test]
-    fn cell_with_no_energy_is_dead() {
-        let subject = Cell::new(&CellParameters::DEFAULT, 0.0);
-        assert!(!subject.is_alive());
-    }
-
-    #[test]
     fn generate_cells_from_normal_distribution() {
         let cells = generate_cells(
             100,
@@ -251,5 +234,22 @@ mod tests {
         assert_eq!(num_died, 0);
         let (_, num_died) = subject.step();
         assert_eq!(num_died, 10);
+    }
+
+    #[test]
+    fn cell_uses_energy() {
+        let cell_params = CellParameters {
+            energy_use_per_step: 5.25,
+            ..CellParameters::DEFAULT
+        };
+        let mut subject = Cell::new(&cell_params, 10.0);
+        subject.step();
+        assert_eq!(subject.energy(), 4.75);
+    }
+
+    #[test]
+    fn cell_with_no_energy_is_dead() {
+        let subject = Cell::new(&CellParameters::DEFAULT, 0.0);
+        assert!(!subject.is_alive());
     }
 }
