@@ -13,8 +13,8 @@ fn main() {
 
     let mut world = World::new(generate_cells(
         args.cells,
-        cell_params.mean_initial_energy,
-        cell_params.std_dev_initial_energy,
+        args.mean_energy,
+        args.std_dev_energy,
         &cell_params,
     ));
 
