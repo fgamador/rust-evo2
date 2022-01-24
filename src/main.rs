@@ -41,11 +41,11 @@ struct Args {
     cells: usize,
 
     /// Mean of cell initial energies
-    #[clap(short('e'), long, default_value_t = CellParameters::DEFAULT.mean_initial_energy)]
+    #[clap(short('e'), long, default_value_t = MEAN_INITIAL_ENERGY)]
     mean_energy: f32,
 
     /// Standard deviation of cell initial energies
-    #[clap(short('s'), long, default_value_t = CellParameters::DEFAULT.std_dev_initial_energy)]
+    #[clap(short('s'), long, default_value_t = STD_DEV_INITIAL_ENERGY)]
     std_dev_energy: f32,
 
     /// Cell energy use per time step
