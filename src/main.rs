@@ -1,6 +1,9 @@
 use clap::Parser;
 use rand_distr::{Distribution, Normal};
 
+const MEAN_INITIAL_ENERGY: f32 = 100.0;
+const STD_DEV_INITIAL_ENERGY: f32 = 0.0;
+
 fn main() {
     let args = Args::parse();
 
@@ -136,8 +139,8 @@ pub struct CellParameters {
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
-        mean_initial_energy: 100.0,
-        std_dev_initial_energy: 0.0,
+        mean_initial_energy: MEAN_INITIAL_ENERGY,
+        std_dev_initial_energy: STD_DEV_INITIAL_ENERGY,
         energy_use_per_step: 0.0,
     };
 }
