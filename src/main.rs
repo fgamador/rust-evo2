@@ -159,14 +159,11 @@ mod tests {
 
     #[test]
     fn mean_energy_starts_at_mean_initial_energy() {
-        let cell_params = CellParameters {
-            ..CellParameters::DEFAULT
-        };
         let subject = World::new(generate_cells(
             100,
             39.5,
             CellParameters::DEFAULT.std_dev_initial_energy,
-            &cell_params,
+            &CellParameters::DEFAULT,
         ));
         assert_eq!(subject.mean_energy(), 39.5);
     }
@@ -204,14 +201,11 @@ mod tests {
 
     #[test]
     fn generate_cells_from_normal_distribution() {
-        let cell_params = CellParameters {
-            ..CellParameters::DEFAULT
-        };
         let cells = generate_cells(
             100,
             100.0,
             5.0,
-            &cell_params,
+            &CellParameters::DEFAULT,
         );
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e > 100.0));
