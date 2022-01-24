@@ -160,7 +160,6 @@ mod tests {
     #[test]
     fn mean_energy_starts_at_mean_initial_energy() {
         let cell_params = CellParameters {
-            mean_initial_energy: 39.5,
             ..CellParameters::DEFAULT
         };
         let subject = World::new(generate_cells(
@@ -195,7 +194,6 @@ mod tests {
     #[test]
     fn cell_uses_energy() {
         let cell_params = CellParameters {
-            mean_initial_energy: 10.0,
             energy_use_per_step: 5.25,
             ..CellParameters::DEFAULT
         };
@@ -207,8 +205,6 @@ mod tests {
     #[test]
     fn generate_cells_from_normal_distribution() {
         let cell_params = CellParameters {
-            mean_initial_energy: 100.0,
-            std_dev_initial_energy: 5.0,
             ..CellParameters::DEFAULT
         };
         let cells = generate_cells(
@@ -224,7 +220,6 @@ mod tests {
     #[test]
     fn dead_cells_disappear() {
         let cell_params = CellParameters {
-            mean_initial_energy: 10.0,
             energy_use_per_step: 11.0,
             ..CellParameters::DEFAULT
         };
@@ -241,7 +236,6 @@ mod tests {
     #[test]
     fn world_step_reports_num_died() {
         let cell_params = CellParameters {
-            mean_initial_energy: 10.0,
             energy_use_per_step: 5.0,
             ..CellParameters::DEFAULT
         };
