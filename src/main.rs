@@ -3,6 +3,7 @@ use rand_distr::{Distribution, Normal};
 
 const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
 const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
+const DEFAULT_ENERGY_USE_PER_STEP: f32 = 0.0;
 
 fn main() {
     let args = Args::parse();
@@ -47,7 +48,7 @@ struct Args {
     std_dev_energy: f32,
 
     /// Cell energy use per time step
-    #[clap(short('u'), long, default_value_t = CellParameters::DEFAULT.energy_use_per_step)]
+    #[clap(short('u'), long, default_value_t = DEFAULT_ENERGY_USE_PER_STEP)]
     energy_use: f32,
 }
 
@@ -135,7 +136,7 @@ pub struct CellParameters {
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
-        energy_use_per_step: 0.0,
+        energy_use_per_step: DEFAULT_ENERGY_USE_PER_STEP,
     };
 }
 
