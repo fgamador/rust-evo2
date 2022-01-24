@@ -11,15 +11,11 @@ fn main() {
         ..CellParameters::DEFAULT
     };
 
-    let num_cells = args.cells;
-    let cell_params_argument = &cell_params;
-    let mean_initial_energy = cell_params_argument.mean_initial_energy;
-    let std_dev_initial_energy = cell_params_argument.std_dev_initial_energy;
     let mut world = World::new(generate_cells(
-        num_cells,
-        mean_initial_energy,
-        std_dev_initial_energy,
-        cell_params_argument,
+        args.cells,
+        cell_params.mean_initial_energy,
+        cell_params.std_dev_initial_energy,
+        &cell_params,
     ));
 
     while world.num_alive() > 0 {
