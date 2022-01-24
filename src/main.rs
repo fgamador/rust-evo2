@@ -165,7 +165,7 @@ mod tests {
         };
         let subject = World::new(generate_cells(
             100,
-            cell_params.mean_initial_energy,
+            39.5,
             CellParameters::DEFAULT.std_dev_initial_energy,
             &cell_params,
         ));
@@ -213,8 +213,8 @@ mod tests {
         };
         let cells = generate_cells(
             100,
-            cell_params.mean_initial_energy,
-            cell_params.std_dev_initial_energy,
+            100.0,
+            5.0,
             &cell_params,
         );
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
@@ -230,7 +230,7 @@ mod tests {
         };
         let mut subject = World::new(generate_cells(
             10,
-            cell_params.mean_initial_energy,
+            10.0,
             CellParameters::DEFAULT.std_dev_initial_energy,
             &cell_params,
         ));
@@ -247,7 +247,7 @@ mod tests {
         };
         let mut subject = World::new(generate_cells(
             10,
-            cell_params.mean_initial_energy,
+            10.0,
             CellParameters::DEFAULT.std_dev_initial_energy,
             &cell_params,
         ));
