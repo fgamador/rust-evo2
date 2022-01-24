@@ -87,10 +87,12 @@ impl<'a> World<'a> {
 }
 
 pub fn generate_cells(num_cells: usize, cell_params: &CellParameters) -> Vec<Cell> {
+    let mean_initial_energy = cell_params.mean_initial_energy;
+    let std_dev_initial_energy = cell_params.std_dev_initial_energy;
     let mut rng = rand::thread_rng();
     let normal = Normal::new(
-        cell_params.mean_initial_energy,
-        cell_params.std_dev_initial_energy,
+        mean_initial_energy,
+        std_dev_initial_energy,
     ).unwrap();
 
     let mut cells = Vec::with_capacity(num_cells);
