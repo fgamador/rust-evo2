@@ -6,7 +6,7 @@ fn main() {
 
     let cell_params = CellParameters {
         mean_initial_energy: args.mean_energy,
-        stdev_initial_energy: args.stdev_energy,
+        std_dev_initial_energy: args.std_dev_energy,
         energy_use_per_step: args.energy_use,
         ..CellParameters::DEFAULT
     };
@@ -35,8 +35,8 @@ struct Args {
     mean_energy: f32,
 
     /// Standard deviation of cell initial energies
-    #[clap(short('s'), long, default_value_t = CellParameters::DEFAULT.stdev_initial_energy)]
-    stdev_energy: f32,
+    #[clap(short('s'), long, default_value_t = CellParameters::DEFAULT.std_dev_initial_energy)]
+    std_dev_energy: f32,
 
     /// Cell energy use per time step
     #[clap(short('u'), long, default_value_t = CellParameters::DEFAULT.energy_use_per_step)]
@@ -90,7 +90,7 @@ pub fn generate_cells(num_cells: usize, cell_params: &CellParameters) -> Vec<Cel
     let mut rng = rand::thread_rng();
     let normal = Normal::new(
         cell_params.mean_initial_energy,
-        cell_params.stdev_initial_energy,
+        cell_params.std_dev_initial_energy,
     ).unwrap();
 
     let mut cells = Vec::with_capacity(num_cells);
@@ -124,14 +124,14 @@ impl<'a> Cell<'a> {
 
 pub struct CellParameters {
     pub mean_initial_energy: f32,
-    pub stdev_initial_energy: f32,
+    pub std_dev_initial_energy: f32,
     pub energy_use_per_step: f32,
 }
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
         mean_initial_energy: 100.0,
-        stdev_initial_energy: 0.0,
+        std_dev_initial_energy: 0.0,
         energy_use_per_step: 0.0,
     };
 }
@@ -187,7 +187,7 @@ mod tests {
     fn generate_cells_from_normal_distribution() {
         let cell_params = CellParameters {
             mean_initial_energy: 100.0,
-            stdev_initial_energy: 5.0,
+            std_dev_initial_energy: 5.0,
             ..CellParameters::DEFAULT
         };
         let cells = generate_cells(100, &cell_params);
