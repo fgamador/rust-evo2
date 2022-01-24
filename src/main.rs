@@ -77,7 +77,7 @@ impl<'a> World<'a> {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
         for (index, cell) in self.cells.iter_mut().enumerate() {
             cell.step();
-            if cell.energy() <= 0.0 {
+            if !cell.is_alive() {
                 dead_indexes.push(index);
             }
         }
@@ -123,6 +123,10 @@ impl<'a> Cell<'a> {
 
     pub fn energy(&self) -> f32 {
         self.energy
+    }
+
+    pub fn is_alive(&self) -> bool {
+        self.energy() > 0.0
     }
 
     pub fn step(&mut self) {
