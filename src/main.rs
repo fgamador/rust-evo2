@@ -152,8 +152,8 @@ mod tests {
     fn world_cells_start_alive() {
         let subject = World::new(generate_cells(
             42,
-            DEFAULT_MEAN_INITIAL_ENERGY,
-            DEFAULT_STD_DEV_INITIAL_ENERGY,
+            10.0,
+            0.0,
             &CellParameters::DEFAULT,
         ));
         assert_eq!(subject.num_alive(), 42);
@@ -164,7 +164,7 @@ mod tests {
         let subject = World::new(generate_cells(
             100,
             39.5,
-            DEFAULT_STD_DEV_INITIAL_ENERGY,
+            0.0,
             &CellParameters::DEFAULT,
         ));
         assert_eq!(subject.mean_energy(), 39.5);
@@ -174,8 +174,8 @@ mod tests {
     fn mean_energy_with_no_cells_is_zero() {
         let subject = World::new(generate_cells(
             0,
-            DEFAULT_MEAN_INITIAL_ENERGY,
-            DEFAULT_STD_DEV_INITIAL_ENERGY,
+            10.0,
+            0.0,
             &CellParameters::DEFAULT,
         ));
         assert_eq!(subject.mean_energy(), 0.0);
