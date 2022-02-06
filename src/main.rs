@@ -4,6 +4,7 @@ use rand_distr::{Distribution, Normal};
 const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
 const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
 const DEFAULT_ENERGY_USE_PER_STEP: f32 = 0.0;
+const DEFAULT_ABSORPTION_YIELD_FACTOR: f32 = 1.0;
 
 fn main() {
     let args = Args::parse();
@@ -96,6 +97,7 @@ pub fn generate_cells(
     num_cells: usize,
     mean_initial_energy: f32,
     std_dev_initial_energy: f32,
+    //absorption_energy_per_step: f32,
     cell_params: &CellParameters,
 ) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
@@ -103,7 +105,11 @@ pub fn generate_cells(
 
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
-        cells.push(Cell::new(cell_params, normal.sample(&mut rng)));
+        cells.push(Cell::new(
+            cell_params,
+            normal.sample(&mut rng),
+            0.0, // absorption_energy_per_step: f32,
+        ));
     }
     cells
 }
@@ -114,7 +120,11 @@ pub struct Cell<'a> {
 }
 
 impl<'a> Cell<'a> {
-    pub fn new(cell_params: &'a CellParameters, energy: f32) -> Self {
+    pub fn new(
+        cell_params: &'a CellParameters,
+        energy: f32,
+        _absorption_energy_per_step: f32,
+    ) -> Self {
         Cell {
             cell_params,
             energy,
@@ -130,18 +140,25 @@ impl<'a> Cell<'a> {
     }
 
     pub fn step(&mut self) {
+        //, _environment: &Environment) {
         self.energy -= self.cell_params.energy_use_per_step;
     }
 }
 
 pub struct CellParameters {
     pub energy_use_per_step: f32,
+    pub absorption_yield_factor: f32,
 }
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
         energy_use_per_step: DEFAULT_ENERGY_USE_PER_STEP,
+        absorption_yield_factor: DEFAULT_ABSORPTION_YIELD_FACTOR,
     };
+}
+
+pub struct Environment {
+    _food_concentration: f32,
 }
 
 #[cfg(test)]
@@ -169,8 +186,8 @@ mod tests {
     #[test]
     fn calculate_mean_energy() {
         let subject = World::new(vec![
-            Cell::new(&CellParameters::DEFAULT, 1.0),
-            Cell::new(&CellParameters::DEFAULT, 2.0),
+            Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
+            Cell::new(&CellParameters::DEFAULT, 2.0, 0.0),
         ]);
         assert_eq!(subject.mean_energy(), 1.5);
     }
@@ -205,9 +222,9 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let mut subject = World::new(vec![
-            Cell::new(&cell_params, 10.0),
-            Cell::new(&cell_params, 5.0),
-            Cell::new(&cell_params, 5.0),
+            Cell::new(&cell_params, 10.0, 0.0),
+            Cell::new(&cell_params, 5.0, 0.0),
+            Cell::new(&cell_params, 5.0, 0.0),
         ]);
         let (_, num_died) = subject.step();
         assert_eq!(num_died, 2);
@@ -219,29 +236,29 @@ mod tests {
             energy_use_per_step: 5.25,
             ..CellParameters::DEFAULT
         };
-        let mut subject = Cell::new(&cell_params, 10.0);
+        let mut subject = Cell::new(&cell_params, 10.0, 0.0);
         subject.step();
         assert_eq!(subject.energy(), 4.75);
     }
 
     #[test]
     fn cell_with_no_energy_is_dead() {
-        let subject = Cell::new(&CellParameters::DEFAULT, 0.0);
+        let subject = Cell::new(&CellParameters::DEFAULT, 0.0, 0.0);
         assert!(!subject.is_alive());
     }
 
     // #[test]
-    // fn cell_absorbs_energy_from_compound_in_environment() {
+    // fn cell_absorbs_energy_from_environment() {
     //     let cell_params = CellParameters {
     //         energy_use_per_step: 0.0,
-    //         compound_energy_absorption_factor: 2.0,
+    //         absorption_yield_factor: 2.0,
     //         ..CellParameters::DEFAULT
     //     };
     //     let environment = Environment {
-    //         compound_concentration: 3.0,
+    //         food_concentration: 3.0,
     //     };
     //     let mut subject = Cell::new(&cell_params, 10.0, 2.5);
-    //     subject.step(&environment);
+    //     subject.step(&environment); // TODO
     //     assert_eq!(subject.energy(), 10.0 + 2.5 * 2.0 * 3.0);
     // }
 }
