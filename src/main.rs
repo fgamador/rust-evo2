@@ -118,17 +118,19 @@ pub fn generate_cells(
 pub struct Cell<'a> {
     cell_params: &'a CellParameters,
     energy: f32,
+    absorption_energy_per_step: f32,
 }
 
 impl<'a> Cell<'a> {
     pub fn new(
         cell_params: &'a CellParameters,
         energy: f32,
-        _absorption_energy_per_step: f32,
+        absorption_energy_per_step: f32,
     ) -> Self {
         Cell {
             cell_params,
             energy,
+            absorption_energy_per_step,
         }
     }
 
@@ -140,7 +142,10 @@ impl<'a> Cell<'a> {
         self.energy() > 0.0
     }
 
-    pub fn step(&mut self, _environment: &Environment) {
+    pub fn step(&mut self, environment: &Environment) {
+        self.energy += self.absorption_energy_per_step
+            * self.cell_params.absorption_yield_factor
+            * environment.food_concentration;
         self.energy -= self.cell_params.energy_use_per_step;
     }
 }
@@ -158,12 +163,12 @@ impl CellParameters {
 }
 
 pub struct Environment {
-    _food_concentration: f32,
+    food_concentration: f32,
 }
 
 impl Environment {
     pub const DEFAULT: Environment = Environment {
-        _food_concentration: DEFAULT_FOOD_CONCENTRATION,
+        food_concentration: DEFAULT_FOOD_CONCENTRATION,
     };
 }
 
@@ -253,18 +258,18 @@ mod tests {
         assert!(!subject.is_alive());
     }
 
-    // #[test]
-    // fn cell_absorbs_energy_from_environment() {
-    //     let cell_params = CellParameters {
-    //         energy_use_per_step: 0.0,
-    //         absorption_yield_factor: 2.0,
-    //         ..CellParameters::DEFAULT
-    //     };
-    //     let environment = Environment {
-    //         food_concentration: 3.0,
-    //     };
-    //     let mut subject = Cell::new(&cell_params, 10.0, 2.5);
-    //     subject.step(&environment); // TODO
-    //     assert_eq!(subject.energy(), 10.0 + 2.5 * 2.0 * 3.0);
-    // }
+    #[test]
+    fn cell_absorbs_energy_from_environment() {
+        let cell_params = CellParameters {
+            energy_use_per_step: 0.0,
+            absorption_yield_factor: 2.0,
+            ..CellParameters::DEFAULT
+        };
+        let environment = Environment {
+            food_concentration: 3.0,
+        };
+        let mut subject = Cell::new(&cell_params, 10.0, 2.5);
+        subject.step(&environment);
+        assert_eq!(subject.energy(), 10.0 + 2.5 * 2.0 * 3.0);
+    }
 }
