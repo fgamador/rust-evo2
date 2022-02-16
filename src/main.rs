@@ -29,11 +29,12 @@ fn main() {
     while world.num_alive() > 0 {
         let (num_created, num_died) = world.step(&Environment::DEFAULT);
         println!(
-            "+{} -{} -> {} (e: {})",
+            "+{} -{} -> {} (e: {}, f: {})",
             num_created,
             num_died,
             world.num_alive(),
-            world.mean_energy()
+            world.mean_energy(),
+            world.food_amount()
         );
     }
 }
@@ -64,11 +65,12 @@ struct Args {
 
 pub struct World<'a> {
     cells: Vec<Cell<'a>>,
+    food_amount: f32,
 }
 
 impl<'a> World<'a> {
-    pub fn new(cells: Vec<Cell>, _food_amount: f32) -> World {
-        World { cells }
+    pub fn new(cells: Vec<Cell>, food_amount: f32) -> World {
+        World { cells, food_amount }
     }
 
     pub fn num_alive(&self) -> usize {
@@ -81,6 +83,10 @@ impl<'a> World<'a> {
         }
 
         self.cells.iter().map(|cell| cell.energy()).sum::<f32>() / self.cells.len() as f32
+    }
+
+    pub fn food_amount(&self) -> f32 {
+        self.food_amount
     }
 
     pub fn step(&mut self, environment: &Environment) -> (usize, usize) {
