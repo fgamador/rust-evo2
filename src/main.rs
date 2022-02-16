@@ -16,12 +16,15 @@ fn main() {
         ..CellParameters::DEFAULT
     };
 
-    let mut world = World::new(generate_cells(
-        args.cells,
-        args.mean_energy,
-        args.std_dev_energy,
-        &cell_params,
-    ));
+    let mut world = World::new(
+        generate_cells(
+            args.cells,
+            args.mean_energy,
+            args.std_dev_energy,
+            &cell_params,
+        ),
+        args.food_amount,
+    );
 
     while world.num_alive() > 0 {
         let (num_created, num_died) = world.step(&Environment::DEFAULT);
@@ -64,7 +67,7 @@ pub struct World<'a> {
 }
 
 impl<'a> World<'a> {
-    pub fn new(cells: Vec<Cell>) -> World {
+    pub fn new(cells: Vec<Cell>, _food_amount: f32) -> World {
         World { cells }
     }
 
@@ -183,28 +186,34 @@ mod tests {
 
     #[test]
     fn world_cells_start_alive() {
-        let subject = World::new(generate_cells(42, 10.0, 0.0, &CellParameters::DEFAULT));
+        let subject = World::new(generate_cells(42, 10.0, 0.0, &CellParameters::DEFAULT), 0.0);
         assert_eq!(subject.num_alive(), 42);
     }
 
     #[test]
     fn mean_energy_starts_at_mean_initial_energy() {
-        let subject = World::new(generate_cells(100, 39.5, 0.0, &CellParameters::DEFAULT));
+        let subject = World::new(
+            generate_cells(100, 39.5, 0.0, &CellParameters::DEFAULT),
+            0.0,
+        );
         assert_eq!(subject.mean_energy(), 39.5);
     }
 
     #[test]
     fn mean_energy_with_no_cells_is_zero() {
-        let subject = World::new(generate_cells(0, 10.0, 0.0, &CellParameters::DEFAULT));
+        let subject = World::new(generate_cells(0, 10.0, 0.0, &CellParameters::DEFAULT), 0.0);
         assert_eq!(subject.mean_energy(), 0.0);
     }
 
     #[test]
     fn calculate_mean_energy() {
-        let subject = World::new(vec![
-            Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
-            Cell::new(&CellParameters::DEFAULT, 2.0, 0.0),
-        ]);
+        let subject = World::new(
+            vec![
+                Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
+                Cell::new(&CellParameters::DEFAULT, 2.0, 0.0),
+            ],
+            0.0,
+        );
         assert_eq!(subject.mean_energy(), 1.5);
     }
 
@@ -221,12 +230,10 @@ mod tests {
             energy_use_per_step: 11.0,
             ..CellParameters::DEFAULT
         };
-        let mut subject = World::new(generate_cells(
-            10,
-            10.0,
-            DEFAULT_STD_DEV_INITIAL_ENERGY,
-            &cell_params,
-        ));
+        let mut subject = World::new(
+            generate_cells(10, 10.0, DEFAULT_STD_DEV_INITIAL_ENERGY, &cell_params),
+            0.0,
+        );
         subject.step(&Environment::DEFAULT);
         assert_eq!(subject.num_alive(), 0);
     }
@@ -237,11 +244,14 @@ mod tests {
             energy_use_per_step: 5.0,
             ..CellParameters::DEFAULT
         };
-        let mut subject = World::new(vec![
-            Cell::new(&cell_params, 10.0, 0.0),
-            Cell::new(&cell_params, 5.0, 0.0),
-            Cell::new(&cell_params, 5.0, 0.0),
-        ]);
+        let mut subject = World::new(
+            vec![
+                Cell::new(&cell_params, 10.0, 0.0),
+                Cell::new(&cell_params, 5.0, 0.0),
+                Cell::new(&cell_params, 5.0, 0.0),
+            ],
+            0.0,
+        );
         let (_, num_died) = subject.step(&Environment::DEFAULT);
         assert_eq!(num_died, 2);
     }
