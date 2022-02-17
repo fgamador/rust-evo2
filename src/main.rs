@@ -6,6 +6,7 @@ const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
 const DEFAULT_ENERGY_USE_PER_STEP: f32 = 0.0;
 const DEFAULT_ABSORPTION_YIELD_FACTOR: f32 = 1.0;
 const DEFAULT_INGESTION_FOOD_YIELD: f32 = 1.0;
+const DEFAULT_DIGESTION_FOOD_YIELD: f32 = 1.0;
 const DEFAULT_FOOD_CONCENTRATION: f32 = 0.0;
 const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
 
@@ -170,6 +171,10 @@ impl<'a> Cell<'a> {
         self.ingestion_energy_per_step * self.cell_params.ingestion_food_yield
     }
 
+    pub fn digest_food(&mut self, food_amount: f32) {
+        self.energy += food_amount * self.cell_params.digestion_energy_yield;
+    }
+
     pub fn step(&mut self, environment: &Environment) {
         self.energy += self.absorption_energy_per_step
             * self.cell_params.absorption_yield_factor
@@ -182,6 +187,7 @@ pub struct CellParameters {
     pub energy_use_per_step: f32,
     pub absorption_yield_factor: f32,
     pub ingestion_food_yield: f32,
+    pub digestion_energy_yield: f32,
 }
 
 impl CellParameters {
@@ -189,6 +195,7 @@ impl CellParameters {
         energy_use_per_step: DEFAULT_ENERGY_USE_PER_STEP,
         absorption_yield_factor: DEFAULT_ABSORPTION_YIELD_FACTOR,
         ingestion_food_yield: DEFAULT_INGESTION_FOOD_YIELD,
+        digestion_energy_yield: DEFAULT_DIGESTION_FOOD_YIELD,
     };
 }
 
@@ -320,6 +327,17 @@ mod tests {
         };
         let cell = Cell::new(&cell_params, 1.0, 0.0, 2.0);
         assert_eq!(cell.request_food(), 3.0);
+    }
+
+    #[test]
+    fn cell_digests_food() {
+        let cell_params = CellParameters {
+            digestion_energy_yield: 1.5,
+            ..CellParameters::DEFAULT
+        };
+        let mut cell = Cell::new(&cell_params, 10.0, 0.0, 0.0);
+        cell.digest_food(3.0);
+        assert_eq!(cell.energy(), 14.5);
     }
 
     #[test]
