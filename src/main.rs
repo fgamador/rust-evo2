@@ -92,7 +92,10 @@ impl<'a> World<'a> {
 
     pub fn step(&mut self, environment: &Environment) -> (usize, usize) {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
-        let food_consumed = 5.0;
+        let mut food_consumed = 0.0;
+        for _cell in &self.cells {
+            food_consumed += 2.5;
+        }
         for (index, cell) in self.cells.iter_mut().enumerate() {
             cell.step(environment);
             if !cell.is_alive() {
