@@ -126,7 +126,11 @@ pub fn generate_cells(
 
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
-        cells.push(Cell::new(cell_params, initial_energies.sample(&mut rng), eating_energy_per_step));
+        cells.push(Cell::new(
+            cell_params,
+            initial_energies.sample(&mut rng),
+            eating_energy_per_step,
+        ));
     }
     cells
 }
@@ -138,11 +142,7 @@ pub struct Cell<'a> {
 }
 
 impl<'a> Cell<'a> {
-    pub fn new(
-        cell_params: &'a CellParameters,
-        energy: f32,
-        eating_energy_per_step: f32,
-    ) -> Self {
+    pub fn new(cell_params: &'a CellParameters, energy: f32, eating_energy_per_step: f32) -> Self {
         Cell {
             cell_params,
             energy,
@@ -197,7 +197,10 @@ mod tests {
 
     #[test]
     fn world_cells_start_alive() {
-        let subject = World::new(generate_cells(42, 10.0, 0.0, 0.0, &CellParameters::DEFAULT), 0.0);
+        let subject = World::new(
+            generate_cells(42, 10.0, 0.0, 0.0, &CellParameters::DEFAULT),
+            0.0,
+        );
         assert_eq!(subject.num_alive(), 42);
     }
 
@@ -212,7 +215,10 @@ mod tests {
 
     #[test]
     fn mean_energy_with_no_cells_is_zero() {
-        let subject = World::new(generate_cells(0, 10.0, 0.0, 0.0, &CellParameters::DEFAULT), 0.0);
+        let subject = World::new(
+            generate_cells(0, 10.0, 0.0, 0.0, &CellParameters::DEFAULT),
+            0.0,
+        );
         assert_eq!(subject.mean_energy(), 0.0);
     }
 
