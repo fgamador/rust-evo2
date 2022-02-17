@@ -140,6 +140,7 @@ pub struct Cell<'a> {
     cell_params: &'a CellParameters,
     energy: f32,
     absorption_energy_per_step: f32,
+    ingestion_energy_per_step: f32,
 }
 
 impl<'a> Cell<'a> {
@@ -147,12 +148,13 @@ impl<'a> Cell<'a> {
         cell_params: &'a CellParameters,
         energy: f32,
         absorption_energy_per_step: f32,
-        _ingestion_energy_per_step: f32,
+        ingestion_energy_per_step: f32,
     ) -> Self {
         Cell {
             cell_params,
             energy,
             absorption_energy_per_step,
+            ingestion_energy_per_step,
         }
     }
 
@@ -165,7 +167,7 @@ impl<'a> Cell<'a> {
     }
 
     pub fn request_food(&self) -> f32 {
-        2.5
+        self.ingestion_energy_per_step * self.cell_params.ingestion_food_yield
     }
 
     pub fn step(&mut self, environment: &Environment) {
@@ -287,7 +289,7 @@ mod tests {
                 Cell::new(&cell_params, 1.0, 0.0, 2.0),
                 Cell::new(&cell_params, 1.0, 0.0, 3.0),
             ],
-            10.0
+            10.0,
         );
         world.step(&Environment::DEFAULT);
         assert_eq!(world.food_amount(), 5.0);
@@ -308,6 +310,16 @@ mod tests {
     fn cell_with_no_energy_is_dead() {
         let subject = Cell::new(&CellParameters::DEFAULT, 0.0, 0.0, 0.0);
         assert!(!subject.is_alive());
+    }
+
+    #[test]
+    fn cell_requests_food() {
+        let cell_params = CellParameters {
+            ingestion_food_yield: 1.5,
+            ..CellParameters::DEFAULT
+        };
+        let cell = Cell::new(&cell_params, 1.0, 0.0, 2.0);
+        assert_eq!(cell.request_food(), 3.0);
     }
 
     #[test]
