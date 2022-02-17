@@ -5,6 +5,7 @@ const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
 const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
 const DEFAULT_ENERGY_USE_PER_STEP: f32 = 0.0;
 const DEFAULT_ABSORPTION_YIELD_FACTOR: f32 = 1.0;
+const DEFAULT_INGESTION_FOOD_YIELD: f32 = 1.0;
 const DEFAULT_FOOD_CONCENTRATION: f32 = 0.0;
 const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
 
@@ -97,6 +98,7 @@ impl<'a> World<'a> {
                 dead_indexes.push(index);
             }
         }
+        self.food_amount -= 5.0;
         self.remove_cells(&mut dead_indexes);
         (0, dead_indexes.len())
     }
@@ -123,7 +125,8 @@ pub fn generate_cells(
         cells.push(Cell::new(
             cell_params,
             normal.sample(&mut rng),
-            0.0, // absorption_energy_per_step: f32,
+            0.0,
+            0.0,
         ));
     }
     cells
@@ -140,6 +143,7 @@ impl<'a> Cell<'a> {
         cell_params: &'a CellParameters,
         energy: f32,
         absorption_energy_per_step: f32,
+        _ingestion_energy_per_step: f32,
     ) -> Self {
         Cell {
             cell_params,
@@ -167,12 +171,14 @@ impl<'a> Cell<'a> {
 pub struct CellParameters {
     pub energy_use_per_step: f32,
     pub absorption_yield_factor: f32,
+    pub ingestion_food_yield: f32,
 }
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
         energy_use_per_step: DEFAULT_ENERGY_USE_PER_STEP,
         absorption_yield_factor: DEFAULT_ABSORPTION_YIELD_FACTOR,
+        ingestion_food_yield: DEFAULT_INGESTION_FOOD_YIELD,
     };
 }
 
@@ -215,8 +221,8 @@ mod tests {
     fn calculate_mean_energy() {
         let subject = World::new(
             vec![
-                Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
-                Cell::new(&CellParameters::DEFAULT, 2.0, 0.0),
+                Cell::new(&CellParameters::DEFAULT, 1.0, 0.0, 0.0),
+                Cell::new(&CellParameters::DEFAULT, 2.0, 0.0, 0.0),
             ],
             0.0,
         );
@@ -252,9 +258,9 @@ mod tests {
         };
         let mut subject = World::new(
             vec![
-                Cell::new(&cell_params, 10.0, 0.0),
-                Cell::new(&cell_params, 5.0, 0.0),
-                Cell::new(&cell_params, 5.0, 0.0),
+                Cell::new(&cell_params, 10.0, 0.0, 0.0),
+                Cell::new(&cell_params, 5.0, 0.0, 0.0),
+                Cell::new(&cell_params, 5.0, 0.0, 0.0),
             ],
             0.0,
         );
@@ -263,19 +269,36 @@ mod tests {
     }
 
     #[test]
+    fn cells_consume_food() {
+        let cell_params = CellParameters {
+            ingestion_food_yield: 1.0,
+            ..CellParameters::DEFAULT
+        };
+        let mut world = World::new(
+            vec![
+                Cell::new(&cell_params, 1.0, 0.0, 2.0),
+                Cell::new(&cell_params, 1.0, 0.0, 3.0),
+            ],
+            10.0
+        );
+        world.step(&Environment::DEFAULT);
+        assert_eq!(world.food_amount(), 5.0);
+    }
+
+    #[test]
     fn cell_uses_energy() {
         let cell_params = CellParameters {
             energy_use_per_step: 5.25,
             ..CellParameters::DEFAULT
         };
-        let mut subject = Cell::new(&cell_params, 10.0, 0.0);
+        let mut subject = Cell::new(&cell_params, 10.0, 0.0, 0.0);
         subject.step(&Environment::DEFAULT);
         assert_eq!(subject.energy(), 4.75);
     }
 
     #[test]
     fn cell_with_no_energy_is_dead() {
-        let subject = Cell::new(&CellParameters::DEFAULT, 0.0, 0.0);
+        let subject = Cell::new(&CellParameters::DEFAULT, 0.0, 0.0, 0.0);
         assert!(!subject.is_alive());
     }
 
@@ -289,7 +312,7 @@ mod tests {
         let environment = Environment {
             food_concentration: 3.0,
         };
-        let mut subject = Cell::new(&cell_params, 10.0, 2.5);
+        let mut subject = Cell::new(&cell_params, 10.0, 2.5, 0.0);
         subject.step(&environment);
         assert_eq!(subject.energy(), 10.0 + 2.5 * 2.0 * 3.0);
     }
