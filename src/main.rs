@@ -122,11 +122,11 @@ pub fn generate_cells(
     cell_params: &CellParameters,
 ) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
-    let normal = Normal::new(mean_initial_energy, std_dev_initial_energy).unwrap();
+    let initial_energies = Normal::new(mean_initial_energy, std_dev_initial_energy).unwrap();
 
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
-        cells.push(Cell::new(cell_params, normal.sample(&mut rng), eating_energy_per_step));
+        cells.push(Cell::new(cell_params, initial_energies.sample(&mut rng), eating_energy_per_step));
     }
     cells
 }
