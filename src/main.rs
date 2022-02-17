@@ -4,8 +4,8 @@ use rand_distr::{Distribution, Normal};
 const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
 const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
 const DEFAULT_ENERGY_USE_PER_STEP: f32 = 0.0;
-const DEFAULT_INGESTION_FOOD_YIELD: f32 = 1.0;
-const DEFAULT_DIGESTION_FOOD_YIELD: f32 = 1.0;
+const DEFAULT_EATING_FOOD_YIELD: f32 = 1.0;
+const DEFAULT_DIGESTION_ENERGY_YIELD: f32 = 1.0;
 const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
 
 fn main() {
@@ -133,19 +133,19 @@ pub fn generate_cells(
 pub struct Cell<'a> {
     cell_params: &'a CellParameters,
     energy: f32,
-    ingestion_energy_per_step: f32,
+    eating_energy_per_step: f32,
 }
 
 impl<'a> Cell<'a> {
     pub fn new(
         cell_params: &'a CellParameters,
         energy: f32,
-        ingestion_energy_per_step: f32,
+        eating_energy_per_step: f32,
     ) -> Self {
         Cell {
             cell_params,
             energy,
-            ingestion_energy_per_step,
+            eating_energy_per_step,
         }
     }
 
@@ -158,7 +158,7 @@ impl<'a> Cell<'a> {
     }
 
     pub fn request_food(&self) -> f32 {
-        self.ingestion_energy_per_step * self.cell_params.ingestion_food_yield
+        self.eating_energy_per_step * self.cell_params.eating_food_yield
     }
 
     pub fn digest_food(&mut self, food_amount: f32) {
@@ -172,15 +172,15 @@ impl<'a> Cell<'a> {
 
 pub struct CellParameters {
     pub energy_use_per_step: f32,
-    pub ingestion_food_yield: f32,
+    pub eating_food_yield: f32,
     pub digestion_energy_yield: f32,
 }
 
 impl CellParameters {
     pub const DEFAULT: CellParameters = CellParameters {
         energy_use_per_step: DEFAULT_ENERGY_USE_PER_STEP,
-        ingestion_food_yield: DEFAULT_INGESTION_FOOD_YIELD,
-        digestion_energy_yield: DEFAULT_DIGESTION_FOOD_YIELD,
+        eating_food_yield: DEFAULT_EATING_FOOD_YIELD,
+        digestion_energy_yield: DEFAULT_DIGESTION_ENERGY_YIELD,
     };
 }
 
@@ -271,7 +271,7 @@ mod tests {
     #[test]
     fn cells_consume_food() {
         let cell_params = CellParameters {
-            ingestion_food_yield: 1.0,
+            eating_food_yield: 1.0,
             ..CellParameters::DEFAULT
         };
         let mut world = World::new(
@@ -305,7 +305,7 @@ mod tests {
     #[test]
     fn cell_requests_food() {
         let cell_params = CellParameters {
-            ingestion_food_yield: 1.5,
+            eating_food_yield: 1.5,
             ..CellParameters::DEFAULT
         };
         let cell = Cell::new(&cell_params, 1.0, 2.0);
