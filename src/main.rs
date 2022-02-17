@@ -92,9 +92,9 @@ impl<'a> World<'a> {
 
     pub fn step(&mut self, environment: &Environment) -> (usize, usize) {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
-        let mut food_consumed = 0.0;
-        for _cell in &self.cells {
-            food_consumed += 2.5;
+        let mut food_requested = 0.0;
+        for cell in &self.cells {
+            food_requested += cell.request_food();
         }
         for (index, cell) in self.cells.iter_mut().enumerate() {
             cell.step(environment);
@@ -102,7 +102,7 @@ impl<'a> World<'a> {
                 dead_indexes.push(index);
             }
         }
-        self.food_amount -= food_consumed;
+        self.food_amount -= food_requested;
         self.remove_cells(&mut dead_indexes);
         (0, dead_indexes.len())
     }
@@ -162,6 +162,10 @@ impl<'a> Cell<'a> {
 
     pub fn is_alive(&self) -> bool {
         self.energy() > 0.0
+    }
+
+    pub fn request_food(&self) -> f32 {
+        2.5
     }
 
     pub fn step(&mut self, environment: &Environment) {
