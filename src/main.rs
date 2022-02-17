@@ -6,7 +6,6 @@ const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
 const DEFAULT_ENERGY_USE_PER_STEP: f32 = 0.0;
 const DEFAULT_INGESTION_FOOD_YIELD: f32 = 1.0;
 const DEFAULT_DIGESTION_FOOD_YIELD: f32 = 1.0;
-const DEFAULT_FOOD_CONCENTRATION: f32 = 0.0;
 const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
 
 fn main() {
@@ -186,12 +185,10 @@ impl CellParameters {
 }
 
 pub struct Environment {
-    _food_concentration: f32,
 }
 
 impl Environment {
     pub const DEFAULT: Environment = Environment {
-        _food_concentration: DEFAULT_FOOD_CONCENTRATION,
     };
 }
 
