@@ -90,19 +90,21 @@ impl<'a> World<'a> {
     }
 
     pub fn step(&mut self, environment: &Environment) -> (usize, usize) {
-        let mut dead_indexes = Vec::with_capacity(self.cells.len());
         let mut food_requested = 0.0;
         for cell in &self.cells {
             food_requested += cell.request_food();
         }
+        self.food_amount -= food_requested;
+
+        let mut dead_indexes = Vec::with_capacity(self.cells.len());
         for (index, cell) in self.cells.iter_mut().enumerate() {
             cell.step(environment);
             if !cell.is_alive() {
                 dead_indexes.push(index);
             }
         }
-        self.food_amount -= food_requested;
         self.remove_cells(&mut dead_indexes);
+
         (0, dead_indexes.len())
     }
 
