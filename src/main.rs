@@ -91,8 +91,10 @@ impl<'a> World<'a> {
 
     pub fn step(&mut self, environment: &Environment) -> (usize, usize) {
         let mut food_requested = 0.0;
-        for cell in &self.cells {
-            food_requested += cell.request_food();
+        for cell in &mut self.cells {
+            let food = cell.request_food();
+            cell.digest_food(food);
+            food_requested += food;
         }
         self.food_amount -= food_requested;
 
