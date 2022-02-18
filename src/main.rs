@@ -305,6 +305,26 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
+    fn world_apportions_scarce_food() {
+        let cell_params = CellParameters {
+            eating_food_yield: 1.0,
+            digestion_energy_yield: 1.0,
+            ..CellParameters::DEFAULT
+        };
+        let mut world = World::new(
+            vec![
+                Cell::new(&cell_params, 10.0, 4.0),
+                Cell::new(&cell_params, 10.0, 6.0),
+            ],
+            5.0,
+        );
+        world.step(&Environment::DEFAULT);
+        assert_eq!(world.food_amount(), 0.0);
+        assert_eq!(world.mean_energy(), 12.5);
+    }
+
+    #[test]
     fn cell_uses_energy() {
         let cell_params = CellParameters {
             energy_use_per_step: 5.25,
