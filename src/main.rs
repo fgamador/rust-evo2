@@ -272,7 +272,7 @@ mod tests {
     }
 
     #[test]
-    fn cells_consume_food() {
+    fn cells_consume_world_food() {
         let cell_params = CellParameters {
             eating_food_yield: 1.0,
             ..CellParameters::DEFAULT
@@ -286,6 +286,19 @@ mod tests {
         );
         world.step(&Environment::DEFAULT);
         assert_eq!(world.food_amount(), 5.0);
+    }
+
+    #[test]
+    #[ignore]
+    fn cells_gain_energy_from_eating_world_food() {
+        let cell_params = CellParameters {
+            eating_food_yield: 1.0,
+            digestion_energy_yield: 2.0,
+            ..CellParameters::DEFAULT
+        };
+        let mut world = World::new(vec![Cell::new(&cell_params, 10.0, 1.0)], 10.0);
+        world.step(&Environment::DEFAULT);
+        assert_eq!(world.mean_energy(), 12.0);
     }
 
     #[test]
