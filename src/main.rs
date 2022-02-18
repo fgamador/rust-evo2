@@ -293,7 +293,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn cells_gain_energy_from_eating_world_food() {
         let cell_params = CellParameters {
             eating_food_yield: 1.0,
