@@ -94,11 +94,12 @@ impl<'a> World<'a> {
     }
 
     pub fn step(&mut self, environment: &Environment) -> (usize, usize) {
+        let food_per_cell = self.food_amount / (self.cells.len() as f32);
         let mut food_consumed = 0.0;
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            let food = cell.request_food(0.0);
+            let food = cell.request_food(food_per_cell);
             cell.digest_food(food);
             cell.step(environment);
 
@@ -162,8 +163,8 @@ impl<'a> Cell<'a> {
         self.energy() > 0.0
     }
 
-    pub fn request_food(&self, _food_per_cell: f32) -> f32 {
-        self.eating_energy_per_step * self.cell_params.eating_food_yield
+    pub fn request_food(&self, food_per_cell: f32) -> f32 {
+        (self.eating_energy_per_step * self.cell_params.eating_food_yield).min(food_per_cell)
     }
 
     pub fn digest_food(&mut self, food_amount: f32) {
@@ -297,7 +298,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
         let cell_params = CellParameters {
             energy_use_per_step: 0.0,
@@ -354,7 +354,7 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let cell = Cell::new(&cell_params, 1.0, 2.0);
-        assert_eq!(cell.request_food(0.0), 3.0);
+        assert_eq!(cell.request_food(10.0), 3.0);
     }
 
     #[test]
