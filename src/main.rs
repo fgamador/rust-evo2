@@ -68,8 +68,8 @@ pub struct World<'a> {
 }
 
 impl<'a> World<'a> {
-    pub fn new(cells: Vec<Cell>, food_amount: f32) -> World {
-        World { cells, food_amount }
+    pub fn new(_cells: Vec<Cell>, _food_amount: f32) -> World {
+        World { cells: vec![], food_amount: 0.0 }
     }
 
     pub fn with_cells(mut self, cells: Vec<Cell<'a>>) -> Self {
