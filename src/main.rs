@@ -233,18 +233,6 @@ mod tests {
     }
 
     #[test]
-    fn mean_energy_starts_at_mean_initial_energy() {
-        let initial_energies = Normal::new(39.5, 0.0).unwrap();
-        let subject = World::new().with_cells(generate_cells(
-            100,
-            initial_energies,
-            0.0,
-            &CellParameters::DEFAULT,
-        ));
-        assert_eq!(subject.mean_energy(), 39.5);
-    }
-
-    #[test]
     fn mean_energy_with_no_cells_is_zero() {
         let subject = World::new();
         assert_eq!(subject.mean_energy(), 0.0);
