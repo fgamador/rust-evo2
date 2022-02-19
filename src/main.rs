@@ -73,6 +73,10 @@ impl<'a> World<'a> {
         World { cells, food_amount }
     }
 
+    pub fn cell(&self, index: usize) -> &Cell {
+        &self.cells[index]
+    }
+
     pub fn num_alive(&self) -> usize {
         self.cells.len()
     }
@@ -293,6 +297,28 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
+    fn cells_cannot_consume_more_than_their_share_of_world_food() {
+        let cell_params = CellParameters {
+            energy_use_per_step: 0.0,
+            eating_food_yield: 1.0,
+            digestion_energy_yield: 1.0,
+            ..CellParameters::DEFAULT
+        };
+        let mut world = World::new(
+            vec![
+                Cell::new(&cell_params, 10.0, 2.0),
+                Cell::new(&cell_params, 10.0, 3.0),
+            ],
+            4.0,
+        );
+        world.step(&Environment::DEFAULT);
+        assert_eq!(world.food_amount(), 0.0);
+        assert_eq!(world.cell(0).energy(), 12.0);
+        assert_eq!(world.cell(1).energy(), 12.0);
+    }
+
+    #[test]
     fn cells_gain_energy_from_eating_world_food() {
         let cell_params = CellParameters {
             eating_food_yield: 1.0,
@@ -302,26 +328,6 @@ mod tests {
         let mut world = World::new(vec![Cell::new(&cell_params, 10.0, 1.0)], 10.0);
         world.step(&Environment::DEFAULT);
         assert_eq!(world.mean_energy(), 12.0);
-    }
-
-    #[test]
-    #[ignore]
-    fn world_apportions_scarce_food() {
-        let cell_params = CellParameters {
-            eating_food_yield: 1.0,
-            digestion_energy_yield: 1.0,
-            ..CellParameters::DEFAULT
-        };
-        let mut world = World::new(
-            vec![
-                Cell::new(&cell_params, 10.0, 4.0),
-                Cell::new(&cell_params, 10.0, 6.0),
-            ],
-            5.0,
-        );
-        world.step(&Environment::DEFAULT);
-        assert_eq!(world.food_amount(), 0.0);
-        assert_eq!(world.mean_energy(), 12.5);
     }
 
     #[test]
