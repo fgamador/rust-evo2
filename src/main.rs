@@ -344,7 +344,9 @@ mod tests {
             digestion_energy_yield: 2.0,
             ..CellParameters::DEFAULT
         };
-        let mut world = World::new(vec![Cell::new(&cell_params, 10.0, 1.0)], 10.0);
+        let mut world = World::new(vec![], 0.0)
+            .with_cell(Cell::new(&cell_params, 10.0, 1.0))
+            .with_food(10.0);
         world.step();
         assert_eq!(world.mean_energy(), 12.0);
     }
