@@ -97,18 +97,18 @@ impl<'a> World<'a> {
         let environment = CellEnvironment {
             food_per_cell: self.food_amount / (self.cells.len() as f32),
         };
-        let mut food_consumed = 0.0;
+        let mut _food_consumed = 0.0;
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
             let food = cell.step(&environment);
-            food_consumed += food;
+            self.food_amount -= food;
+            _food_consumed += food;
             if !cell.is_alive() {
                 dead_indexes.push(index);
             }
         }
 
-        self.food_amount -= food_consumed;
         self.remove_cells(&mut dead_indexes);
 
         (0, dead_indexes.len())
