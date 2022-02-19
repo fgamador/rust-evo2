@@ -94,8 +94,9 @@ impl<'a> World<'a> {
     }
 
     pub fn step(&mut self) -> (usize, usize) {
-        let food_per_cell = self.food_amount / (self.cells.len() as f32);
-        let environment = CellEnvironment { food_per_cell };
+        let environment = CellEnvironment {
+            food_per_cell: self.food_amount / (self.cells.len() as f32),
+        };
         let mut food_consumed = 0.0;
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
