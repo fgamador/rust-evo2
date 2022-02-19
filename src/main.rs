@@ -100,9 +100,9 @@ impl<'a> World<'a> {
         for (index, cell) in self.cells.iter_mut().enumerate() {
             let food = cell.request_food();
             cell.digest_food(food);
-            food_consumed += food;
-
             cell.step(environment);
+
+            food_consumed += food;
             if !cell.is_alive() {
                 dead_indexes.push(index);
             }
