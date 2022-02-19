@@ -275,7 +275,7 @@ mod tests {
     }
 
     #[test]
-    fn world_step_reports_num_died() {
+    fn world_reports_num_died() {
         let cell_params = CellParameters {
             energy_use_per_step: 5.0,
             ..CellParameters::DEFAULT
