@@ -98,7 +98,7 @@ impl<'a> World<'a> {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            let food = cell.request_food();
+            let food = cell.request_food(0.0);
             cell.digest_food(food);
             cell.step(environment);
 
@@ -162,7 +162,7 @@ impl<'a> Cell<'a> {
         self.energy() > 0.0
     }
 
-    pub fn request_food(&self) -> f32 {
+    pub fn request_food(&self, _food_per_cell: f32) -> f32 {
         self.eating_energy_per_step * self.cell_params.eating_food_yield
     }
 
@@ -354,7 +354,7 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let cell = Cell::new(&cell_params, 1.0, 2.0);
-        assert_eq!(cell.request_food(), 3.0);
+        assert_eq!(cell.request_food(0.0), 3.0);
     }
 
     #[test]
