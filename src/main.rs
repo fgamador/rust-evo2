@@ -223,30 +223,24 @@ mod tests {
     #[test]
     fn world_cells_start_alive() {
         let initial_energies = Normal::new(10.0, 0.0).unwrap();
-        let subject = World::new(
-            generate_cells(42, initial_energies, 0.0, &CellParameters::DEFAULT),
-            0.0,
-        );
+        let subject = World::new(vec![], 0.0)
+            .with_cells(generate_cells(42, initial_energies, 0.0, &CellParameters::DEFAULT));
         assert_eq!(subject.num_alive(), 42);
     }
 
     #[test]
     fn mean_energy_starts_at_mean_initial_energy() {
         let initial_energies = Normal::new(39.5, 0.0).unwrap();
-        let subject = World::new(
-            generate_cells(100, initial_energies, 0.0, &CellParameters::DEFAULT),
-            0.0,
-        );
+        let subject = World::new(vec![], 0.0)
+            .with_cells(generate_cells(100, initial_energies, 0.0, &CellParameters::DEFAULT));
         assert_eq!(subject.mean_energy(), 39.5);
     }
 
     #[test]
     fn mean_energy_with_no_cells_is_zero() {
         let initial_energies = Normal::new(10.0, 0.0).unwrap();
-        let subject = World::new(
-            generate_cells(0, initial_energies, 0.0, &CellParameters::DEFAULT),
-            0.0,
-        );
+        let subject = World::new(vec![], 0.0)
+            .with_cells(generate_cells(0, initial_energies, 0.0, &CellParameters::DEFAULT));
         assert_eq!(subject.mean_energy(), 0.0);
     }
 
