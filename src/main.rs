@@ -100,7 +100,6 @@ impl<'a> World<'a> {
             cell.digest_food(food);
             food_requested += food;
         }
-        self.food_amount -= food_requested;
 
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
         for (index, cell) in self.cells.iter_mut().enumerate() {
@@ -110,6 +109,7 @@ impl<'a> World<'a> {
             }
         }
         self.remove_cells(&mut dead_indexes);
+        self.food_amount -= food_requested;
 
         (0, dead_indexes.len())
     }
