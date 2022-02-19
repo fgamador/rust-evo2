@@ -223,16 +223,24 @@ mod tests {
     #[test]
     fn world_cells_start_alive() {
         let initial_energies = Normal::new(10.0, 0.0).unwrap();
-        let subject = World::new(vec![], 0.0)
-            .with_cells(generate_cells(42, initial_energies, 0.0, &CellParameters::DEFAULT));
+        let subject = World::new(vec![], 0.0).with_cells(generate_cells(
+            42,
+            initial_energies,
+            0.0,
+            &CellParameters::DEFAULT,
+        ));
         assert_eq!(subject.num_alive(), 42);
     }
 
     #[test]
     fn mean_energy_starts_at_mean_initial_energy() {
         let initial_energies = Normal::new(39.5, 0.0).unwrap();
-        let subject = World::new(vec![], 0.0)
-            .with_cells(generate_cells(100, initial_energies, 0.0, &CellParameters::DEFAULT));
+        let subject = World::new(vec![], 0.0).with_cells(generate_cells(
+            100,
+            initial_energies,
+            0.0,
+            &CellParameters::DEFAULT,
+        ));
         assert_eq!(subject.mean_energy(), 39.5);
     }
 
@@ -244,13 +252,10 @@ mod tests {
 
     #[test]
     fn calculate_mean_energy() {
-        let subject = World::new(
-            vec![
-                Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
-                Cell::new(&CellParameters::DEFAULT, 2.0, 0.0),
-            ],
-            0.0,
-        );
+        let subject = World::new(vec![], 0.0).with_cells(vec![
+            Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
+            Cell::new(&CellParameters::DEFAULT, 2.0, 0.0),
+        ]);
         assert_eq!(subject.mean_energy(), 1.5);
     }
 
@@ -269,7 +274,12 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let initial_energies = Normal::new(10.0, DEFAULT_STD_DEV_INITIAL_ENERGY).unwrap();
-        let mut subject = World::new(generate_cells(10, initial_energies, 0.0, &cell_params), 0.0);
+        let mut subject = World::new(vec![], 0.0).with_cells(generate_cells(
+            10,
+            initial_energies,
+            0.0,
+            &cell_params,
+        ));
         subject.step();
         assert_eq!(subject.num_alive(), 0);
     }
