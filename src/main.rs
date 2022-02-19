@@ -223,15 +223,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn world_cells_start_alive() {
-        let initial_energies = Normal::new(10.0, 0.0).unwrap();
-        let subject = World::new().with_cells(generate_cells(
+    fn world_counts_living_cells() {
+        let world = World::new().with_cells(generate_cells(
             42,
-            initial_energies,
+            Normal::new(1.0, 0.0).unwrap(),
             0.0,
             &CellParameters::DEFAULT,
         ));
-        assert_eq!(subject.num_alive(), 42);
+        assert_eq!(world.num_alive(), 42);
     }
 
     #[test]
