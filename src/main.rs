@@ -27,7 +27,7 @@ fn main() {
     );
 
     while world.num_alive() > 0 {
-        let (num_created, num_died) = world.step(&CellEnvironment::DEFAULT);
+        let (num_created, num_died) = world.step();
         println!(
             "+{} -{} -> {} (e: {}, f: {})",
             num_created,
@@ -93,7 +93,7 @@ impl<'a> World<'a> {
         self.food_amount
     }
 
-    pub fn step(&mut self, _environment: &CellEnvironment) -> (usize, usize) {
+    pub fn step(&mut self) -> (usize, usize) {
         let food_per_cell = self.food_amount / (self.cells.len() as f32);
         let environment = CellEnvironment::DEFAULT;
         let mut food_consumed = 0.0;
@@ -265,7 +265,7 @@ mod tests {
         };
         let initial_energies = Normal::new(10.0, DEFAULT_STD_DEV_INITIAL_ENERGY).unwrap();
         let mut subject = World::new(generate_cells(10, initial_energies, 0.0, &cell_params), 0.0);
-        subject.step(&CellEnvironment::DEFAULT);
+        subject.step();
         assert_eq!(subject.num_alive(), 0);
     }
 
@@ -283,7 +283,7 @@ mod tests {
             ],
             0.0,
         );
-        let (_, num_died) = subject.step(&CellEnvironment::DEFAULT);
+        let (_, num_died) = subject.step();
         assert_eq!(num_died, 2);
     }
 
@@ -300,7 +300,7 @@ mod tests {
             ],
             10.0,
         );
-        world.step(&CellEnvironment::DEFAULT);
+        world.step();
         assert_eq!(world.food_amount(), 5.0);
     }
 
@@ -319,7 +319,7 @@ mod tests {
             ],
             4.0,
         );
-        world.step(&CellEnvironment::DEFAULT);
+        world.step();
         assert_eq!(world.food_amount(), 0.0);
         assert_eq!(world.cell(0).energy(), 12.0);
         assert_eq!(world.cell(1).energy(), 12.0);
@@ -333,7 +333,7 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let mut world = World::new(vec![Cell::new(&cell_params, 10.0, 1.0)], 10.0);
-        world.step(&CellEnvironment::DEFAULT);
+        world.step();
         assert_eq!(world.mean_energy(), 12.0);
     }
 
