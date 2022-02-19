@@ -99,10 +99,7 @@ impl<'a> World<'a> {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            let food = cell.request_food(food_per_cell);
-            cell.digest_food(food);
-            cell.use_energy(environment);
-
+            let food = Self::step_cell(cell, environment, food_per_cell);
             food_consumed += food;
             if !cell.is_alive() {
                 dead_indexes.push(index);
@@ -113,6 +110,13 @@ impl<'a> World<'a> {
         self.remove_cells(&mut dead_indexes);
 
         (0, dead_indexes.len())
+    }
+
+    fn step_cell(cell: &mut Cell, environment: &Environment, food_per_cell: f32) -> f32 {
+        let food = cell.request_food(food_per_cell);
+        cell.digest_food(food);
+        cell.use_energy(environment);
+        food
     }
 
     fn remove_cells(&mut self, sorted_indexes: &mut Vec<usize>) {
