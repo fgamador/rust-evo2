@@ -25,13 +25,13 @@ fn main() {
         ))
         .with_food(args.food_amount);
 
-    while world.num_alive() > 0 {
+    while world.num_cells() > 0 {
         let (num_created, num_died) = world.step();
         println!(
             "+{} -{} -> {} (e: {}, f: {})",
             num_created,
             num_died,
-            world.num_alive(),
+            world.num_cells(),
             world.mean_energy(),
             world.food_amount()
         );
@@ -94,7 +94,7 @@ impl<'a> World<'a> {
         &self.cells[index]
     }
 
-    pub fn num_alive(&self) -> usize {
+    pub fn num_cells(&self) -> usize {
         self.cells.len()
     }
 
@@ -223,14 +223,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn world_counts_living_cells() {
-        let world = World::new().with_cells(generate_cells(
-            42,
-            Normal::new(1.0, 0.0).unwrap(),
-            0.0,
-            &CellParameters::DEFAULT,
-        ));
-        assert_eq!(world.num_alive(), 42);
+    fn world_counts_both_living_and_dead_cells() {
+        let world = World::new().with_cells(vec![
+            Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
+            Cell::new(&CellParameters::DEFAULT, 0.0, 0.0),
+            Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
+        ]);
+        assert_eq!(world.num_cells(), 3);
     }
 
     #[test]
@@ -278,7 +277,7 @@ mod tests {
         let mut subject =
             World::new().with_cells(generate_cells(10, initial_energies, 0.0, &cell_params));
         subject.step();
-        assert_eq!(subject.num_alive(), 0);
+        assert_eq!(subject.num_cells(), 0);
     }
 
     #[test]
