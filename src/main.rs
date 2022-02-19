@@ -247,9 +247,13 @@ mod tests {
     }
 
     #[test]
-    fn generate_cells_from_normal_distribution() {
-        let initial_energies = Normal::new(100.0, 5.0).unwrap();
-        let cells = generate_cells(100, initial_energies, 0.0, &CellParameters::DEFAULT);
+    fn generate_cells_with_normal_energy_distribution() {
+        let cells = generate_cells(
+            100,
+            Normal::new(100.0, 5.0).unwrap(),
+            0.0,
+            &CellParameters::DEFAULT,
+        );
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e > 100.0));
     }
