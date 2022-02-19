@@ -194,10 +194,12 @@ impl CellParameters {
     };
 }
 
-pub struct Environment {}
+pub struct Environment {
+    pub food_per_cell: f32,
+}
 
 impl Environment {
-    pub const DEFAULT: Environment = Environment {};
+    pub const DEFAULT: Environment = Environment { food_per_cell: 0.0 };
 }
 
 #[cfg(test)]
