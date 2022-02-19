@@ -238,12 +238,12 @@ mod tests {
     }
 
     #[test]
-    fn calculate_mean_energy() {
-        let subject = World::new().with_cells(vec![
+    fn world_calculates_mean_energy() {
+        let world = World::new().with_cells(vec![
             Cell::new(&CellParameters::DEFAULT, 1.0, 0.0),
             Cell::new(&CellParameters::DEFAULT, 2.0, 0.0),
         ]);
-        assert_eq!(subject.mean_energy(), 1.5);
+        assert_eq!(world.mean_energy(), 1.5);
     }
 
     #[test]
