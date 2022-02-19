@@ -73,6 +73,21 @@ impl<'a> World<'a> {
         World { cells, food_amount }
     }
 
+    pub fn with_cells(mut self, cells: Vec<Cell<'a>>) -> Self {
+        self.cells = cells;
+        self
+    }
+
+    pub fn with_cell(mut self, cell: Cell<'a>) -> Self {
+        self.cells.push(cell);
+        self
+    }
+
+    pub fn with_food(mut self, food: f32) -> Self {
+        self.food_amount = food;
+        self
+    }
+
     pub fn cell(&self, index: usize) -> &Cell {
         &self.cells[index]
     }
@@ -310,13 +325,12 @@ mod tests {
             digestion_energy_yield: 1.0,
             ..CellParameters::DEFAULT
         };
-        let mut world = World::new(
-            vec![
+        let mut world = World::new(vec![], 0.0)
+            .with_cells(vec![
                 Cell::new(&cell_params, 10.0, 2.0),
                 Cell::new(&cell_params, 10.0, 3.0),
-            ],
-            4.0,
-        );
+            ])
+            .with_food(4.0);
         world.step();
         assert_eq!(world.food_amount(), 0.0);
         assert_eq!(world.cell(0).energy(), 12.0);
