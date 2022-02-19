@@ -27,7 +27,7 @@ fn main() {
     );
 
     while world.num_alive() > 0 {
-        let (num_created, num_died) = world.step(&Environment::DEFAULT);
+        let (num_created, num_died) = world.step(&CellEnvironment::DEFAULT);
         println!(
             "+{} -{} -> {} (e: {}, f: {})",
             num_created,
@@ -93,7 +93,7 @@ impl<'a> World<'a> {
         self.food_amount
     }
 
-    pub fn step(&mut self, environment: &Environment) -> (usize, usize) {
+    pub fn step(&mut self, environment: &CellEnvironment) -> (usize, usize) {
         let food_per_cell = self.food_amount / (self.cells.len() as f32);
         let mut food_consumed = 0.0;
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
@@ -160,7 +160,7 @@ impl<'a> Cell<'a> {
         self.energy() > 0.0
     }
 
-    pub fn step(&mut self, environment: &Environment, food_per_cell: f32) -> f32 {
+    pub fn step(&mut self, environment: &CellEnvironment, food_per_cell: f32) -> f32 {
         let food = self.request_food(food_per_cell);
         self.digest_food(food);
         self.use_energy(environment);
@@ -175,7 +175,7 @@ impl<'a> Cell<'a> {
         self.energy += food_amount * self.cell_params.digestion_energy_yield;
     }
 
-    pub fn use_energy(&mut self, _environment: &Environment) {
+    pub fn use_energy(&mut self, _environment: &CellEnvironment) {
         self.energy -= self.cell_params.energy_use_per_step;
     }
 }
@@ -194,12 +194,12 @@ impl CellParameters {
     };
 }
 
-pub struct Environment {
+pub struct CellEnvironment {
     pub food_per_cell: f32,
 }
 
-impl Environment {
-    pub const DEFAULT: Environment = Environment { food_per_cell: 0.0 };
+impl CellEnvironment {
+    pub const DEFAULT: CellEnvironment = CellEnvironment { food_per_cell: 0.0 };
 }
 
 #[cfg(test)]
@@ -264,7 +264,7 @@ mod tests {
         };
         let initial_energies = Normal::new(10.0, DEFAULT_STD_DEV_INITIAL_ENERGY).unwrap();
         let mut subject = World::new(generate_cells(10, initial_energies, 0.0, &cell_params), 0.0);
-        subject.step(&Environment::DEFAULT);
+        subject.step(&CellEnvironment::DEFAULT);
         assert_eq!(subject.num_alive(), 0);
     }
 
@@ -282,7 +282,7 @@ mod tests {
             ],
             0.0,
         );
-        let (_, num_died) = subject.step(&Environment::DEFAULT);
+        let (_, num_died) = subject.step(&CellEnvironment::DEFAULT);
         assert_eq!(num_died, 2);
     }
 
@@ -299,7 +299,7 @@ mod tests {
             ],
             10.0,
         );
-        world.step(&Environment::DEFAULT);
+        world.step(&CellEnvironment::DEFAULT);
         assert_eq!(world.food_amount(), 5.0);
     }
 
@@ -318,7 +318,7 @@ mod tests {
             ],
             4.0,
         );
-        world.step(&Environment::DEFAULT);
+        world.step(&CellEnvironment::DEFAULT);
         assert_eq!(world.food_amount(), 0.0);
         assert_eq!(world.cell(0).energy(), 12.0);
         assert_eq!(world.cell(1).energy(), 12.0);
@@ -332,7 +332,7 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let mut world = World::new(vec![Cell::new(&cell_params, 10.0, 1.0)], 10.0);
-        world.step(&Environment::DEFAULT);
+        world.step(&CellEnvironment::DEFAULT);
         assert_eq!(world.mean_energy(), 12.0);
     }
 
@@ -343,7 +343,7 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let mut subject = Cell::new(&cell_params, 10.0, 0.0);
-        subject.use_energy(&Environment::DEFAULT);
+        subject.use_energy(&CellEnvironment::DEFAULT);
         assert_eq!(subject.energy(), 4.75);
     }
 
