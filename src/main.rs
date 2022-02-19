@@ -101,7 +101,7 @@ impl<'a> World<'a> {
         for (index, cell) in self.cells.iter_mut().enumerate() {
             let food = cell.request_food(food_per_cell);
             cell.digest_food(food);
-            cell.step(environment);
+            cell.use_energy(environment);
 
             food_consumed += food;
             if !cell.is_alive() {
@@ -171,7 +171,7 @@ impl<'a> Cell<'a> {
         self.energy += food_amount * self.cell_params.digestion_energy_yield;
     }
 
-    pub fn step(&mut self, _environment: &Environment) {
+    pub fn use_energy(&mut self, _environment: &Environment) {
         self.energy -= self.cell_params.energy_use_per_step;
     }
 }
@@ -337,7 +337,7 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let mut subject = Cell::new(&cell_params, 10.0, 0.0);
-        subject.step(&Environment::DEFAULT);
+        subject.use_energy(&Environment::DEFAULT);
         assert_eq!(subject.energy(), 4.75);
     }
 
