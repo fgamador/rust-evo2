@@ -16,15 +16,14 @@ fn main() {
         ..CellParameters::DEFAULT
     };
 
-    let mut world = World::new(
-        generate_cells(
+    let mut world = World::new(vec![], 0.0)
+        .with_cells(generate_cells(
             args.cells,
             Normal::new(args.mean_energy, args.std_dev_energy).unwrap(),
             0.0,
             &cell_params,
-        ),
-        args.food_amount,
-    );
+        ))
+        .with_food(args.food_amount);
 
     while world.num_alive() > 0 {
         let (num_created, num_died) = world.step();
