@@ -290,15 +290,12 @@ mod tests {
             energy_use_per_step: 5.0,
             ..CellParameters::DEFAULT
         };
-        let mut subject = World::new(
-            vec![
-                Cell::new(&cell_params, 10.0, 0.0),
-                Cell::new(&cell_params, 5.0, 0.0),
-                Cell::new(&cell_params, 5.0, 0.0),
-            ],
-            0.0,
-        );
-        let (_, num_died) = subject.step();
+        let mut world = World::new(vec![], 0.0).with_cells(vec![
+            Cell::new(&cell_params, 10.0, 0.0),
+            Cell::new(&cell_params, 5.0, 0.0),
+            Cell::new(&cell_params, 5.0, 0.0),
+        ]);
+        let (_, num_died) = world.step();
         assert_eq!(num_died, 2);
     }
 
@@ -308,13 +305,12 @@ mod tests {
             eating_food_yield: 1.0,
             ..CellParameters::DEFAULT
         };
-        let mut world = World::new(
-            vec![
+        let mut world = World::new(vec![], 0.0)
+            .with_cells(vec![
                 Cell::new(&cell_params, 1.0, 2.0),
                 Cell::new(&cell_params, 1.0, 3.0),
-            ],
-            10.0,
-        );
+            ])
+            .with_food(10.0);
         world.step();
         assert_eq!(world.food_amount(), 5.0);
     }
