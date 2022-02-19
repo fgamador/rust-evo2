@@ -238,9 +238,7 @@ mod tests {
 
     #[test]
     fn mean_energy_with_no_cells_is_zero() {
-        let initial_energies = Normal::new(10.0, 0.0).unwrap();
-        let subject = World::new(vec![], 0.0)
-            .with_cells(generate_cells(0, initial_energies, 0.0, &CellParameters::DEFAULT));
+        let subject = World::new(vec![], 0.0);
         assert_eq!(subject.mean_energy(), 0.0);
     }
 
