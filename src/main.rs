@@ -259,16 +259,19 @@ mod tests {
     }
 
     #[test]
-    fn dead_cells_disappear() {
+    fn world_removes_dead_cells() {
         let cell_params = CellParameters {
-            energy_use_per_step: 11.0,
+            energy_use_per_step: 0.0,
             ..CellParameters::DEFAULT
         };
-        let initial_energies = Normal::new(10.0, DEFAULT_STD_DEV_INITIAL_ENERGY).unwrap();
-        let mut subject =
-            World::new().with_cells(generate_cells(10, initial_energies, 0.0, &cell_params));
-        subject.step();
-        assert_eq!(subject.num_cells(), 0);
+        let mut world = World::new()
+            .with_cells(vec![
+                Cell::new(&cell_params, 1.0, 0.0),
+                Cell::new(&cell_params, 0.0, 0.0),
+            ])
+            .with_food(0.0);
+        world.step();
+        assert_eq!(world.num_cells(), 1);
     }
 
     #[test]
