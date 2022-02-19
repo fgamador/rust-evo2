@@ -233,9 +233,8 @@ mod tests {
     }
 
     #[test]
-    fn mean_energy_with_no_cells_is_zero() {
-        let subject = World::new();
-        assert_eq!(subject.mean_energy(), 0.0);
+    fn world_mean_energy_with_no_cells_is_zero() {
+        assert_eq!(World::new().mean_energy(), 0.0);
     }
 
     #[test]
