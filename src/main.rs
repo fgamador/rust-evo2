@@ -373,11 +373,16 @@ mod tests {
     #[test]
     fn cell_digests_food() {
         let cell_params = CellParameters {
+            eating_food_yield: 1.0,
             digestion_energy_yield: 1.5,
             ..CellParameters::DEFAULT
         };
-        let mut cell = Cell::new(&cell_params, 10.0, 0.0);
-        cell.digest_food(3.0);
-        assert_eq!(cell.energy(), 14.5);
+        let environment = CellEnvironment {
+            food_per_cell: 10.0,
+            ..CellEnvironment::DEFAULT
+        };
+        let mut cell = Cell::new(&cell_params, 10.0, 2.0);
+        cell.step(&environment);
+        assert_eq!(cell.energy(), 13.0);
     }
 }
