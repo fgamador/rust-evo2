@@ -357,13 +357,17 @@ mod tests {
     }
 
     #[test]
-    fn cell_requests_food() {
+    fn cell_eats_food() {
         let cell_params = CellParameters {
             eating_food_yield: 1.5,
             ..CellParameters::DEFAULT
         };
-        let cell = Cell::new(&cell_params, 1.0, 2.0);
-        assert_eq!(cell.request_food(10.0), 3.0);
+        let environment = CellEnvironment {
+            food_per_cell: 10.0,
+            ..CellEnvironment::DEFAULT
+        };
+        let mut cell = Cell::new(&cell_params, 1.0, 2.0);
+        assert_eq!(cell.step(&environment), 3.0);
     }
 
     #[test]
