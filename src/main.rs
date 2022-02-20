@@ -326,20 +326,6 @@ mod tests {
     }
 
     #[test]
-    fn cells_gain_energy_from_eating_world_food() {
-        let cell_params = CellParameters {
-            eating_food_yield: 1.0,
-            digestion_energy_yield: 2.0,
-            ..CellParameters::DEFAULT
-        };
-        let mut world = World::new()
-            .with_cell(Cell::new(&cell_params, 10.0, 1.0))
-            .with_food(10.0);
-        world.step();
-        assert_eq!(world.mean_energy(), 12.0);
-    }
-
-    #[test]
     fn cell_eats_food() {
         let cell_params = CellParameters {
             eating_food_yield: 1.5,
