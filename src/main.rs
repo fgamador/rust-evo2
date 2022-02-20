@@ -362,7 +362,7 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let mut cell = Cell::new(&cell_params, 10.0, 0.0);
-        cell.use_energy();
+        cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(cell.energy(), 4.75);
     }
 
