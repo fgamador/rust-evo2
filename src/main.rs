@@ -336,7 +336,23 @@ mod tests {
             ..CellEnvironment::DEFAULT
         };
         let mut cell = Cell::new(&cell_params, 1.0, 2.0);
-        assert_eq!(cell.step(&environment), 3.0);
+        let food_eaten = cell.step(&environment);
+        assert_eq!(food_eaten, 3.0);
+    }
+
+    #[test]
+    fn cell_cannot_eat_more_food_than_is_available() {
+        let cell_params = CellParameters {
+            eating_food_yield: 1.0,
+            ..CellParameters::DEFAULT
+        };
+        let environment = CellEnvironment {
+            food_per_cell: 2.0,
+            ..CellEnvironment::DEFAULT
+        };
+        let mut cell = Cell::new(&cell_params, 1.0, 3.0);
+        let food_eaten = cell.step(&environment);
+        assert_eq!(food_eaten, 2.0);
     }
 
     #[test]
