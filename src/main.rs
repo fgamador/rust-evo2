@@ -177,21 +177,21 @@ impl<'a> Cell<'a> {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> f32 {
-        let food = self.request_food(environment.food_per_cell);
+        let food = self.eat_food(environment.food_per_cell);
         self.digest_food(food);
-        self.use_energy(environment);
+        self.use_energy();
         food
     }
 
-    pub fn request_food(&self, food_per_cell: f32) -> f32 {
+    fn eat_food(&self, food_per_cell: f32) -> f32 {
         (self.eating_energy_per_step * self.cell_params.eating_food_yield).min(food_per_cell)
     }
 
-    pub fn digest_food(&mut self, food_amount: f32) {
+    fn digest_food(&mut self, food_amount: f32) {
         self.energy += food_amount * self.cell_params.digestion_energy_yield;
     }
 
-    pub fn use_energy(&mut self, _environment: &CellEnvironment) {
+    fn use_energy(&mut self) {
         self.energy -= self.cell_params.energy_use_per_step;
     }
 }
@@ -346,7 +346,7 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let mut subject = Cell::new(&cell_params, 10.0, 0.0);
-        subject.use_energy(&CellEnvironment::DEFAULT);
+        subject.use_energy();
         assert_eq!(subject.energy(), 4.75);
     }
 
