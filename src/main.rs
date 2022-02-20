@@ -33,7 +33,7 @@ fn main() {
             num_died,
             world.num_cells(),
             world.mean_energy(),
-            world.food_amount()
+            world.food()
         );
     }
 }
@@ -64,14 +64,14 @@ struct Args {
 
 pub struct World<'a> {
     cells: Vec<Cell<'a>>,
-    food_amount: f32,
+    food: f32,
 }
 
 impl<'a> World<'a> {
     pub fn new() -> World<'a> {
         World {
             cells: vec![],
-            food_amount: 0.0,
+            food: 0.0,
         }
     }
 
@@ -86,7 +86,7 @@ impl<'a> World<'a> {
     }
 
     pub fn with_food(mut self, food: f32) -> Self {
-        self.food_amount = food;
+        self.food = food;
         self
     }
 
@@ -106,18 +106,18 @@ impl<'a> World<'a> {
         self.cells.iter().map(|cell| cell.energy()).sum::<f32>() / self.cells.len() as f32
     }
 
-    pub fn food_amount(&self) -> f32 {
-        self.food_amount
+    pub fn food(&self) -> f32 {
+        self.food
     }
 
     pub fn step(&mut self) -> (usize, usize) {
         let environment = CellEnvironment {
-            food_per_cell: self.food_amount / (self.cells.len() as f32),
+            food_per_cell: self.food / (self.cells.len() as f32),
         };
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            self.food_amount -= cell.step(&environment);
+            self.food -= cell.step(&environment);
             if !cell.is_alive() {
                 dead_indexes.push(index);
             }
@@ -302,7 +302,7 @@ mod tests {
             ])
             .with_food(10.0);
         world.step();
-        assert_eq!(world.food_amount(), 5.0);
+        assert_eq!(world.food(), 5.0);
     }
 
     #[test]
@@ -320,7 +320,7 @@ mod tests {
             ])
             .with_food(4.0);
         world.step();
-        assert_eq!(world.food_amount(), 0.0);
+        assert_eq!(world.food(), 0.0);
         assert_eq!(world.cell(0).energy(), 12.0);
         assert_eq!(world.cell(1).energy(), 12.0);
     }
