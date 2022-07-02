@@ -83,6 +83,7 @@ pub fn generate_cells(
     num_cells: usize,
     initial_energies: Normal<f32>,
     eating_energy_per_step: f32,
+    eating_energies_per_step: Normal<f32>,
     cell_params: &CellParameters,
 ) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
@@ -132,6 +133,7 @@ mod tests {
             100,
             Normal::new(100.0, 5.0).unwrap(),
             0.0,
+            Normal::new(0.0, 0.0).unwrap(),
             &CellParameters::DEFAULT,
         );
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
