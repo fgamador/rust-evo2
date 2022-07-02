@@ -64,6 +64,7 @@ pub struct CellEnvironment {
 }
 
 impl CellEnvironment {
+    #[allow(dead_code)]
     pub const DEFAULT: CellEnvironment = CellEnvironment { food_per_cell: 0.0 };
 }
 

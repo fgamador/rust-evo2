@@ -33,6 +33,7 @@ impl<'a> World<'a> {
         self
     }
 
+    #[allow(dead_code)]
     pub fn cell(&self, index: usize) -> &Cell {
         &self.cells[index]
     }
