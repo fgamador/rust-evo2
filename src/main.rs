@@ -30,6 +30,7 @@ fn main() {
 }
 
 fn run(world: &mut World) {
+    println!("+born -died -> cells (e: mean_energy, f: total_food");
     while world.num_cells() > 0 {
         let (num_created, num_died) = world.step();
         println!(
