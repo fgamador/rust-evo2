@@ -17,7 +17,13 @@ fn main() {
         ..CellParameters::DEFAULT
     };
 
-    let mut world = World::new()
+    let mut world = create_world(args, &cell_params);
+
+    run(&mut world);
+}
+
+fn create_world(args: Args, cell_params: &CellParameters) -> World {
+    let world = World::new()
         .with_cells(world::generate_cells(
             args.cells,
             Normal::new(args.mean_energy, args.std_dev_energy).unwrap(),
@@ -25,8 +31,7 @@ fn main() {
             &cell_params,
         ))
         .with_food(args.food_amount);
-
-    run(&mut world);
+    world
 }
 
 fn run(world: &mut World) {
