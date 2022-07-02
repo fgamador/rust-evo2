@@ -16,7 +16,8 @@ fn main() {
 
     let cell_params = CellParameters {
         energy_use_per_step: args.energy_use,
-        ..CellParameters::DEFAULT
+        eating_food_yield: cell::DEFAULT_EATING_FOOD_YIELD,
+        digestion_energy_yield: cell::DEFAULT_DIGESTION_ENERGY_YIELD,
     };
 
     let mut world = create_world(args, &cell_params);

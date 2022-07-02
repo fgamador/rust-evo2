@@ -52,6 +52,7 @@ pub struct CellParameters {
 }
 
 impl CellParameters {
+    #[allow(dead_code)]
     pub const DEFAULT: CellParameters = CellParameters {
         energy_use_per_step: DEFAULT_ENERGY_USE_PER_STEP,
         eating_food_yield: DEFAULT_EATING_FOOD_YIELD,
