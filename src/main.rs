@@ -73,6 +73,10 @@ struct Args {
     #[clap(short('s'), long, default_value_t = DEFAULT_STD_DEV_INITIAL_ENERGY)]
     std_dev_energy: f32,
 
+    /// Cell energy use per time step
+    #[clap(short('u'), long, default_value_t = cell::DEFAULT_ENERGY_USE_PER_STEP)]
+    energy_use: f32,
+
     /// Mean of cell eating energies
     #[clap(short('E'), long, default_value_t = DEFAULT_MEAN_EATING_ENERGY)]
     mean_eating_energy: f32,
@@ -82,16 +86,12 @@ struct Args {
     std_dev_eating_energy: f32,
 
     /// Eating food yield
-    #[clap(long, default_value_t = cell::DEFAULT_EATING_FOOD_YIELD)]
+    #[clap(short('F'), long, default_value_t = cell::DEFAULT_EATING_FOOD_YIELD)]
     eating_food_yield: f32,
 
     /// Digestion energy yield
-    #[clap(long, default_value_t = cell::DEFAULT_DIGESTION_ENERGY_YIELD)]
+    #[clap(short('D'), long, default_value_t = cell::DEFAULT_DIGESTION_ENERGY_YIELD)]
     digestion_energy_yield: f32,
-
-    /// Cell energy use per time step
-    #[clap(short('u'), long, default_value_t = cell::DEFAULT_ENERGY_USE_PER_STEP)]
-    energy_use: f32,
 
     /// Initial amount of food
     #[clap(short('f'), long, default_value_t = world::DEFAULT_FOOD_AMOUNT)]
