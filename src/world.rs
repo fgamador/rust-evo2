@@ -71,7 +71,7 @@ impl<'a> World<'a> {
         (0, dead_indexes.len())
     }
 
-    fn remove_cells(&mut self, sorted_indexes: &mut Vec<usize>) {
+    fn remove_cells(&mut self, sorted_indexes: &mut [usize]) {
         for index in sorted_indexes.iter().rev() {
             self.cells.swap_remove(*index);
         }
