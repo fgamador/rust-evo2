@@ -39,6 +39,13 @@ fn create_world(args: Args, cell_params: &CellParameters) -> World {
 
 fn run(world: &mut World) {
     println!("+born -died -> cells (e: mean_energy, f: total_food");
+    println!(
+            "+{} -{} -> {} (e: {}, f: {})",
+            0,
+            0,
+            world.num_cells(),
+            world.mean_energy(),
+            world.food());
     while world.num_cells() > 0 {
         let (num_created, num_died) = world.step();
         println!(
