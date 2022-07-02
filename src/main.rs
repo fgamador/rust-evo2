@@ -16,8 +16,8 @@ fn main() {
 
     let cell_params = CellParameters {
         energy_use_per_step: args.energy_use,
-        eating_food_yield: cell::DEFAULT_EATING_FOOD_YIELD,
-        digestion_energy_yield: cell::DEFAULT_DIGESTION_ENERGY_YIELD,
+        eating_food_yield: args.eating_food_yield,
+        digestion_energy_yield: args.digestion_energy_yield,
     };
 
     let mut world = create_world(args, &cell_params);
@@ -74,6 +74,14 @@ struct Args {
     /// Standard deviation of cell eating energies
     #[clap(short('S'), long, default_value_t = DEFAULT_STD_DEV_EATING_ENERGY)]
     std_dev_eating_energy: f32,
+
+    /// Eating food yield
+    #[clap(long, default_value_t = cell::DEFAULT_EATING_FOOD_YIELD)]
+    eating_food_yield: f32,
+
+    /// Digestion energy yield
+    #[clap(long, default_value_t = cell::DEFAULT_DIGESTION_ENERGY_YIELD)]
+    digestion_energy_yield: f32,
 
     /// Cell energy use per time step
     #[clap(short('u'), long, default_value_t = cell::DEFAULT_ENERGY_USE_PER_STEP)]
