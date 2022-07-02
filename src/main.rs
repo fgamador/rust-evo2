@@ -26,6 +26,10 @@ fn main() {
         ))
         .with_food(args.food_amount);
 
+    run(&mut world);
+}
+
+fn run(world: &mut World) {
     while world.num_cells() > 0 {
         let (num_created, num_died) = world.step();
         println!(
