@@ -27,7 +27,6 @@ fn create_world(args: Args, cell_params: &CellParameters) -> World {
         .with_cells(world::generate_cells(
             args.cells,
             Normal::new(args.mean_energy, args.std_dev_energy).unwrap(),
-            0.0,
             Normal::new(0.0, 0.0).unwrap(),
             &cell_params,
         ))
