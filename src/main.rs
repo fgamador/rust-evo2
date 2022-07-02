@@ -8,6 +8,8 @@ mod world;
 
 const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
 const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
+const DEFAULT_MEAN_EATING_ENERGY: f32 = 0.0;
+const DEFAULT_STD_DEV_EATING_ENERGY: f32 = 0.0;
 
 fn main() {
     let args = Args::parse();
@@ -27,7 +29,7 @@ fn create_world(args: Args, cell_params: &CellParameters) -> World {
         .with_cells(world::generate_cells(
             args.cells,
             Normal::new(args.mean_energy, args.std_dev_energy).unwrap(),
-            Normal::new(0.0, 0.0).unwrap(),
+            Normal::new(args.mean_eating_energy, args.std_dev_eating_energy).unwrap(),
             &cell_params,
         ))
         .with_food(args.food_amount);
@@ -63,6 +65,14 @@ struct Args {
     /// Standard deviation of cell initial energies
     #[clap(short('s'), long, default_value_t = DEFAULT_STD_DEV_INITIAL_ENERGY)]
     std_dev_energy: f32,
+
+    /// Mean of cell eating energies
+    #[clap(short('E'), long, default_value_t = DEFAULT_MEAN_EATING_ENERGY)]
+    mean_eating_energy: f32,
+
+    /// Standard deviation of cell eating energies
+    #[clap(short('S'), long, default_value_t = DEFAULT_STD_DEV_EATING_ENERGY)]
+    std_dev_eating_energy: f32,
 
     /// Cell energy use per time step
     #[clap(short('u'), long, default_value_t = cell::DEFAULT_ENERGY_USE_PER_STEP)]
