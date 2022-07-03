@@ -31,6 +31,7 @@ fn create_world(args: Args, cell_params: &CellParameters) -> World {
             args.cells,
             Normal::new(args.mean_en, args.sd_en).unwrap(),
             Normal::new(args.mean_eat, args.sd_eat).unwrap(),
+            Normal::new(f32::MAX, 0.0).unwrap(),
             &cell_params,
         ))
         .with_food(args.total_food);
