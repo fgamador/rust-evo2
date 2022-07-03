@@ -85,15 +85,15 @@ struct Args {
     #[clap(short('S'), long, default_value_t = DEFAULT_STD_DEV_EATING_ENERGY)]
     std_dev_eating_energy: f32,
 
-    /// Eating food yield
+    /// Food gained per unit eating energy
     #[clap(short('F'), long, default_value_t = cell::DEFAULT_FOOD_YIELD_FROM_EATING)]
     food_yield_from_eating: f32,
 
-    /// Digestion energy yield
+    /// Energy gained per unit food
     #[clap(short('D'), long, default_value_t = cell::DEFAULT_ENERGY_YIELD_FROM_DIGESTION)]
     energy_yield_from_digestion: f32,
 
-    /// Initial amount of food
+    /// Total world food
     #[clap(short('f'), long, default_value_t = world::DEFAULT_FOOD_AMOUNT)]
     food_amount: f32,
 }
