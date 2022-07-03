@@ -33,9 +33,8 @@ impl<'a> Cell<'a> {
     }
 
     fn eating(&mut self, food_per_cell: f32) -> f32 {
-        let food_gained = (self.attempted_eating_energy * self.cell_params.food_yield_from_eating).min(food_per_cell);
         self.energy -= self.attempted_eating_energy;
-        food_gained
+        (self.attempted_eating_energy * self.cell_params.food_yield_from_eating).min(food_per_cell)
     }
 
     fn digestion(&mut self, food_amount: f32) {
