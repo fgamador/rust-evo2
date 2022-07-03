@@ -61,7 +61,8 @@ impl<'a> World<'a> {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            self.food -= cell.step(&environment);
+            let (_, food_eaten) = cell.step(&environment);
+            self.food -= food_eaten;
             if !cell.is_alive() {
                 dead_indexes.push(index);
             }

@@ -25,11 +25,11 @@ impl<'a> Cell<'a> {
         self.energy() > 0.0
     }
 
-    pub fn step(&mut self, environment: &CellEnvironment) -> f32 {
+    pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, f32) {
         let food = self.eat(environment.food_per_cell);
         self.digest(food);
         self.maintain();
-        food
+        (None, food)
     }
 
     fn eat(&mut self, food_per_cell: f32) -> f32 {
@@ -102,7 +102,7 @@ mod tests {
             ..CellEnvironment::DEFAULT
         };
         let mut cell = Cell::new(&cell_params, 1.0, 2.0);
-        let food_eaten = cell.step(&environment);
+        let (_, food_eaten) = cell.step(&environment);
         assert_eq!(food_eaten, 3.0);
     }
 
@@ -117,7 +117,7 @@ mod tests {
             ..CellEnvironment::DEFAULT
         };
         let mut cell = Cell::new(&cell_params, 1.0, 3.0);
-        let food_eaten = cell.step(&environment);
+        let (_, food_eaten) = cell.step(&environment);
         assert_eq!(food_eaten, 2.0);
     }
 
