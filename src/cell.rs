@@ -26,22 +26,22 @@ impl<'a> Cell<'a> {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> f32 {
-        let food = self.eating(environment.food_per_cell);
-        self.digestion(food);
-        self.maintenance();
+        let food = self.eat(environment.food_per_cell);
+        self.digest(food);
+        self.maintain();
         food
     }
 
-    fn eating(&mut self, food_per_cell: f32) -> f32 {
+    fn eat(&mut self, food_per_cell: f32) -> f32 {
         self.energy -= self.attempted_eating_energy;
         (self.attempted_eating_energy * self.cell_params.food_yield_from_eating).min(food_per_cell)
     }
 
-    fn digestion(&mut self, food_amount: f32) {
+    fn digest(&mut self, food_amount: f32) {
         self.energy += food_amount * self.cell_params.energy_yield_from_digestion;
     }
 
-    fn maintenance(&mut self) {
+    fn maintain(&mut self) {
         self.energy -= self.cell_params.maintenance_energy_use;
     }
 }
