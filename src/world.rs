@@ -171,17 +171,11 @@ mod tests {
 
     #[test]
     fn cells_consume_world_food() {
-        let cell_params = CellParameters {
-            maintenance_energy_use: 0.0,
-            food_yield_from_eating: 1.0,
-            energy_yield_from_digestion: 1.0,
-            ..CellParameters::DEFAULT
-        };
         let mut world = World::new()
             .with_food(10.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 1.0, 2.0),
-                Cell::new(&cell_params, 1.0, 3.0),
+                Cell::new(&CellParameters::DEFAULT, 1.0, 2.0),
+                Cell::new(&CellParameters::DEFAULT, 1.0, 3.0),
             ]);
         world.step();
         assert_eq!(world.food(), 5.0);
@@ -189,17 +183,11 @@ mod tests {
 
     #[test]
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
-        let cell_params = CellParameters {
-            maintenance_energy_use: 0.0,
-            food_yield_from_eating: 1.0,
-            energy_yield_from_digestion: 1.0,
-            ..CellParameters::DEFAULT
-        };
         let mut world = World::new()
             .with_food(4.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 10.0, 3.0),
-                Cell::new(&cell_params, 10.0, 1.0),
+                Cell::new(&CellParameters::DEFAULT, 10.0, 3.0),
+                Cell::new(&CellParameters::DEFAULT, 10.0, 1.0),
             ]);
         world.step();
         assert_eq!(world.food(), 1.0);
