@@ -141,7 +141,7 @@ mod tests {
     #[test]
     fn world_removes_dead_cells() {
         let cell_params = CellParameters {
-            energy_use_per_step: 0.0,
+            maintenance_energy_use: 0.0,
             ..CellParameters::DEFAULT
         };
         let mut world = World::new()
@@ -157,7 +157,7 @@ mod tests {
     #[test]
     fn world_reports_num_died() {
         let cell_params = CellParameters {
-            energy_use_per_step: 5.0,
+            maintenance_energy_use: 5.0,
             ..CellParameters::DEFAULT
         };
         let mut world = World::new().with_cells(vec![
@@ -172,7 +172,7 @@ mod tests {
     #[test]
     fn cells_consume_world_food() {
         let cell_params = CellParameters {
-            eating_food_yield: 1.0,
+            food_yield_from_eating: 1.0,
             ..CellParameters::DEFAULT
         };
         let mut world = World::new()
@@ -188,9 +188,9 @@ mod tests {
     #[test]
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
         let cell_params = CellParameters {
-            energy_use_per_step: 0.0,
-            eating_food_yield: 1.0,
-            digestion_energy_yield: 1.0,
+            maintenance_energy_use: 0.0,
+            food_yield_from_eating: 1.0,
+            energy_yield_from_digestion: 1.0,
             ..CellParameters::DEFAULT
         };
         let mut world = World::new()

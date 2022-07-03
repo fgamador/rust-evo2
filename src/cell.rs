@@ -1,19 +1,19 @@
-pub const DEFAULT_ENERGY_USE_PER_STEP: f32 = 0.0;
-pub const DEFAULT_EATING_FOOD_YIELD: f32 = 1.0;
-pub const DEFAULT_DIGESTION_ENERGY_YIELD: f32 = 1.0;
+pub const DEFAULT_MAINTENANCE_ENERGY_USE: f32 = 0.0;
+pub const DEFAULT_FOOD_YIELD_FROM_EATING: f32 = 1.0;
+pub const DEFAULT_ENERGY_YIELD_FROM_DIGESTION: f32 = 1.0;
 
 pub struct Cell<'a> {
     cell_params: &'a CellParameters,
     energy: f32,
-    eating_energy_per_step: f32,
+    attempted_eating_energy: f32,
 }
 
 impl<'a> Cell<'a> {
-    pub fn new(cell_params: &'a CellParameters, energy: f32, eating_energy_per_step: f32) -> Self {
+    pub fn new(cell_params: &'a CellParameters, energy: f32, attempted_eating_energy: f32) -> Self {
         Cell {
             cell_params,
             energy,
-            eating_energy_per_step,
+            attempted_eating_energy,
         }
     }
 
@@ -26,39 +26,39 @@ impl<'a> Cell<'a> {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> f32 {
-        let food = self.eat_food(environment.food_per_cell);
-        self.digest_food(food);
-        self.use_energy();
+        let food = self.eating(environment.food_per_cell);
+        self.digestion(food);
+        self.maintenance();
         food
     }
 
-    fn eat_food(&mut self, food_per_cell: f32) -> f32 {
-        let food_gained = (self.eating_energy_per_step * self.cell_params.eating_food_yield).min(food_per_cell);
-        self.energy -= self.eating_energy_per_step;
+    fn eating(&mut self, food_per_cell: f32) -> f32 {
+        let food_gained = (self.attempted_eating_energy * self.cell_params.food_yield_from_eating).min(food_per_cell);
+        self.energy -= self.attempted_eating_energy;
         food_gained
     }
 
-    fn digest_food(&mut self, food_amount: f32) {
-        self.energy += food_amount * self.cell_params.digestion_energy_yield;
+    fn digestion(&mut self, food_amount: f32) {
+        self.energy += food_amount * self.cell_params.energy_yield_from_digestion;
     }
 
-    fn use_energy(&mut self) {
-        self.energy -= self.cell_params.energy_use_per_step;
+    fn maintenance(&mut self) {
+        self.energy -= self.cell_params.maintenance_energy_use;
     }
 }
 
 pub struct CellParameters {
-    pub energy_use_per_step: f32,
-    pub eating_food_yield: f32,
-    pub digestion_energy_yield: f32,
+    pub maintenance_energy_use: f32,
+    pub food_yield_from_eating: f32,
+    pub energy_yield_from_digestion: f32,
 }
 
 impl CellParameters {
     #[allow(dead_code)]
     pub const DEFAULT: CellParameters = CellParameters {
-        energy_use_per_step: DEFAULT_ENERGY_USE_PER_STEP,
-        eating_food_yield: DEFAULT_EATING_FOOD_YIELD,
-        digestion_energy_yield: DEFAULT_DIGESTION_ENERGY_YIELD,
+        maintenance_energy_use: DEFAULT_MAINTENANCE_ENERGY_USE,
+        food_yield_from_eating: DEFAULT_FOOD_YIELD_FROM_EATING,
+        energy_yield_from_digestion: DEFAULT_ENERGY_YIELD_FROM_DIGESTION,
     };
 }
 
@@ -78,7 +78,7 @@ mod tests {
     #[test]
     fn cell_uses_energy() {
         let cell_params = CellParameters {
-            energy_use_per_step: 5.25,
+            maintenance_energy_use: 5.25,
             ..CellParameters::DEFAULT
         };
         let mut cell = Cell::new(&cell_params, 10.0, 0.0);
@@ -95,7 +95,7 @@ mod tests {
     #[test]
     fn cell_eats_food() {
         let cell_params = CellParameters {
-            eating_food_yield: 1.5,
+            food_yield_from_eating: 1.5,
             ..CellParameters::DEFAULT
         };
         let environment = CellEnvironment {
@@ -110,7 +110,7 @@ mod tests {
     #[test]
     fn cell_cannot_eat_more_food_than_is_available() {
         let cell_params = CellParameters {
-            eating_food_yield: 1.0,
+            food_yield_from_eating: 1.0,
             ..CellParameters::DEFAULT
         };
         let environment = CellEnvironment {
@@ -125,7 +125,7 @@ mod tests {
     #[test]
     fn cell_expends_energy_eating() {
         let cell_params = CellParameters {
-            eating_food_yield: 0.0,
+            food_yield_from_eating: 0.0,
             ..CellParameters::DEFAULT
         };
         let environment = CellEnvironment {
@@ -140,9 +140,9 @@ mod tests {
     #[test]
     fn cell_digests_food() {
         let cell_params = CellParameters {
-            energy_use_per_step: 0.0,
-            eating_food_yield: 1.0,
-            digestion_energy_yield: 1.5,
+            maintenance_energy_use: 0.0,
+            food_yield_from_eating: 1.0,
+            energy_yield_from_digestion: 1.5,
         };
         let environment = CellEnvironment {
             food_per_cell: 10.0,
