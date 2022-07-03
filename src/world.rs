@@ -201,7 +201,7 @@ mod tests {
             .with_food(4.0);
         world.step();
         assert_eq!(world.food(), 0.0);
-        assert_eq!(world.cell(0).energy(), 12.0);
-        assert_eq!(world.cell(1).energy(), 12.0);
+        assert_eq!(world.cell(0).energy(), 10.0);
+        assert_eq!(world.cell(1).energy(), 9.0);
     }
 }

@@ -32,8 +32,10 @@ impl<'a> Cell<'a> {
         food
     }
 
-    fn eat_food(&self, food_per_cell: f32) -> f32 {
-        (self.eating_energy_per_step * self.cell_params.eating_food_yield).min(food_per_cell)
+    fn eat_food(&mut self, food_per_cell: f32) -> f32 {
+        let food_gained = (self.eating_energy_per_step * self.cell_params.eating_food_yield).min(food_per_cell);
+        self.energy -= self.eating_energy_per_step;
+        food_gained
     }
 
     fn digest_food(&mut self, food_amount: f32) {
@@ -121,11 +123,26 @@ mod tests {
     }
 
     #[test]
+    fn cell_expends_energy_eating() {
+        let cell_params = CellParameters {
+            eating_food_yield: 0.0,
+            ..CellParameters::DEFAULT
+        };
+        let environment = CellEnvironment {
+            food_per_cell: 10.0,
+            ..CellEnvironment::DEFAULT
+        };
+        let mut cell = Cell::new(&cell_params, 5.0, 2.0);
+        cell.step(&environment);
+        assert_eq!(cell.energy(), 3.0);
+    }
+
+    #[test]
     fn cell_digests_food() {
         let cell_params = CellParameters {
+            energy_use_per_step: 0.0,
             eating_food_yield: 1.0,
             digestion_energy_yield: 1.5,
-            ..CellParameters::DEFAULT
         };
         let environment = CellEnvironment {
             food_per_cell: 10.0,
@@ -133,6 +150,6 @@ mod tests {
         };
         let mut cell = Cell::new(&cell_params, 10.0, 2.0);
         cell.step(&environment);
-        assert_eq!(cell.energy(), 13.0);
+        assert_eq!(cell.energy(), 11.0);
     }
 }
