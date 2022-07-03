@@ -150,6 +150,21 @@ mod tests {
     }
 
     #[test]
+    fn cell_expends_energy_eating_even_when_there_is_no_food() {
+        let cell_params = CellParameters {
+            food_yield_from_eating: 0.0,
+            ..CellParameters::DEFAULT
+        };
+        let environment = CellEnvironment {
+            food_per_cell: 0.0,
+            ..CellEnvironment::DEFAULT
+        };
+        let mut cell = Cell::new(&cell_params, 5.0, f32::MAX, 2.0);
+        cell.step(&environment);
+        assert_eq!(cell.energy(), 3.0);
+    }
+
+    #[test]
     fn cell_digests_food() {
         let cell_params = CellParameters {
             maintenance_energy_use: 0.0,
