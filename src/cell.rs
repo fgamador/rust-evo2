@@ -74,6 +74,23 @@ mod tests {
     use super::*;
 
     #[test]
+    fn cell_uses_energy() {
+        let cell_params = CellParameters {
+            energy_use_per_step: 5.25,
+            ..CellParameters::DEFAULT
+        };
+        let mut cell = Cell::new(&cell_params, 10.0, 0.0);
+        cell.step(&CellEnvironment::DEFAULT);
+        assert_eq!(cell.energy(), 4.75);
+    }
+
+    #[test]
+    fn cell_with_no_energy_is_dead() {
+        let cell = Cell::new(&CellParameters::DEFAULT, 0.0, 0.0);
+        assert!(!cell.is_alive());
+    }
+
+    #[test]
     fn cell_eats_food() {
         let cell_params = CellParameters {
             eating_food_yield: 1.5,
@@ -117,22 +134,5 @@ mod tests {
         let mut cell = Cell::new(&cell_params, 10.0, 2.0);
         cell.step(&environment);
         assert_eq!(cell.energy(), 13.0);
-    }
-
-    #[test]
-    fn cell_uses_energy() {
-        let cell_params = CellParameters {
-            energy_use_per_step: 5.25,
-            ..CellParameters::DEFAULT
-        };
-        let mut cell = Cell::new(&cell_params, 10.0, 0.0);
-        cell.step(&CellEnvironment::DEFAULT);
-        assert_eq!(cell.energy(), 4.75);
-    }
-
-    #[test]
-    fn cell_with_no_energy_is_dead() {
-        let cell = Cell::new(&CellParameters::DEFAULT, 0.0, 0.0);
-        assert!(!cell.is_alive());
     }
 }
