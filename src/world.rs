@@ -186,8 +186,8 @@ mod tests {
         let mut world = World::new()
             .with_food(4.0)
             .with_cells(vec![
-                Cell::new(&CellParameters::DEFAULT, 10.0, 3.0),
-                Cell::new(&CellParameters::DEFAULT, 10.0, 1.0),
+                Cell::new(&CellParameters::DEFAULT, 1.0, 3.0),
+                Cell::new(&CellParameters::DEFAULT, 1.0, 1.0),
             ]);
         world.step();
         assert_eq!(world.food(), 1.0);
