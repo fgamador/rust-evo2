@@ -2,7 +2,7 @@ pub const DEFAULT_MAINTENANCE_ENERGY_USE: f32 = 0.0;
 pub const DEFAULT_FOOD_YIELD_FROM_EATING: f32 = 1.0;
 pub const DEFAULT_ENERGY_YIELD_FROM_DIGESTION: f32 = 1.0;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Cell<'a> {
     cell_params: &'a CellParameters,
     energy: f32,
@@ -29,15 +29,19 @@ impl<'a> Cell<'a> {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, f32) {
-        let child = None; // self.maybe_reproduce();
+        let child = self.try_reproduce();
         let food = self.eat(environment.food_per_cell);
         self.digest(food);
         self.maintain();
         (child, food)
     }
 
-    fn _maybe_reproduce(&mut self) -> Option<Cell> {
-        None
+    fn try_reproduce(&mut self) -> Option<Cell<'a>> {
+        if self.energy < self.child_threshold_energy { return None; }
+
+        let mut child = self.clone();
+        child.energy = self.child_threshold_energy;
+        Some(child)
     }
 
     fn eat(&mut self, food_per_cell: f32) -> f32 {
@@ -161,16 +165,17 @@ mod tests {
         assert_eq!(cell.energy(), 11.0);
     }
 
-    // #[test]
-    // fn cell_passes_energy_to_child() {
-    //     let mut cell = Cell::new(&CellParameters::DEFAULT, 10.0, 4.0, 3.0);
-    //     let (child, _) = cell.step(&CellEnvironment::DEFAULT);
-    //     assert_eq!(child, Some(Cell {
-    //         cell_params: &CellParameters::DEFAULT,
-    //         energy: 4.0,
-    //         child_threshold_energy: 4.0,
-    //         attempted_eating_energy: 3.0,
-    //     }));
-    //     assert_eq!(6.0, cell.energy());
-    // }
+    #[test]
+    #[ignore]
+    fn cell_passes_energy_to_child() {
+        let mut cell = Cell::new(&CellParameters::DEFAULT, 10.0, 4.0, 3.0);
+        let (child, _) = cell.step(&CellEnvironment::DEFAULT);
+        assert_eq!(child, Some(Cell {
+            cell_params: &CellParameters::DEFAULT,
+            energy: 4.0,
+            child_threshold_energy: 4.0,
+            attempted_eating_energy: 3.0,
+        }));
+        assert_eq!(6.0, cell.energy());
+    }
 }
