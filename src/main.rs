@@ -15,9 +15,9 @@ fn main() {
     let args = Args::parse();
 
     let cell_params = CellParameters {
-        maintenance_energy_use: args.maintenance_energy_use,
-        food_yield_from_eating: args.food_yield_from_eating,
-        energy_yield_from_digestion: args.energy_yield_from_digestion,
+        maintenance_energy_use: args.maint,
+        food_yield_from_eating: args.eat_yield,
+        energy_yield_from_digestion: args.digest_yield,
     };
 
     let mut world = create_world(args, &cell_params);
@@ -29,11 +29,11 @@ fn create_world(args: Args, cell_params: &CellParameters) -> World {
     let world = World::new()
         .with_cells(world::generate_cells(
             args.cells,
-            Normal::new(args.mean_energy, args.std_dev_energy).unwrap(),
-            Normal::new(args.mean_eating_energy, args.std_dev_eating_energy).unwrap(),
+            Normal::new(args.mean_en, args.sd_en).unwrap(),
+            Normal::new(args.mean_eat, args.sd_eat).unwrap(),
             &cell_params,
         ))
-        .with_food(args.food_amount);
+        .with_food(args.total_food);
     world
 }
 
@@ -61,39 +61,39 @@ fn run(world: &mut World) {
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
+    /// Total world food
+    #[clap(short('f'), long, default_value_t = world::DEFAULT_FOOD_AMOUNT)]
+    total_food: f32,
+
     /// Initial number of cells
     #[clap(short('n'), long, default_value_t = 100)]
     cells: usize,
 
     /// Mean of cell initial energies
     #[clap(short('e'), long, default_value_t = DEFAULT_MEAN_INITIAL_ENERGY)]
-    mean_energy: f32,
+    mean_en: f32,
 
     /// Standard deviation of cell initial energies
     #[clap(short('s'), long, default_value_t = DEFAULT_STD_DEV_INITIAL_ENERGY)]
-    std_dev_energy: f32,
+    sd_en: f32,
 
-    /// Cell energy use per time step
-    #[clap(short('u'), long, default_value_t = cell::DEFAULT_MAINTENANCE_ENERGY_USE)]
-    maintenance_energy_use: f32,
+    /// Cell maintenance energy
+    #[clap(short('M'), long, default_value_t = cell::DEFAULT_MAINTENANCE_ENERGY_USE)]
+    maint: f32,
 
     /// Mean of cell eating energies
     #[clap(short('E'), long, default_value_t = DEFAULT_MEAN_EATING_ENERGY)]
-    mean_eating_energy: f32,
+    mean_eat: f32,
 
     /// Standard deviation of cell eating energies
     #[clap(short('S'), long, default_value_t = DEFAULT_STD_DEV_EATING_ENERGY)]
-    std_dev_eating_energy: f32,
+    sd_eat: f32,
 
     /// Food gained per unit eating energy
     #[clap(short('F'), long, default_value_t = cell::DEFAULT_FOOD_YIELD_FROM_EATING)]
-    food_yield_from_eating: f32,
+    eat_yield: f32,
 
     /// Energy gained per unit food
     #[clap(short('D'), long, default_value_t = cell::DEFAULT_ENERGY_YIELD_FROM_DIGESTION)]
-    energy_yield_from_digestion: f32,
-
-    /// Total world food
-    #[clap(short('f'), long, default_value_t = world::DEFAULT_FOOD_AMOUNT)]
-    food_amount: f32,
+    digest_yield: f32,
 }
