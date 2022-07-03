@@ -38,17 +38,20 @@ fn create_world(args: Args, cell_params: &CellParameters) -> World {
 }
 
 fn run(world: &mut World) {
-    println!("step +born -died -> cells (e: mean_energy, f: total_food)");
-    println!("0: +{} -{} -> {} (e: {}, f: {})",
+    println!("<step>: +<born> -<died> -> <cells> (e: <mean_cell_energy>, f: <total_food>)");
+
+    let mut step = 0;
+    println!("{}: +{} -{} -> {} (e: {}, f: {})",
+             step,
              0,
              0,
              world.num_cells(),
              world.mean_energy(),
              world.food());
 
-    let mut step = 1;
     while world.num_cells() > 0 {
         let (num_created, num_died) = world.step();
+        step += 1;
         println!("{}: +{} -{} -> {} (e: {}, f: {})",
                  step,
                  num_created,
@@ -57,7 +60,6 @@ fn run(world: &mut World) {
                  world.mean_energy(),
                  world.food()
         );
-        step += 1;
     }
 }
 
