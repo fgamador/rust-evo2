@@ -39,6 +39,7 @@ impl<'a> Cell<'a> {
     fn try_reproduce(&mut self) -> Option<Cell<'a>> {
         if self.energy < self.child_threshold_energy { return None; }
 
+        self.energy -= self.child_threshold_energy;
         let mut child = self.clone();
         child.energy = self.child_threshold_energy;
         Some(child)
@@ -181,16 +182,15 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn cell_passes_energy_to_child() {
-        let mut cell = Cell::new(&CellParameters::DEFAULT, 10.0, 4.0, 3.0);
+        let mut cell = Cell::new(&CellParameters::DEFAULT, 10.0, 4.0, 1.0);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
             cell_params: &CellParameters::DEFAULT,
             energy: 4.0,
             child_threshold_energy: 4.0,
-            attempted_eating_energy: 3.0,
+            attempted_eating_energy: 1.0,
         }));
-        assert_eq!(6.0, cell.energy());
+        assert_eq!(5.0, cell.energy());
     }
 }
