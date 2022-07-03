@@ -172,15 +172,17 @@ mod tests {
     #[test]
     fn cells_consume_world_food() {
         let cell_params = CellParameters {
+            maintenance_energy_use: 0.0,
             food_yield_from_eating: 1.0,
+            energy_yield_from_digestion: 1.0,
             ..CellParameters::DEFAULT
         };
         let mut world = World::new()
+            .with_food(10.0)
             .with_cells(vec![
                 Cell::new(&cell_params, 1.0, 2.0),
                 Cell::new(&cell_params, 1.0, 3.0),
-            ])
-            .with_food(10.0);
+            ]);
         world.step();
         assert_eq!(world.food(), 5.0);
     }
@@ -194,14 +196,12 @@ mod tests {
             ..CellParameters::DEFAULT
         };
         let mut world = World::new()
+            .with_food(4.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 10.0, 2.0),
                 Cell::new(&cell_params, 10.0, 3.0),
-            ])
-            .with_food(4.0);
+                Cell::new(&cell_params, 10.0, 1.0),
+            ]);
         world.step();
-        assert_eq!(world.food(), 0.0);
-        assert_eq!(world.cell(0).energy(), 10.0);
-        assert_eq!(world.cell(1).energy(), 9.0);
+        assert_eq!(world.food(), 1.0);
     }
 }
