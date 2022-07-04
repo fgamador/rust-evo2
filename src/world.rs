@@ -58,16 +58,21 @@ impl<'a> World<'a> {
         let environment = CellEnvironment {
             food_per_cell: self.food / (self.cells.len() as f32),
         };
+        //let mut new_cells = vec![];
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            let (_, food_eaten) = cell.step(&environment);
+            let (_child, food_eaten) = cell.step(&environment);
+            // if let Some(child) = child {
+            //     new_cells.push(child);
+            // }
             self.food -= food_eaten;
             if !cell.is_alive() {
                 dead_indexes.push(index);
             }
         }
 
+        //self.cells.append(&mut new_cells);
         self.remove_cells(&mut dead_indexes);
 
         (0, dead_indexes.len())
@@ -143,17 +148,25 @@ mod tests {
     }
 
     #[test]
-    fn world_removes_dead_cells() {
-        let cell_params = CellParameters {
-            maintenance_energy_use: 0.0,
-            ..CellParameters::DEFAULT
-        };
+    #[ignore]
+    fn world_adds_new_cells() {
         let mut world = World::new()
+            .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
-                Cell::new(&cell_params, 0.0, f32::MAX, 0.0),
-            ])
-            .with_food(0.0);
+                Cell::new(&CellParameters::DEFAULT, 10.0, 4.0, 0.0),
+            ]);
+        world.step();
+        assert_eq!(world.num_cells(), 2);
+    }
+
+    #[test]
+    fn world_removes_dead_cells() {
+        let mut world = World::new()
+            .with_food(0.0)
+            .with_cells(vec![
+                Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 0.0),
+                Cell::new(&CellParameters::DEFAULT, 0.0, f32::MAX, 0.0),
+            ]);
         world.step();
         assert_eq!(world.num_cells(), 1);
     }
