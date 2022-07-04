@@ -59,21 +59,21 @@ impl World {
         let environment = CellEnvironment {
             food_per_cell: self.food / (self.cells.len() as f32),
         };
-        //let mut new_cells = vec![];
+        let mut new_cells = vec![];
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
             let (child, food_eaten) = cell.step(&environment);
-            // if let Some(child) = child {
-            //     new_cells.push(child);
-            // }
+            if let Some(child) = child {
+                new_cells.push(child);
+            }
             self.food -= food_eaten;
             if !cell.is_alive() {
                 dead_indexes.push(index);
             }
         }
 
-        //self.cells.append(&mut new_cells);
+        self.cells.append(&mut new_cells);
         self.remove_cells(&mut dead_indexes);
 
         (0, dead_indexes.len())
@@ -152,7 +152,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn world_adds_new_cells() {
         let cell_params = Rc::new(CellParameters::DEFAULT);
         let mut world = World::new()
