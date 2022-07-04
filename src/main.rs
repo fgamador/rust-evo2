@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use cell::{Cell, CellEnvironment, CellParameters};
 use clap::Parser;
 use rand_distr::Normal;
@@ -16,18 +17,18 @@ const DEFAULT_STD_DEV_EATING_ENERGY: f32 = 0.0;
 fn main() {
     let args = Args::parse();
 
-    let cell_params = CellParameters {
+    let cell_params = Rc::new(CellParameters {
         maintenance_energy_use: args.maint,
         food_yield_from_eating: args.eat_yield,
         energy_yield_from_digestion: args.digest_yield,
-    };
+    });
 
     let mut world = create_world(args, &cell_params);
 
     run(&mut world);
 }
 
-fn create_world(args: Args, cell_params: &CellParameters) -> World {
+fn create_world(args: Args, cell_params: &Rc<CellParameters>) -> World {
     let world = World::new()
         .with_cells(world::generate_cells(
             args.cells,

@@ -1,29 +1,30 @@
+use std::rc::Rc;
 use crate::{Cell, CellEnvironment, CellParameters};
 use rand::distributions::Distribution;
 use rand_distr::Normal;
 
 pub const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
 
-pub struct World<'a> {
-    cells: Vec<Cell<'a>>,
+pub struct World {
+    cells: Vec<Cell>,
     food: f32,
 }
 
-impl<'a> World<'a> {
-    pub fn new() -> World<'a> {
+impl World {
+    pub fn new() -> Self {
         World {
             cells: vec![],
             food: 0.0,
         }
     }
 
-    pub fn with_cells(mut self, cells: Vec<Cell<'a>>) -> Self {
+    pub fn with_cells(mut self, cells: Vec<Cell>) -> Self {
         self.cells = cells;
         self
     }
 
     #[allow(dead_code)]
-    pub fn with_cell(mut self, cell: Cell<'a>) -> Self {
+    pub fn with_cell(mut self, cell: Cell) -> Self {
         self.cells.push(cell);
         self
     }
@@ -62,7 +63,7 @@ impl<'a> World<'a> {
         let mut dead_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            let (_child, food_eaten) = cell.step(&environment);
+            let (child, food_eaten) = cell.step(&environment);
             // if let Some(child) = child {
             //     new_cells.push(child);
             // }
@@ -90,13 +91,13 @@ pub fn generate_cells(
     initial_energies: Normal<f32>,
     eating_energies: Normal<f32>,
     child_threshold_energies: Normal<f32>,
-    cell_params: &CellParameters,
+    cell_params: &Rc<CellParameters>,
 ) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
         cells.push(Cell::new(
-            cell_params,
+            &cell_params,
             initial_energies.sample(&mut rng),
             child_threshold_energies.sample(&mut rng),
             eating_energies.sample(&mut rng),
@@ -112,10 +113,11 @@ mod tests {
 
     #[test]
     fn world_counts_both_living_and_dead_cells() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
         let world = World::new().with_cells(vec![
-            Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 0.0),
-            Cell::new(&CellParameters::DEFAULT, 0.0, f32::MAX, 0.0),
-            Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 0.0),
+            Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
+            Cell::new(&cell_params, 0.0, f32::MAX, 0.0),
+            Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
         ]);
         assert_eq!(world.num_cells(), 3);
     }
@@ -127,21 +129,23 @@ mod tests {
 
     #[test]
     fn world_calculates_mean_energy() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
         let world = World::new().with_cells(vec![
-            Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 0.0),
-            Cell::new(&CellParameters::DEFAULT, 2.0, f32::MAX, 0.0),
+            Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
+            Cell::new(&cell_params, 2.0, f32::MAX, 0.0),
         ]);
         assert_eq!(world.mean_energy(), 1.5);
     }
 
     #[test]
     fn generate_cells_with_normal_energy_distribution() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
         let cells = generate_cells(
             100,
             Normal::new(100.0, 5.0).unwrap(),
             Normal::new(0.0, 0.0).unwrap(),
             Normal::new(f32::MAX, 0.0).unwrap(),
-            &CellParameters::DEFAULT,
+            &cell_params,
         );
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e > 100.0));
@@ -150,10 +154,11 @@ mod tests {
     #[test]
     #[ignore]
     fn world_adds_new_cells() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&CellParameters::DEFAULT, 10.0, 4.0, 0.0),
+                Cell::new(&cell_params, 10.0, 4.0, 0.0),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 2);
@@ -161,11 +166,12 @@ mod tests {
 
     #[test]
     fn world_removes_dead_cells() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 0.0),
-                Cell::new(&CellParameters::DEFAULT, 0.0, f32::MAX, 0.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
+                Cell::new(&cell_params, 0.0, f32::MAX, 0.0),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 1);
@@ -173,10 +179,10 @@ mod tests {
 
     #[test]
     fn world_reports_num_died() {
-        let cell_params = CellParameters {
+        let cell_params = Rc::new(CellParameters {
             maintenance_energy_use: 5.0,
             ..CellParameters::DEFAULT
-        };
+        });
         let mut world = World::new().with_cells(vec![
             Cell::new(&cell_params, 10.0, f32::MAX, 0.0),
             Cell::new(&cell_params, 5.0, f32::MAX, 0.0),
@@ -188,11 +194,12 @@ mod tests {
 
     #[test]
     fn cells_consume_world_food() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
         let mut world = World::new()
             .with_food(10.0)
             .with_cells(vec![
-                Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 2.0),
-                Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 3.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, 2.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, 3.0),
             ]);
         world.step();
         assert_eq!(world.food(), 5.0);
@@ -200,11 +207,12 @@ mod tests {
 
     #[test]
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
         let mut world = World::new()
             .with_food(4.0)
             .with_cells(vec![
-                Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 3.0),
-                Cell::new(&CellParameters::DEFAULT, 1.0, f32::MAX, 1.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, 3.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, 1.0),
             ]);
         world.step();
         assert_eq!(world.food(), 1.0);

@@ -1,19 +1,21 @@
+use std::rc::Rc;
+
 pub const DEFAULT_MAINTENANCE_ENERGY_USE: f32 = 0.0;
 pub const DEFAULT_FOOD_YIELD_FROM_EATING: f32 = 1.0;
 pub const DEFAULT_ENERGY_YIELD_FROM_DIGESTION: f32 = 1.0;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Cell<'a> {
-    cell_params: &'a CellParameters,
+pub struct Cell {
+    cell_params: Rc<CellParameters>,
     energy: f32,
     child_threshold_energy: f32,
     attempted_eating_energy: f32,
 }
 
-impl<'a> Cell<'a> {
-    pub fn new(cell_params: &'a CellParameters, energy: f32, child_threshold_energy: f32, attempted_eating_energy: f32) -> Self {
+impl Cell {
+    pub fn new(cell_params: &Rc<CellParameters>, energy: f32, child_threshold_energy: f32, attempted_eating_energy: f32) -> Self {
         Cell {
-            cell_params,
+            cell_params: Rc::clone(cell_params),
             energy,
             child_threshold_energy,
             attempted_eating_energy,
@@ -36,7 +38,7 @@ impl<'a> Cell<'a> {
         (child, food)
     }
 
-    fn try_reproduce(&mut self) -> Option<Cell<'a>> {
+    fn try_reproduce(&mut self) -> Option<Cell> {
         if self.energy < self.child_threshold_energy { return None; }
 
         self.energy -= self.child_threshold_energy;
@@ -90,10 +92,10 @@ mod tests {
 
     #[test]
     fn cell_uses_energy() {
-        let cell_params = CellParameters {
+        let cell_params = Rc::new(CellParameters {
             maintenance_energy_use: 5.25,
             ..CellParameters::DEFAULT
-        };
+        });
         let mut cell = Cell::new(&cell_params, 10.0, f32::MAX, 0.0);
         cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(cell.energy(), 4.75);
@@ -101,16 +103,19 @@ mod tests {
 
     #[test]
     fn cell_with_no_energy_is_dead() {
-        let cell = Cell::new(&CellParameters::DEFAULT, 0.0, f32::MAX, 0.0);
+        let cell_params = Rc::new(CellParameters {
+            ..CellParameters::DEFAULT
+        });
+        let cell = Cell::new(&cell_params, 0.0, f32::MAX, 0.0);
         assert!(!cell.is_alive());
     }
 
     #[test]
     fn cell_eats_food() {
-        let cell_params = CellParameters {
+        let cell_params = Rc::new(CellParameters {
             food_yield_from_eating: 1.5,
             ..CellParameters::DEFAULT
-        };
+        });
         let environment = CellEnvironment {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
@@ -122,10 +127,10 @@ mod tests {
 
     #[test]
     fn cell_cannot_eat_more_food_than_is_available() {
-        let cell_params = CellParameters {
+        let cell_params = Rc::new(CellParameters {
             food_yield_from_eating: 1.0,
             ..CellParameters::DEFAULT
-        };
+        });
         let environment = CellEnvironment {
             food_per_cell: 2.0,
             ..CellEnvironment::DEFAULT
@@ -137,10 +142,10 @@ mod tests {
 
     #[test]
     fn cell_expends_energy_eating() {
-        let cell_params = CellParameters {
+        let cell_params = Rc::new(CellParameters {
             food_yield_from_eating: 0.0,
             ..CellParameters::DEFAULT
-        };
+        });
         let environment = CellEnvironment {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
@@ -152,10 +157,10 @@ mod tests {
 
     #[test]
     fn cell_expends_energy_eating_even_when_there_is_no_food() {
-        let cell_params = CellParameters {
+        let cell_params = Rc::new(CellParameters {
             food_yield_from_eating: 0.0,
             ..CellParameters::DEFAULT
-        };
+        });
         let environment = CellEnvironment {
             food_per_cell: 0.0,
             ..CellEnvironment::DEFAULT
@@ -167,11 +172,11 @@ mod tests {
 
     #[test]
     fn cell_digests_food() {
-        let cell_params = CellParameters {
+        let cell_params = Rc::new(CellParameters {
             maintenance_energy_use: 0.0,
             food_yield_from_eating: 1.0,
             energy_yield_from_digestion: 1.5,
-        };
+        });
         let environment = CellEnvironment {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
@@ -183,10 +188,13 @@ mod tests {
 
     #[test]
     fn cell_passes_energy_to_child() {
-        let mut cell = Cell::new(&CellParameters::DEFAULT, 10.0, 4.0, 1.0);
+        let cell_params = Rc::new(CellParameters {
+            ..CellParameters::DEFAULT
+        });
+        let mut cell = Cell::new(&cell_params, 10.0, 4.0, 1.0);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
-            cell_params: &CellParameters::DEFAULT,
+            cell_params: Rc::clone(&cell_params),
             energy: 4.0,
             child_threshold_energy: 4.0,
             attempted_eating_energy: 1.0,
