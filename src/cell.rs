@@ -3,6 +3,7 @@ use std::rc::Rc;
 pub const DEFAULT_MAINTENANCE_ENERGY_USE: f32 = 0.0;
 pub const DEFAULT_FOOD_YIELD_FROM_EATING: f32 = 1.0;
 pub const DEFAULT_ENERGY_YIELD_FROM_DIGESTION: f32 = 1.0;
+pub const DEFAULT_CREATE_CHILD_ENERGY: f32 = 0.0;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Cell {
@@ -41,9 +42,9 @@ impl Cell {
     fn try_reproduce(&mut self) -> Option<Cell> {
         if self.energy < self.child_threshold_energy { return None; }
 
-        self.energy -= self.child_threshold_energy;
         let mut child = self.clone();
-        child.energy = self.child_threshold_energy;
+        self.energy -= self.child_threshold_energy;
+        child.energy = self.child_threshold_energy - self.cell_params.create_child_energy;
         Some(child)
     }
 
@@ -66,6 +67,7 @@ pub struct CellParameters {
     pub maintenance_energy_use: f32,
     pub food_yield_from_eating: f32,
     pub energy_yield_from_digestion: f32,
+    pub create_child_energy: f32,
 }
 
 impl CellParameters {
@@ -74,6 +76,7 @@ impl CellParameters {
         maintenance_energy_use: DEFAULT_MAINTENANCE_ENERGY_USE,
         food_yield_from_eating: DEFAULT_FOOD_YIELD_FROM_EATING,
         energy_yield_from_digestion: DEFAULT_ENERGY_YIELD_FROM_DIGESTION,
+        create_child_energy: DEFAULT_CREATE_CHILD_ENERGY,
     };
 }
 
@@ -176,6 +179,7 @@ mod tests {
             maintenance_energy_use: 0.0,
             food_yield_from_eating: 1.0,
             energy_yield_from_digestion: 1.5,
+            ..CellParameters::DEFAULT
         });
         let environment = CellEnvironment {
             food_per_cell: 10.0,
@@ -189,13 +193,14 @@ mod tests {
     #[test]
     fn cell_passes_energy_to_child() {
         let cell_params = Rc::new(CellParameters {
+            create_child_energy: 1.5,
             ..CellParameters::DEFAULT
         });
         let mut cell = Cell::new(&cell_params, 10.0, 4.0, 1.0);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
             cell_params: Rc::clone(&cell_params),
-            energy: 4.0,
+            energy: 2.5,
             child_threshold_energy: 4.0,
             attempted_eating_energy: 1.0,
         }));

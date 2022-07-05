@@ -21,6 +21,7 @@ fn main() {
         maintenance_energy_use: args.maint,
         food_yield_from_eating: args.eat_yield,
         energy_yield_from_digestion: args.digest_yield,
+        create_child_energy: args.create_child,
     });
 
     let mut world = create_world(&args, &cell_params);
@@ -97,6 +98,10 @@ struct Args {
     /// Standard deviation of child threshold energies
     #[clap(long, default_value_t = DEFAULT_STD_DEV_CHILD_THRESHOLD_ENERGY)]
     sd_child: f32,
+
+    /// Energy cost of creating a child
+    #[clap(long, default_value_t = cell::DEFAULT_CREATE_CHILD_ENERGY)]
+    create_child: f32,
 
     /// Cell maintenance energy
     #[clap(short('M'), long, default_value_t = cell::DEFAULT_MAINTENANCE_ENERGY_USE)]
