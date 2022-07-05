@@ -23,12 +23,12 @@ fn main() {
         energy_yield_from_digestion: args.digest_yield,
     });
 
-    let mut world = create_world(args, &cell_params);
+    let mut world = create_world(&args, &cell_params);
 
-    run(&mut world);
+    run(&mut world, args.steps);
 }
 
-fn create_world(args: Args, cell_params: &Rc<CellParameters>) -> World {
+fn create_world(args: &Args, cell_params: &Rc<CellParameters>) -> World {
     let world = World::new()
         .with_cells(world::generate_cells(
             args.cells,
@@ -41,7 +41,7 @@ fn create_world(args: Args, cell_params: &Rc<CellParameters>) -> World {
     world
 }
 
-fn run(world: &mut World) {
+fn run(world: &mut World, steps: u32) {
     println!("<step>: +<born> -<died> -> <cells> (e: <mean_cell_energy>, f: <total_food>)");
 
     let mut step = 0;
@@ -53,7 +53,7 @@ fn run(world: &mut World) {
              world.mean_energy(),
              world.food());
 
-    while world.num_cells() > 0 {
+    while step < steps && world.num_cells() > 0 {
         let (num_created, num_died) = world.step();
         step += 1;
         println!("{}: +{} -{} -> {} (e: {}, f: {})",
@@ -70,6 +70,10 @@ fn run(world: &mut World) {
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
+    /// Number of steps
+    #[clap(short('s'), long, default_value_t = u32::MAX)]
+    steps: u32,
+
     /// Total world food
     #[clap(short('f'), long, default_value_t = world::DEFAULT_FOOD_AMOUNT)]
     total_food: f32,
@@ -83,7 +87,7 @@ struct Args {
     mean_en: f32,
 
     /// Standard deviation of cell initial energies
-    #[clap(short('s'), long, default_value_t = DEFAULT_STD_DEV_INITIAL_ENERGY)]
+    #[clap(long, default_value_t = DEFAULT_STD_DEV_INITIAL_ENERGY)]
     sd_en: f32,
 
     /// Mean of child threshold energies
@@ -103,7 +107,7 @@ struct Args {
     mean_eat: f32,
 
     /// Standard deviation of cell eating energies
-    #[clap(short('S'), long, default_value_t = DEFAULT_STD_DEV_EATING_ENERGY)]
+    #[clap(long, default_value_t = DEFAULT_STD_DEV_EATING_ENERGY)]
     sd_eat: f32,
 
     /// Food gained per unit eating energy
