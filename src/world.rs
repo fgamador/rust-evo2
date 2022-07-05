@@ -73,10 +73,11 @@ impl World {
             }
         }
 
+        let num_added = new_cells.len();
         self.cells.append(&mut new_cells);
         self.remove_cells(&mut dead_indexes);
 
-        (0, dead_indexes.len())
+        (num_added, dead_indexes.len())
     }
 
     fn remove_cells(&mut self, sorted_indexes: &mut [usize]) {
@@ -161,6 +162,19 @@ mod tests {
             ]);
         world.step();
         assert_eq!(world.num_cells(), 2);
+    }
+
+    #[test]
+    fn world_reports_num_added() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let mut world = World::new()
+            .with_food(0.0)
+            .with_cells(vec![
+                Cell::new(&cell_params, 10.0, 4.0, 0.0),
+                Cell::new(&cell_params, 10.0, 4.0, 0.0),
+            ]);
+        let (num_added, _) = world.step();
+        assert_eq!(num_added, 2);
     }
 
     #[test]
