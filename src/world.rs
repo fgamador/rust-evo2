@@ -98,7 +98,7 @@ pub fn generate_cells(
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
         cells.push(Cell::new(
-            &cell_params,
+            cell_params,
             initial_energies.sample(&mut rng),
             child_threshold_energies.sample(&mut rng),
             eating_energies.sample(&mut rng),

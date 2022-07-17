@@ -30,16 +30,15 @@ fn main() {
 }
 
 fn create_world(args: &Args, cell_params: &Rc<CellParameters>) -> World {
-    let world = World::new()
+    World::new()
         .with_cells(world::generate_cells(
             args.cells,
             Normal::new(args.mean_en, args.sd_en).unwrap(),
             Normal::new(args.mean_eat, args.sd_eat).unwrap(),
             Normal::new(args.mean_child, args.sd_child).unwrap(),
-            &cell_params,
+            cell_params,
         ))
-        .with_food(args.total_food);
-    world
+        .with_food(args.total_food)
 }
 
 fn run(world: &mut World, steps: u32) {
