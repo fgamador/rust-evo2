@@ -60,7 +60,7 @@ impl World {
             food_per_cell: self.food / (self.cells.len() as f32),
         };
         let mut new_cells = vec![];
-        let mut dead_indexes = Vec::with_capacity(self.cells.len());
+        let mut dead_cell_indexes = Vec::with_capacity(self.cells.len());
 
         for (index, cell) in self.cells.iter_mut().enumerate() {
             let (child, food_eaten) = cell.step(&environment);
@@ -69,15 +69,15 @@ impl World {
             }
             self.food -= food_eaten;
             if !cell.is_alive() {
-                dead_indexes.push(index);
+                dead_cell_indexes.push(index);
             }
         }
 
         let num_added = new_cells.len();
         self.cells.append(&mut new_cells);
-        self.remove_cells(&mut dead_indexes);
+        self.remove_cells(&mut dead_cell_indexes);
 
-        (num_added, dead_indexes.len())
+        (num_added, dead_cell_indexes.len())
     }
 
     fn remove_cells(&mut self, sorted_indexes: &mut [usize]) {
