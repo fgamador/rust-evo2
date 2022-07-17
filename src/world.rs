@@ -62,8 +62,18 @@ impl World {
         let mut new_cells = vec![];
         let mut dead_cell_indexes = Vec::with_capacity(self.cells.len());
 
+        self.step_cells(&environment, &mut new_cells, &mut dead_cell_indexes);
+
+        let num_added = new_cells.len();
+        self.cells.append(&mut new_cells);
+        self.remove_cells(&mut dead_cell_indexes);
+
+        (num_added, dead_cell_indexes.len())
+    }
+
+    fn step_cells(&mut self, environment: &CellEnvironment, new_cells: &mut Vec<Cell>, dead_cell_indexes: &mut Vec<usize>) {
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            let (child, food_eaten) = cell.step(&environment);
+            let (child, food_eaten) = cell.step(environment);
             if let Some(child) = child {
                 new_cells.push(child);
             }
@@ -72,12 +82,6 @@ impl World {
                 dead_cell_indexes.push(index);
             }
         }
-
-        let num_added = new_cells.len();
-        self.cells.append(&mut new_cells);
-        self.remove_cells(&mut dead_cell_indexes);
-
-        (num_added, dead_cell_indexes.len())
     }
 
     fn remove_cells(&mut self, sorted_indexes: &mut [usize]) {
