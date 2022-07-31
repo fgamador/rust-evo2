@@ -34,6 +34,11 @@ impl World {
         self
     }
 
+    pub fn with_food_sources(mut self, _food_sources: Vec<ConstantFoodSource>) -> Self {
+        // TODO
+        self
+    }
+
     #[allow(dead_code)]
     pub fn cell(&self, index: usize) -> &Cell {
         &self.cells[index]
@@ -56,6 +61,8 @@ impl World {
     }
 
     pub fn step(&mut self) -> (usize, usize) {
+        self.step_food_sources();
+
         let environment = CellEnvironment {
             food_per_cell: self.food / (self.cells.len() as f32),
         };
@@ -69,6 +76,10 @@ impl World {
         self.remove_cells(&mut dead_cell_indexes);
 
         (num_added, dead_cell_indexes.len())
+    }
+
+    fn step_food_sources(&mut self) {
+        // TODO
     }
 
     fn step_cells(&mut self, environment: &CellEnvironment, new_cells: &mut Vec<Cell>, dead_cell_indexes: &mut Vec<usize>) {
@@ -109,6 +120,14 @@ pub fn generate_cells(
         ));
     }
     cells
+}
+
+pub struct ConstantFoodSource(f32);
+
+impl ConstantFoodSource {
+    pub fn new(food_per_step: f32) -> Self {
+        ConstantFoodSource(food_per_step)
+    }
 }
 
 #[cfg(test)]
@@ -233,5 +252,19 @@ mod tests {
             ]);
         world.step();
         assert_eq!(world.food(), 1.0);
+    }
+
+    #[test]
+    #[ignore]
+    fn food_sources_add_to_world_food() {
+        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let mut world = World::new()
+            .with_food(0.0)
+            .with_food_sources(vec![
+                ConstantFoodSource::new(2.0),
+                ConstantFoodSource::new(3.0),
+            ]);
+        world.step();
+        assert_eq!(world.food(), 5.0);
     }
 }
