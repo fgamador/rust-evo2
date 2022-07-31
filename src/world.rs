@@ -2,6 +2,7 @@ use std::rc::Rc;
 use crate::{Cell, CellEnvironment, CellParameters};
 use rand::distributions::Distribution;
 use rand_distr::Normal;
+use crate::food_sources::FoodSource;
 
 pub const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
 
@@ -126,30 +127,9 @@ pub fn generate_cells(
     cells
 }
 
-pub trait FoodSource {
-    fn food_this_step(&self) -> f32;
-}
-
-pub struct ConstantFoodSource {
-    food_per_step: f32,
-}
-
-impl ConstantFoodSource {
-    pub fn new(food_per_step: f32) -> Self {
-        ConstantFoodSource {
-            food_per_step
-        }
-    }
-}
-
-impl FoodSource for ConstantFoodSource {
-    fn food_this_step(&self) -> f32 {
-        self.food_per_step
-    }
-}
-
 #[cfg(test)]
 mod tests {
+    use crate::food_sources::ConstantFoodSource;
     use super::*;
     use crate::world::generate_cells;
 

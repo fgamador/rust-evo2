@@ -5,6 +5,7 @@ use rand_distr::Normal;
 use world::World;
 
 mod cell;
+mod food_sources;
 mod world;
 
 const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
