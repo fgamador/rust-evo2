@@ -8,6 +8,7 @@ pub const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
 pub struct World {
     cells: Vec<Cell>,
     food: f32,
+    food_sources: Vec<ConstantFoodSource>,
 }
 
 impl World {
@@ -15,6 +16,7 @@ impl World {
         World {
             cells: vec![],
             food: 0.0,
+            food_sources: vec![],
         }
     }
 
@@ -34,8 +36,8 @@ impl World {
         self
     }
 
-    pub fn with_food_sources(mut self, _food_sources: Vec<ConstantFoodSource>) -> Self {
-        // TODO
+    pub fn with_food_sources(mut self, food_sources: Vec<ConstantFoodSource>) -> Self {
+        self.food_sources = food_sources;
         self
     }
 
@@ -79,7 +81,9 @@ impl World {
     }
 
     fn step_food_sources(&mut self) {
-        // TODO
+        for food_source in &self.food_sources {
+            self.food += food_source.food_per_step;
+        }
     }
 
     fn step_cells(&mut self, environment: &CellEnvironment, new_cells: &mut Vec<Cell>, dead_cell_indexes: &mut Vec<usize>) {
@@ -122,11 +126,15 @@ pub fn generate_cells(
     cells
 }
 
-pub struct ConstantFoodSource(f32);
+pub struct ConstantFoodSource {
+    food_per_step: f32,
+}
 
 impl ConstantFoodSource {
     pub fn new(food_per_step: f32) -> Self {
-        ConstantFoodSource(food_per_step)
+        ConstantFoodSource {
+            food_per_step
+        }
     }
 }
 
@@ -255,9 +263,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn food_sources_add_to_world_food() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
         let mut world = World::new()
             .with_food(0.0)
             .with_food_sources(vec![
