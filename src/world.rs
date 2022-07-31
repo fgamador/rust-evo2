@@ -126,6 +126,10 @@ pub fn generate_cells(
     cells
 }
 
+pub trait FoodSource {
+    fn food_this_step(&self) -> f32;
+}
+
 pub struct ConstantFoodSource {
     food_per_step: f32,
 }
@@ -136,8 +140,10 @@ impl ConstantFoodSource {
             food_per_step
         }
     }
+}
 
-    pub fn food_this_step(&self) -> f32 {
+impl FoodSource for ConstantFoodSource {
+    fn food_this_step(&self) -> f32 {
         self.food_per_step
     }
 }
