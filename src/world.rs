@@ -82,7 +82,7 @@ impl World {
 
     fn step_food_sources(&mut self) {
         for food_source in &self.food_sources {
-            self.food += food_source.food_per_step;
+            self.food += food_source.food_this_step();
         }
     }
 
@@ -135,6 +135,10 @@ impl ConstantFoodSource {
         ConstantFoodSource {
             food_per_step
         }
+    }
+
+    pub fn food_this_step(&self) -> f32 {
+        self.food_per_step
     }
 }
 
