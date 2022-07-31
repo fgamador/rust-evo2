@@ -3,6 +3,7 @@ use cell::{Cell, CellEnvironment, CellParameters};
 use clap::Parser;
 use rand_distr::Normal;
 use world::World;
+use crate::food_sources::ConstantFoodSource;
 
 mod cell;
 mod food_sources;
@@ -40,6 +41,9 @@ fn create_world(args: &Args, cell_params: &Rc<CellParameters>) -> World {
             cell_params,
         ))
         .with_food(args.initial_food)
+        .with_food_sources(vec![
+            Box::new(ConstantFoodSource::new(args.added_food))
+        ])
 }
 
 fn run(world: &mut World, steps: u32) {
@@ -78,6 +82,10 @@ struct Args {
     /// Initial world food
     #[clap(short('f'), long, default_value_t = world::DEFAULT_FOOD_AMOUNT)]
     initial_food: f32,
+
+    /// World food added per step
+    #[clap(long, default_value_t = 0.0)]
+    added_food: f32,
 
     /// Initial number of cells
     #[clap(short('n'), long, default_value_t = 100)]
