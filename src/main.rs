@@ -39,7 +39,7 @@ fn create_world(args: &Args, cell_params: &Rc<CellParameters>) -> World {
             Normal::new(args.mean_child, args.sd_child).unwrap(),
             cell_params,
         ))
-        .with_food(args.total_food)
+        .with_food(args.initial_food)
 }
 
 fn run(world: &mut World, steps: u32) {
@@ -75,9 +75,9 @@ struct Args {
     #[clap(short('s'), long, default_value_t = u32::MAX)]
     steps: u32,
 
-    /// Total world food
+    /// Initial world food
     #[clap(short('f'), long, default_value_t = world::DEFAULT_FOOD_AMOUNT)]
-    total_food: f32,
+    initial_food: f32,
 
     /// Initial number of cells
     #[clap(short('n'), long, default_value_t = 100)]
