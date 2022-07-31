@@ -8,7 +8,7 @@ pub const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
 pub struct World {
     cells: Vec<Cell>,
     food: f32,
-    food_sources: Vec<ConstantFoodSource>,
+    food_sources: Vec<Box<dyn FoodSource>>,
 }
 
 impl World {
@@ -36,7 +36,7 @@ impl World {
         self
     }
 
-    pub fn with_food_sources(mut self, food_sources: Vec<ConstantFoodSource>) -> Self {
+    pub fn with_food_sources(mut self, food_sources: Vec<Box<dyn FoodSource>>) -> Self {
         self.food_sources = food_sources;
         self
     }
@@ -277,8 +277,8 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_food_sources(vec![
-                ConstantFoodSource::new(2.0),
-                ConstantFoodSource::new(3.0),
+                Box::new(ConstantFoodSource::new(2.0)),
+                Box::new(ConstantFoodSource::new(3.0)),
             ]);
         world.step();
         assert_eq!(world.food(), 5.0);
