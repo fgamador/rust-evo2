@@ -106,10 +106,7 @@ mod tests {
 
     #[test]
     fn cell_with_no_energy_is_dead() {
-        let cell_params = Rc::new(CellParameters {
-            ..CellParameters::DEFAULT
-        });
-        let cell = Cell::new(&cell_params, 0.0, f32::MAX, 0.0);
+        let cell = Cell::new(&Rc::new(CellParameters::DEFAULT), 0.0, f32::MAX, 0.0);
         assert!(!cell.is_alive());
     }
 
