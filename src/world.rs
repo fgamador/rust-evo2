@@ -121,6 +121,7 @@ pub fn generate_cells(
             cell_params,
             initial_energies.sample(&mut rng),
             child_threshold_energies.sample(&mut rng),
+            f32::MAX,
             eating_energies.sample(&mut rng),
         ));
     }
@@ -137,9 +138,9 @@ mod tests {
     fn world_counts_both_living_and_dead_cells() {
         let cell_params = Rc::new(CellParameters::DEFAULT);
         let world = World::new().with_cells(vec![
-            Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
-            Cell::new(&cell_params, 0.0, f32::MAX, 0.0),
-            Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
+            Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 0.0),
+            Cell::new(&cell_params, 0.0, f32::MAX, f32::MAX, 0.0),
+            Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 0.0),
         ]);
         assert_eq!(world.num_cells(), 3);
     }
@@ -153,8 +154,8 @@ mod tests {
     fn world_calculates_mean_energy() {
         let cell_params = Rc::new(CellParameters::DEFAULT);
         let world = World::new().with_cells(vec![
-            Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
-            Cell::new(&cell_params, 2.0, f32::MAX, 0.0),
+            Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 0.0),
+            Cell::new(&cell_params, 2.0, f32::MAX, f32::MAX, 0.0),
         ]);
         assert_eq!(world.mean_energy(), 1.5);
     }
@@ -179,7 +180,7 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 10.0, 4.0, 0.0),
+                Cell::new(&cell_params, 10.0, 4.0, f32::MAX, 0.0),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 2);
@@ -191,8 +192,8 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 10.0, 4.0, 0.0),
-                Cell::new(&cell_params, 10.0, 4.0, 0.0),
+                Cell::new(&cell_params, 10.0, 4.0, f32::MAX, 0.0),
+                Cell::new(&cell_params, 10.0, 4.0, f32::MAX, 0.0),
             ]);
         let (num_added, _) = world.step();
         assert_eq!(num_added, 2);
@@ -204,8 +205,8 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 1.0, f32::MAX, 0.0),
-                Cell::new(&cell_params, 0.0, f32::MAX, 0.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 0.0),
+                Cell::new(&cell_params, 0.0, f32::MAX, f32::MAX, 0.0),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 1);
@@ -218,9 +219,9 @@ mod tests {
             ..CellParameters::DEFAULT
         });
         let mut world = World::new().with_cells(vec![
-            Cell::new(&cell_params, 10.0, f32::MAX, 0.0),
-            Cell::new(&cell_params, 5.0, f32::MAX, 0.0),
-            Cell::new(&cell_params, 5.0, f32::MAX, 0.0),
+            Cell::new(&cell_params, 10.0, f32::MAX, f32::MAX, 0.0),
+            Cell::new(&cell_params, 5.0, f32::MAX, f32::MAX, 0.0),
+            Cell::new(&cell_params, 5.0, f32::MAX, f32::MAX, 0.0),
         ]);
         let (_, num_died) = world.step();
         assert_eq!(num_died, 2);
@@ -232,8 +233,8 @@ mod tests {
         let mut world = World::new()
             .with_food(10.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 1.0, f32::MAX, 2.0),
-                Cell::new(&cell_params, 1.0, f32::MAX, 3.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 2.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 3.0),
             ]);
         world.step();
         assert_eq!(world.food(), 5.0);
@@ -245,8 +246,8 @@ mod tests {
         let mut world = World::new()
             .with_food(4.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 1.0, f32::MAX, 3.0),
-                Cell::new(&cell_params, 1.0, f32::MAX, 1.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 3.0),
+                Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 1.0),
             ]);
         world.step();
         assert_eq!(world.food(), 1.0);
