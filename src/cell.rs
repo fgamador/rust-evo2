@@ -191,6 +191,13 @@ mod tests {
     }
 
     #[test]
+    fn cell_with_insufficient_energy_does_not_reproduce() {
+        let mut cell = Cell::new(&Rc::new(CellParameters::DEFAULT), 3.0, 4.0, 0.0);
+        let (child, _) = cell.step(&CellEnvironment::DEFAULT);
+        assert_eq!(child, None);
+    }
+
+    #[test]
     fn cell_passes_energy_to_child() {
         let cell_params = Rc::new(CellParameters {
             create_child_energy: 1.5,
