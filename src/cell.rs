@@ -10,15 +10,17 @@ pub struct Cell {
     cell_params: Rc<CellParameters>,
     energy: f32,
     child_threshold_energy: f32,
+    child_threshold_food: f32,
     attempted_eating_energy: f32,
 }
 
 impl Cell {
-    pub fn new(cell_params: &Rc<CellParameters>, energy: f32, child_threshold_energy: f32, _child_threshold_food: f32, attempted_eating_energy: f32) -> Self {
+    pub fn new(cell_params: &Rc<CellParameters>, energy: f32, child_threshold_energy: f32, child_threshold_food: f32, attempted_eating_energy: f32) -> Self {
         Cell {
             cell_params: Rc::clone(cell_params),
             energy,
             child_threshold_energy,
+            child_threshold_food,
             attempted_eating_energy,
         }
     }
@@ -32,15 +34,17 @@ impl Cell {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, f32) {
-        let child = self.try_reproduce();
+        let child = self.try_reproduce(environment);
         let food = self.eat(environment.food_per_cell);
         self.digest(food);
         self.maintain();
         (child, food)
     }
 
-    fn try_reproduce(&mut self) -> Option<Cell> {
-        if self.energy < self.child_threshold_energy { return None; }
+    fn try_reproduce(&mut self, environment: &CellEnvironment) -> Option<Cell> {
+        if self.energy < self.child_threshold_energy
+            || environment.food_per_cell < self.child_threshold_food
+        { return None; }
 
         let mut child = self.clone();
         self.energy -= self.child_threshold_energy;
@@ -195,17 +199,29 @@ mod tests {
     }
 
     #[test]
+    fn cell_with_insufficient_food_does_not_reproduce() {
+        let mut cell = Cell::new(&Rc::new(CellParameters::DEFAULT), 1.0, 1.0, 4.0, 0.0);
+        let environment = CellEnvironment {
+            food_per_cell: 3.0,
+            ..CellEnvironment::DEFAULT
+        };
+        let (child, _) = cell.step(&environment);
+        assert_eq!(child, None);
+    }
+
+    #[test]
     fn cell_passes_energy_to_child() {
         let cell_params = Rc::new(CellParameters {
             create_child_energy: 1.5,
             ..CellParameters::DEFAULT
         });
-        let mut cell = Cell::new(&cell_params, 10.0, 4.0, f32::MAX, 1.0);
+        let mut cell = Cell::new(&cell_params, 10.0, 4.0, 0.0, 1.0);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
             cell_params: Rc::clone(&cell_params),
             energy: 2.5,
             child_threshold_energy: 4.0,
+            child_threshold_food: 0.0,
             attempted_eating_energy: 1.0,
         }));
         assert_eq!(5.0, cell.energy());

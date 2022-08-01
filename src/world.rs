@@ -180,7 +180,7 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 10.0, 4.0, f32::MAX, 0.0),
+                Cell::new(&cell_params, 10.0, 4.0, 0.0, 0.0),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 2);
@@ -192,8 +192,8 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&cell_params, 10.0, 4.0, f32::MAX, 0.0),
-                Cell::new(&cell_params, 10.0, 4.0, f32::MAX, 0.0),
+                Cell::new(&cell_params, 10.0, 4.0, 0.0, 0.0),
+                Cell::new(&cell_params, 10.0, 4.0, 0.0, 0.0),
             ]);
         let (num_added, _) = world.step();
         assert_eq!(num_added, 2);
