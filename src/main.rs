@@ -13,6 +13,8 @@ const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
 const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;
 const DEFAULT_MEAN_CHILD_THRESHOLD_ENERGY: f32 = f32::MAX;
 const DEFAULT_STD_DEV_CHILD_THRESHOLD_ENERGY: f32 = 0.0;
+const DEFAULT_MEAN_CHILD_THRESHOLD_FOOD: f32 = 0.0;
+const DEFAULT_STD_DEV_CHILD_THRESHOLD_FOOD: f32 = 0.0;
 const DEFAULT_MEAN_EATING_ENERGY: f32 = 0.0;
 const DEFAULT_STD_DEV_EATING_ENERGY: f32 = 0.0;
 
@@ -37,7 +39,7 @@ fn create_world(args: &Args, cell_params: &Rc<CellParameters>) -> World {
             args.cells,
             Normal::new(args.mean_en, args.sd_en).unwrap(),
             Normal::new(args.mean_eat, args.sd_eat).unwrap(),
-            Normal::new(args.mean_child, args.sd_child).unwrap(),
+            Normal::new(args.mean_child_en, args.sd_child_en).unwrap(),
             Normal::new(0.0, 0.0).unwrap(),
             cell_params,
         ))
@@ -102,11 +104,19 @@ struct Args {
 
     /// Mean of child threshold energies
     #[clap(short('C'), long, default_value_t = DEFAULT_MEAN_CHILD_THRESHOLD_ENERGY)]
-    mean_child: f32,
+    mean_child_en: f32,
 
     /// Standard deviation of child threshold energies
     #[clap(long, default_value_t = DEFAULT_STD_DEV_CHILD_THRESHOLD_ENERGY)]
-    sd_child: f32,
+    sd_child_en: f32,
+
+    /// Mean of child threshold foods
+    #[clap(long, default_value_t = DEFAULT_MEAN_CHILD_THRESHOLD_FOOD)]
+    mean_child_fd: f32,
+
+    /// Standard deviation of child threshold foods
+    #[clap(long, default_value_t = DEFAULT_STD_DEV_CHILD_THRESHOLD_FOOD)]
+    sd_child_fd: f32,
 
     /// Energy cost of creating a child
     #[clap(long, default_value_t = cell::DEFAULT_CREATE_CHILD_ENERGY)]
