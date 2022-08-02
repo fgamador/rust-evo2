@@ -19,8 +19,10 @@ const DEFAULT_MEAN_EATING_ENERGY: f32 = 0.0;
 const DEFAULT_STD_DEV_EATING_ENERGY: f32 = 0.0;
 
 fn main() {
-    let args = Args::parse();
+    create_and_run_world(&Args::parse());
+}
 
+fn create_and_run_world(args: &Args) {
     let cell_params = Rc::new(CellParameters {
         maintenance_energy_use: args.maint,
         food_yield_from_eating: args.eat_yield,
