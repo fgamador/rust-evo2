@@ -1,7 +1,11 @@
 use std::rc::Rc;
 use clap::Parser;
 use rand_distr::Normal;
-use crate::{cell, CellParameters, ConstantFoodSource, World, world};
+use crate::cell;
+use crate::cell::CellParameters;
+use crate::food_sources::ConstantFoodSource;
+use crate::world;
+use crate::world::World;
 
 const DEFAULT_MEAN_INITIAL_ENERGY: f32 = 100.0;
 const DEFAULT_STD_DEV_INITIAL_ENERGY: f32 = 0.0;

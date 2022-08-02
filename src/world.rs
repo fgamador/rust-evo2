@@ -1,7 +1,7 @@
 use std::rc::Rc;
-use crate::{Cell, CellEnvironment, CellParameters};
 use rand::distributions::Distribution;
 use rand_distr::Normal;
+use crate::cell::{Cell, CellEnvironment, CellParameters};
 use crate::food_sources::FoodSource;
 
 pub const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
