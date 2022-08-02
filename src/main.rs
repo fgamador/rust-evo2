@@ -38,6 +38,7 @@ fn create_world(args: &Args, cell_params: &Rc<CellParameters>) -> World {
             Normal::new(args.mean_en, args.sd_en).unwrap(),
             Normal::new(args.mean_eat, args.sd_eat).unwrap(),
             Normal::new(args.mean_child, args.sd_child).unwrap(),
+            Normal::new(0.0, 0.0).unwrap(),
             cell_params,
         ))
         .with_food(args.initial_food)

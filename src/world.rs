@@ -112,6 +112,7 @@ pub fn generate_cells(
     initial_energies: Normal<f32>,
     eating_energies: Normal<f32>,
     child_threshold_energies: Normal<f32>,
+    child_threshold_foods: Normal<f32>,
     cell_params: &Rc<CellParameters>,
 ) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
@@ -121,7 +122,7 @@ pub fn generate_cells(
             cell_params,
             initial_energies.sample(&mut rng),
             child_threshold_energies.sample(&mut rng),
-            0.0,
+            child_threshold_foods.sample(&mut rng),
             eating_energies.sample(&mut rng),
         ));
     }
@@ -166,6 +167,7 @@ mod tests {
         let cells = generate_cells(
             100,
             Normal::new(100.0, 5.0).unwrap(),
+            Normal::new(0.0, 0.0).unwrap(),
             Normal::new(0.0, 0.0).unwrap(),
             Normal::new(f32::MAX, 0.0).unwrap(),
             &cell_params,
