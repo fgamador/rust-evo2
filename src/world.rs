@@ -121,7 +121,7 @@ pub fn generate_cells(
             cell_params,
             initial_energies.sample(&mut rng),
             child_threshold_energies.sample(&mut rng),
-            f32::MAX,
+            0.0,
             eating_energies.sample(&mut rng),
         ));
     }
