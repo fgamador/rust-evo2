@@ -1,6 +1,6 @@
-use std::rc::Rc;
 use clap::Parser;
 use rand_distr::Normal;
+use std::rc::Rc;
 use crate::cell;
 use crate::cell::CellParameters;
 use crate::food_sources::ConstantFoodSource;

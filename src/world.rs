@@ -1,6 +1,6 @@
-use std::rc::Rc;
 use rand::distributions::Distribution;
 use rand_distr::Normal;
+use std::rc::Rc;
 use crate::cell::{Cell, CellEnvironment, CellParameters};
 use crate::food_sources::FoodSource;
 
