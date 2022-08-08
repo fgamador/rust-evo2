@@ -2,7 +2,7 @@ use clap::Parser;
 use rand_distr::Normal;
 use std::rc::Rc;
 use crate::cell;
-use crate::cell::CellParameters;
+use crate::cell::BioConstants;
 use crate::food_sources::ConstantFoodSource;
 use crate::world;
 use crate::world::World;
@@ -17,19 +17,19 @@ const DEFAULT_MEAN_EATING_ENERGY: f32 = 0.0;
 const DEFAULT_STD_DEV_EATING_ENERGY: f32 = 0.0;
 
 pub fn create_and_run_world(args: &Args) {
-    let cell_params = Rc::new(CellParameters {
+    let bio_constants = Rc::new(BioConstants {
         maintenance_energy_use: args.maint,
         food_yield_from_eating: args.eat_yield,
         energy_yield_from_digestion: args.digest_yield,
         create_child_energy: args.create_child,
     });
 
-    let mut world = create_world(args, &cell_params);
+    let mut world = create_world(args, &bio_constants);
 
     run(&mut world, args.steps);
 }
 
-fn create_world(args: &Args, cell_params: &Rc<CellParameters>) -> World {
+fn create_world(args: &Args, bio_constants: &Rc<BioConstants>) -> World {
     World::new()
         .with_cells(world::generate_cells(
             args.cells,
@@ -37,7 +37,7 @@ fn create_world(args: &Args, cell_params: &Rc<CellParameters>) -> World {
             Normal::new(args.mean_eat, args.sd_eat).unwrap(),
             Normal::new(args.mean_child_en, args.sd_child_en).unwrap(),
             Normal::new(args.mean_child_fd, args.sd_child_fd).unwrap(),
-            cell_params,
+            bio_constants,
         ))
         .with_food(args.initial_food)
         .with_food_sources(vec![

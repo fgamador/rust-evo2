@@ -1,7 +1,7 @@
 use rand::distributions::Distribution;
 use rand_distr::Normal;
 use std::rc::Rc;
-use crate::cell::{Cell, CellEnvironment, CellParameters};
+use crate::cell::{Cell, CellEnvironment, BioConstants};
 use crate::food_sources::FoodSource;
 
 pub const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
@@ -113,7 +113,7 @@ pub fn generate_cells(
     eating_energies: Normal<f32>,
     child_threshold_energies: Normal<f32>,
     child_threshold_foods: Normal<f32>,
-    cell_params: &Rc<CellParameters>,
+    cell_params: &Rc<BioConstants>,
 ) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
     let mut cells = Vec::with_capacity(num_cells);
@@ -137,7 +137,7 @@ mod tests {
 
     #[test]
     fn world_counts_both_living_and_dead_cells() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let cell_params = Rc::new(BioConstants::DEFAULT);
         let world = World::new().with_cells(vec![
             Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 0.0),
             Cell::new(&cell_params, 0.0, f32::MAX, f32::MAX, 0.0),
@@ -153,7 +153,7 @@ mod tests {
 
     #[test]
     fn world_calculates_mean_energy() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let cell_params = Rc::new(BioConstants::DEFAULT);
         let world = World::new().with_cells(vec![
             Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 0.0),
             Cell::new(&cell_params, 2.0, f32::MAX, f32::MAX, 0.0),
@@ -163,7 +163,7 @@ mod tests {
 
     #[test]
     fn generate_cells_with_normal_energy_distribution() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let cell_params = Rc::new(BioConstants::DEFAULT);
         let cells = generate_cells(
             100,
             Normal::new(100.0, 5.0).unwrap(),
@@ -178,7 +178,7 @@ mod tests {
 
     #[test]
     fn world_adds_new_cells() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let cell_params = Rc::new(BioConstants::DEFAULT);
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
@@ -190,7 +190,7 @@ mod tests {
 
     #[test]
     fn world_reports_num_added() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let cell_params = Rc::new(BioConstants::DEFAULT);
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
@@ -203,7 +203,7 @@ mod tests {
 
     #[test]
     fn world_removes_dead_cells() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let cell_params = Rc::new(BioConstants::DEFAULT);
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
@@ -216,9 +216,9 @@ mod tests {
 
     #[test]
     fn world_reports_num_died() {
-        let cell_params = Rc::new(CellParameters {
+        let cell_params = Rc::new(BioConstants {
             maintenance_energy_use: 5.0,
-            ..CellParameters::DEFAULT
+            ..BioConstants::DEFAULT
         });
         let mut world = World::new().with_cells(vec![
             Cell::new(&cell_params, 10.0, f32::MAX, f32::MAX, 0.0),
@@ -231,7 +231,7 @@ mod tests {
 
     #[test]
     fn cells_consume_world_food() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let cell_params = Rc::new(BioConstants::DEFAULT);
         let mut world = World::new()
             .with_food(10.0)
             .with_cells(vec![
@@ -244,7 +244,7 @@ mod tests {
 
     #[test]
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
-        let cell_params = Rc::new(CellParameters::DEFAULT);
+        let cell_params = Rc::new(BioConstants::DEFAULT);
         let mut world = World::new()
             .with_food(4.0)
             .with_cells(vec![

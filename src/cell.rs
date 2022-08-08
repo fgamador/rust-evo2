@@ -7,7 +7,7 @@ pub const DEFAULT_CREATE_CHILD_ENERGY: f32 = 0.0;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Cell {
-    cell_params: Rc<CellParameters>,
+    bio_constants: Rc<BioConstants>,
     energy: f32,
     child_threshold_energy: f32,
     child_threshold_food: f32,
@@ -15,9 +15,9 @@ pub struct Cell {
 }
 
 impl Cell {
-    pub fn new(cell_params: &Rc<CellParameters>, energy: f32, child_threshold_energy: f32, child_threshold_food: f32, attempted_eating_energy: f32) -> Self {
+    pub fn new(bio_constants: &Rc<BioConstants>, energy: f32, child_threshold_energy: f32, child_threshold_food: f32, attempted_eating_energy: f32) -> Self {
         Cell {
-            cell_params: Rc::clone(cell_params),
+            bio_constants: Rc::clone(bio_constants),
             energy,
             child_threshold_energy,
             child_threshold_food,
@@ -48,35 +48,35 @@ impl Cell {
 
         let mut child = self.clone();
         self.energy -= self.child_threshold_energy;
-        child.energy = self.child_threshold_energy - self.cell_params.create_child_energy;
+        child.energy = self.child_threshold_energy - self.bio_constants.create_child_energy;
         Some(child)
     }
 
     fn eat(&mut self, food_per_cell: f32) -> f32 {
         self.energy -= self.attempted_eating_energy;
-        (self.attempted_eating_energy * self.cell_params.food_yield_from_eating).min(food_per_cell)
+        (self.attempted_eating_energy * self.bio_constants.food_yield_from_eating).min(food_per_cell)
     }
 
     fn digest(&mut self, food_amount: f32) {
-        self.energy += food_amount * self.cell_params.energy_yield_from_digestion;
+        self.energy += food_amount * self.bio_constants.energy_yield_from_digestion;
     }
 
     fn maintain(&mut self) {
-        self.energy -= self.cell_params.maintenance_energy_use;
+        self.energy -= self.bio_constants.maintenance_energy_use;
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct CellParameters {
+pub struct BioConstants {
     pub maintenance_energy_use: f32,
     pub food_yield_from_eating: f32,
     pub energy_yield_from_digestion: f32,
     pub create_child_energy: f32,
 }
 
-impl CellParameters {
+impl BioConstants {
     #[allow(dead_code)]
-    pub const DEFAULT: CellParameters = CellParameters {
+    pub const DEFAULT: BioConstants = BioConstants {
         maintenance_energy_use: DEFAULT_MAINTENANCE_ENERGY_USE,
         food_yield_from_eating: DEFAULT_FOOD_YIELD_FROM_EATING,
         energy_yield_from_digestion: DEFAULT_ENERGY_YIELD_FROM_DIGESTION,
@@ -99,108 +99,108 @@ mod tests {
 
     #[test]
     fn cell_uses_energy() {
-        let cell_params = Rc::new(CellParameters {
+        let bio_constants = Rc::new(BioConstants {
             maintenance_energy_use: 5.25,
-            ..CellParameters::DEFAULT
+            ..BioConstants::DEFAULT
         });
-        let mut cell = Cell::new(&cell_params, 10.0, f32::MAX, f32::MAX, 0.0);
+        let mut cell = Cell::new(&bio_constants, 10.0, f32::MAX, f32::MAX, 0.0);
         cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(cell.energy(), 4.75);
     }
 
     #[test]
     fn cell_with_no_energy_is_dead() {
-        let cell = Cell::new(&Rc::new(CellParameters::DEFAULT), 0.0, f32::MAX, f32::MAX, 0.0);
+        let cell = Cell::new(&Rc::new(BioConstants::DEFAULT), 0.0, f32::MAX, f32::MAX, 0.0);
         assert!(!cell.is_alive());
     }
 
     #[test]
     fn cell_eats_food() {
-        let cell_params = Rc::new(CellParameters {
+        let bio_constants = Rc::new(BioConstants {
             food_yield_from_eating: 1.5,
-            ..CellParameters::DEFAULT
+            ..BioConstants::DEFAULT
         });
         let environment = CellEnvironment {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 2.0);
+        let mut cell = Cell::new(&bio_constants, 1.0, f32::MAX, f32::MAX, 2.0);
         let (_, food_eaten) = cell.step(&environment);
         assert_eq!(food_eaten, 3.0);
     }
 
     #[test]
     fn cell_cannot_eat_more_food_than_is_available() {
-        let cell_params = Rc::new(CellParameters {
+        let bio_constants = Rc::new(BioConstants {
             food_yield_from_eating: 1.0,
-            ..CellParameters::DEFAULT
+            ..BioConstants::DEFAULT
         });
         let environment = CellEnvironment {
             food_per_cell: 2.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&cell_params, 1.0, f32::MAX, f32::MAX, 3.0);
+        let mut cell = Cell::new(&bio_constants, 1.0, f32::MAX, f32::MAX, 3.0);
         let (_, food_eaten) = cell.step(&environment);
         assert_eq!(food_eaten, 2.0);
     }
 
     #[test]
     fn cell_expends_energy_eating() {
-        let cell_params = Rc::new(CellParameters {
+        let bio_constants = Rc::new(BioConstants {
             food_yield_from_eating: 0.0,
-            ..CellParameters::DEFAULT
+            ..BioConstants::DEFAULT
         });
         let environment = CellEnvironment {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&cell_params, 5.0, f32::MAX, f32::MAX, 2.0);
+        let mut cell = Cell::new(&bio_constants, 5.0, f32::MAX, f32::MAX, 2.0);
         cell.step(&environment);
         assert_eq!(cell.energy(), 3.0);
     }
 
     #[test]
     fn cell_expends_energy_eating_even_when_there_is_no_food() {
-        let cell_params = Rc::new(CellParameters {
+        let bio_constants = Rc::new(BioConstants {
             food_yield_from_eating: 0.0,
-            ..CellParameters::DEFAULT
+            ..BioConstants::DEFAULT
         });
         let environment = CellEnvironment {
             food_per_cell: 0.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&cell_params, 5.0, f32::MAX, f32::MAX, 2.0);
+        let mut cell = Cell::new(&bio_constants, 5.0, f32::MAX, f32::MAX, 2.0);
         cell.step(&environment);
         assert_eq!(cell.energy(), 3.0);
     }
 
     #[test]
     fn cell_digests_food() {
-        let cell_params = Rc::new(CellParameters {
+        let bio_constants = Rc::new(BioConstants {
             maintenance_energy_use: 0.0,
             food_yield_from_eating: 1.0,
             energy_yield_from_digestion: 1.5,
-            ..CellParameters::DEFAULT
+            ..BioConstants::DEFAULT
         });
         let environment = CellEnvironment {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&cell_params, 10.0, f32::MAX, f32::MAX, 2.0);
+        let mut cell = Cell::new(&bio_constants, 10.0, f32::MAX, f32::MAX, 2.0);
         cell.step(&environment);
         assert_eq!(cell.energy(), 11.0);
     }
 
     #[test]
     fn cell_with_insufficient_energy_does_not_reproduce() {
-        let mut cell = Cell::new(&Rc::new(CellParameters::DEFAULT), 3.0, 4.0, f32::MAX, 0.0);
+        let mut cell = Cell::new(&Rc::new(BioConstants::DEFAULT), 3.0, 4.0, f32::MAX, 0.0);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, None);
     }
 
     #[test]
     fn cell_with_insufficient_food_does_not_reproduce() {
-        let mut cell = Cell::new(&Rc::new(CellParameters::DEFAULT), 1.0, 1.0, 4.0, 0.0);
+        let mut cell = Cell::new(&Rc::new(BioConstants::DEFAULT), 1.0, 1.0, 4.0, 0.0);
         let environment = CellEnvironment {
             food_per_cell: 3.0,
             ..CellEnvironment::DEFAULT
@@ -211,14 +211,14 @@ mod tests {
 
     #[test]
     fn cell_passes_energy_to_child() {
-        let cell_params = Rc::new(CellParameters {
+        let bio_constants = Rc::new(BioConstants {
             create_child_energy: 1.5,
-            ..CellParameters::DEFAULT
+            ..BioConstants::DEFAULT
         });
-        let mut cell = Cell::new(&cell_params, 10.0, 4.0, 0.0, 1.0);
+        let mut cell = Cell::new(&bio_constants, 10.0, 4.0, 0.0, 1.0);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
-            cell_params: Rc::clone(&cell_params),
+            bio_constants: Rc::clone(&bio_constants),
             energy: 2.5,
             child_threshold_energy: 4.0,
             child_threshold_food: 0.0,
