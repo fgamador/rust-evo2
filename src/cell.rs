@@ -1,10 +1,5 @@
 use std::rc::Rc;
 
-pub const DEFAULT_MAINTENANCE_ENERGY_USE: f32 = 0.0;
-pub const DEFAULT_FOOD_YIELD_FROM_EATING: f32 = 1.0;
-pub const DEFAULT_ENERGY_YIELD_FROM_DIGESTION: f32 = 1.0;
-pub const DEFAULT_CREATE_CHILD_ENERGY: f32 = 0.0;
-
 #[derive(Clone, Debug, PartialEq)]
 pub struct Cell {
     bio_constants: Rc<BioConstants>,
@@ -77,10 +72,10 @@ pub struct BioConstants {
 impl BioConstants {
     #[allow(dead_code)]
     pub const DEFAULT: BioConstants = BioConstants {
-        maintenance_energy_use: DEFAULT_MAINTENANCE_ENERGY_USE,
-        food_yield_from_eating: DEFAULT_FOOD_YIELD_FROM_EATING,
-        energy_yield_from_digestion: DEFAULT_ENERGY_YIELD_FROM_DIGESTION,
-        create_child_energy: DEFAULT_CREATE_CHILD_ENERGY,
+        maintenance_energy_use: 0.0,
+        food_yield_from_eating: 1.0,
+        energy_yield_from_digestion: 1.0,
+        create_child_energy: 0.0,
     };
 }
 

@@ -1,7 +1,6 @@
 use clap::Parser;
 use rand_distr::Normal;
 use std::rc::Rc;
-use crate::cell;
 use crate::cell::BioConstants;
 use crate::food_sources::ConstantFoodSource;
 use crate::world;
@@ -115,11 +114,11 @@ pub struct Args {
     sd_child_fd: f32,
 
     /// Energy cost of creating a child
-    #[clap(long, default_value_t = cell::DEFAULT_CREATE_CHILD_ENERGY)]
+    #[clap(long, default_value_t = BioConstants::DEFAULT.create_child_energy)]
     create_child: f32,
 
     /// Cell maintenance energy
-    #[clap(short('M'), long, default_value_t = cell::DEFAULT_MAINTENANCE_ENERGY_USE)]
+    #[clap(short('M'), long, default_value_t = BioConstants::DEFAULT.maintenance_energy_use)]
     maint: f32,
 
     /// Mean of cell eating energies
@@ -131,10 +130,10 @@ pub struct Args {
     sd_eat: f32,
 
     /// Food gained per unit eating energy
-    #[clap(short('F'), long, default_value_t = cell::DEFAULT_FOOD_YIELD_FROM_EATING)]
+    #[clap(short('F'), long, default_value_t = BioConstants::DEFAULT.food_yield_from_eating)]
     eat_yield: f32,
 
     /// Energy gained per unit food
-    #[clap(short('D'), long, default_value_t = cell::DEFAULT_ENERGY_YIELD_FROM_DIGESTION)]
+    #[clap(short('D'), long, default_value_t = BioConstants::DEFAULT.energy_yield_from_digestion)]
     digest_yield: f32,
 }
