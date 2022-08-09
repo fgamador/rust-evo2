@@ -3,6 +3,7 @@ use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Cell {
     bio_constants: Rc<BioConstants>,
+    health: f32,
     energy: f32,
     child_threshold_energy: f32,
     child_threshold_food: f32,
@@ -13,11 +14,16 @@ impl Cell {
     pub fn new(bio_constants: &Rc<BioConstants>, energy: f32, child_threshold_energy: f32, child_threshold_food: f32, attempted_eating_energy: f32) -> Self {
         Cell {
             bio_constants: Rc::clone(bio_constants),
+            health: 1.0,
             energy,
             child_threshold_energy,
             child_threshold_food,
             attempted_eating_energy,
         }
+    }
+
+    pub fn health(&self) -> f32 {
+        self.health
     }
 
     pub fn energy(&self) -> f32 {
@@ -91,6 +97,12 @@ impl CellEnvironment {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn new_cell_has_full_health() {
+        let cell = Cell::new(&Rc::new(BioConstants::DEFAULT), 0.0, f32::MAX, f32::MAX, 0.0);
+        assert_eq!(cell.health(), 1.0);
+    }
 
     #[test]
     fn cell_uses_energy() {
@@ -214,6 +226,7 @@ mod tests {
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
             bio_constants: Rc::clone(&bio_constants),
+            health: 1.0,
             energy: 2.5,
             child_threshold_energy: 4.0,
             child_threshold_food: 0.0,

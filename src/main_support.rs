@@ -45,29 +45,32 @@ fn create_world(args: &Args, bio_constants: &Rc<BioConstants>) -> World {
 }
 
 fn run(world: &mut World, steps: u32) {
-    println!("<step>: +<born> -<died> -> <cells> (e: <mean_cell_energy>, f: <total_food>)");
+    print_stats_header();
 
     let mut step = 0;
-    println!("{}: +{} -{} -> {} (e: {}, f: {})",
-             step,
-             0,
-             0,
-             world.num_cells(),
-             world.mean_energy(),
-             world.food());
+    print_stats(world, step, 0, 0);
 
     while step < steps && world.num_cells() > 0 {
         let (num_created, num_died) = world.step();
         step += 1;
-        println!("{}: +{} -{} -> {} (e: {}, f: {})",
-                 step,
-                 num_created,
-                 num_died,
-                 world.num_cells(),
-                 world.mean_energy(),
-                 world.food()
-        );
+        print_stats(world, step, num_created, num_died);
     }
+}
+
+fn print_stats_header() {
+    println!("<step>: +<born> -<died> -> <cells> (h: <mean_cell_health>, e: <mean_cell_energy>, f: <total_food>)");
+}
+
+fn print_stats(world: &World, step: u32, num_created: usize, num_died: usize) {
+    println!("{}: +{} -{} -> {} (h: {}, e: {}, f: {})",
+             step,
+             num_created,
+             num_died,
+             world.num_cells(),
+             world.mean_health(),
+             world.mean_energy(),
+             world.food()
+    );
 }
 
 #[derive(Parser)]

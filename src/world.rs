@@ -51,6 +51,14 @@ impl World {
         self.cells.len()
     }
 
+    pub fn mean_health(&self) -> f32 {
+        if self.cells.is_empty() {
+            return 0.0;
+        }
+
+        self.cells.iter().map(|cell| cell.health()).sum::<f32>() / self.cells.len() as f32
+    }
+
     pub fn mean_energy(&self) -> f32 {
         if self.cells.is_empty() {
             return 0.0;
@@ -104,6 +112,12 @@ impl World {
         for index in sorted_indexes.iter().rev() {
             self.cells.swap_remove(*index);
         }
+    }
+}
+
+impl Default for World {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
