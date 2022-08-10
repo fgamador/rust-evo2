@@ -15,7 +15,11 @@ impl Cell {
     pub fn new(bio_constants: &Rc<BioConstants>, energy: f32, child_threshold_energy: f32, child_threshold_food: f32, attempted_eating_energy: f32) -> Self {
         Cell {
             bio_constants: Rc::clone(bio_constants),
-            cell_constants: CellConstants {},
+            cell_constants: CellConstants {
+                child_threshold_energy,
+                child_threshold_food,
+                attempted_eating_energy,
+            },
             health: 1.0,
             energy,
             child_threshold_energy,
@@ -89,11 +93,17 @@ impl BioConstants {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct CellConstants {
+    child_threshold_energy: f32,
+    child_threshold_food: f32,
+    attempted_eating_energy: f32,
 }
 
 impl CellConstants {
     #[allow(dead_code)]
     pub const DEFAULT: CellConstants = CellConstants {
+        child_threshold_energy: f32::MAX,
+        child_threshold_food: f32::MAX,
+        attempted_eating_energy: 0.0,
     };
 }
 
@@ -238,7 +248,11 @@ mod tests {
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
             bio_constants: Rc::clone(&bio_constants),
-            cell_constants: CellConstants {},
+            cell_constants: CellConstants {
+                child_threshold_energy: 4.0,
+                child_threshold_food: 0.0,
+                attempted_eating_energy: 1.0,
+            },
             health: 1.0,
             energy: 2.5,
             child_threshold_energy: 4.0,
