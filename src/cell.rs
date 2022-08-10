@@ -6,7 +6,6 @@ pub struct Cell {
     cell_constants: CellConstants,
     health: f32,
     energy: f32,
-    child_threshold_energy: f32,
     child_threshold_food: f32,
     attempted_eating_energy: f32,
 }
@@ -22,7 +21,6 @@ impl Cell {
             },
             health: 1.0,
             energy,
-            child_threshold_energy,
             child_threshold_food,
             attempted_eating_energy,
         }
@@ -49,13 +47,13 @@ impl Cell {
     }
 
     fn try_reproduce(&mut self, environment: &CellEnvironment) -> Option<Cell> {
-        if self.energy < self.child_threshold_energy
+        if self.energy < self.cell_constants.child_threshold_energy
             || environment.food_per_cell < self.child_threshold_food
         { return None; }
 
         let mut child = self.clone();
-        self.energy -= self.child_threshold_energy;
-        child.energy = self.child_threshold_energy - self.bio_constants.create_child_energy;
+        self.energy -= self.cell_constants.child_threshold_energy;
+        child.energy = self.cell_constants.child_threshold_energy - self.bio_constants.create_child_energy;
         Some(child)
     }
 
@@ -255,7 +253,6 @@ mod tests {
             },
             health: 1.0,
             energy: 2.5,
-            child_threshold_energy: 4.0,
             child_threshold_food: 0.0,
             attempted_eating_energy: 1.0,
         }));
