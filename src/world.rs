@@ -124,17 +124,22 @@ impl Default for World {
 pub fn generate_cells(
     num_cells: usize,
     initial_energies: Normal<f32>,
-    _eating_energies: Normal<f32>,
-    _child_threshold_energies: Normal<f32>,
-    _child_threshold_foods: Normal<f32>,
+    eating_energies: Normal<f32>,
+    child_threshold_energies: Normal<f32>,
+    child_threshold_foods: Normal<f32>,
     cell_params: &Rc<BioConstants>,
 ) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
+        let cell_constants = CellConstants {
+            child_threshold_energy: child_threshold_energies.sample(&mut rng),
+            child_threshold_food: child_threshold_foods.sample(&mut rng),
+            attempted_eating_energy: eating_energies.sample(&mut rng),
+        };
         cells.push(Cell::new(
             cell_params,
-            CellConstants::DEFAULT,
+            cell_constants,
             initial_energies.sample(&mut rng),
         ));
     }
