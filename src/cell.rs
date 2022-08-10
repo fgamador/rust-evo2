@@ -144,6 +144,7 @@ mod tests {
             ..BioConstants::DEFAULT
         });
         let cell_constants = CellConstants {
+            attempted_eating_energy: 2.0,
             ..CellConstants::DEFAULT
         };
         let environment = CellEnvironment {
@@ -162,6 +163,7 @@ mod tests {
             ..BioConstants::DEFAULT
         });
         let cell_constants = CellConstants {
+            attempted_eating_energy: 3.0,
             ..CellConstants::DEFAULT
         };
         let environment = CellEnvironment {
@@ -180,6 +182,7 @@ mod tests {
             ..BioConstants::DEFAULT
         });
         let cell_constants = CellConstants {
+            attempted_eating_energy: 2.0,
             ..CellConstants::DEFAULT
         };
         let environment = CellEnvironment {
@@ -198,6 +201,7 @@ mod tests {
             ..BioConstants::DEFAULT
         });
         let cell_constants = CellConstants {
+            attempted_eating_energy: 2.0,
             ..CellConstants::DEFAULT
         };
         let environment = CellEnvironment {
@@ -218,6 +222,7 @@ mod tests {
             ..BioConstants::DEFAULT
         });
         let cell_constants = CellConstants {
+            attempted_eating_energy: 2.0,
             ..CellConstants::DEFAULT
         };
         let environment = CellEnvironment {
@@ -232,6 +237,7 @@ mod tests {
     #[test]
     fn cell_with_insufficient_energy_does_not_reproduce() {
         let cell_constants = CellConstants {
+            child_threshold_energy: 4.0,
             ..CellConstants::DEFAULT
         };
         let mut cell = Cell::new(&Rc::new(BioConstants::DEFAULT), cell_constants, 3.0, 4.0, f32::MAX, 0.0);
@@ -242,6 +248,8 @@ mod tests {
     #[test]
     fn cell_with_insufficient_food_does_not_reproduce() {
         let cell_constants = CellConstants {
+            child_threshold_energy: 1.0,
+            child_threshold_food: 4.0,
             ..CellConstants::DEFAULT
         };
         let mut cell = Cell::new(&Rc::new(BioConstants::DEFAULT), cell_constants, 1.0, 1.0, 4.0, 0.0);
@@ -260,6 +268,8 @@ mod tests {
             ..BioConstants::DEFAULT
         });
         let cell_constants = CellConstants {
+            child_threshold_energy: 4.0,
+            child_threshold_food: 0.0,
             ..CellConstants::DEFAULT
         };
         let mut cell = Cell::new(&bio_constants, cell_constants, 10.0, 4.0, 0.0, 1.0);
