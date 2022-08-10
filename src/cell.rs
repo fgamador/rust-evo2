@@ -85,11 +85,11 @@ impl BioConstants {
     };
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CellConstants {
-    child_threshold_energy: f32,
-    child_threshold_food: f32,
-    attempted_eating_energy: f32,
+    pub child_threshold_energy: f32,
+    pub child_threshold_food: f32,
+    pub attempted_eating_energy: f32,
 }
 
 impl CellConstants {

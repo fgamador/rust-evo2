@@ -194,10 +194,15 @@ mod tests {
     #[test]
     fn world_adds_new_cells() {
         let cell_params = Rc::new(BioConstants::DEFAULT);
+        let cell_constants = CellConstants {
+            child_threshold_energy: 4.0,
+            child_threshold_food: 0.0,
+            ..CellConstants::DEFAULT
+        };
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&cell_params, CellConstants::DEFAULT, 10.0, 4.0, 0.0, 0.0),
+                Cell::new(&cell_params, cell_constants, 10.0, 4.0, 0.0, 0.0),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 2);
@@ -206,11 +211,16 @@ mod tests {
     #[test]
     fn world_reports_num_added() {
         let cell_params = Rc::new(BioConstants::DEFAULT);
+        let cell_constants = CellConstants {
+            child_threshold_energy: 4.0,
+            child_threshold_food: 0.0,
+            ..CellConstants::DEFAULT
+        };
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&cell_params, CellConstants::DEFAULT, 10.0, 4.0, 0.0, 0.0),
-                Cell::new(&cell_params, CellConstants::DEFAULT, 10.0, 4.0, 0.0, 0.0),
+                Cell::new(&cell_params, cell_constants, 10.0, 4.0, 0.0, 0.0),
+                Cell::new(&cell_params, cell_constants, 10.0, 4.0, 0.0, 0.0),
             ]);
         let (num_added, _) = world.step();
         assert_eq!(num_added, 2);
@@ -247,11 +257,19 @@ mod tests {
     #[test]
     fn cells_consume_world_food() {
         let cell_params = Rc::new(BioConstants::DEFAULT);
+        let cell0_constants = CellConstants {
+            attempted_eating_energy: 2.0,
+            ..CellConstants::DEFAULT
+        };
+        let cell1_constants = CellConstants {
+            attempted_eating_energy: 3.0,
+            ..CellConstants::DEFAULT
+        };
         let mut world = World::new()
             .with_food(10.0)
             .with_cells(vec![
-                Cell::new(&cell_params, CellConstants::DEFAULT, 1.0, f32::MAX, f32::MAX, 2.0),
-                Cell::new(&cell_params, CellConstants::DEFAULT, 1.0, f32::MAX, f32::MAX, 3.0),
+                Cell::new(&cell_params, cell0_constants, 1.0, f32::MAX, f32::MAX, 2.0),
+                Cell::new(&cell_params, cell1_constants, 1.0, f32::MAX, f32::MAX, 3.0),
             ]);
         world.step();
         assert_eq!(world.food(), 5.0);
@@ -260,11 +278,19 @@ mod tests {
     #[test]
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
         let cell_params = Rc::new(BioConstants::DEFAULT);
+        let cell0_constants = CellConstants {
+            attempted_eating_energy: 3.0,
+            ..CellConstants::DEFAULT
+        };
+        let cell1_constants = CellConstants {
+            attempted_eating_energy: 1.0,
+            ..CellConstants::DEFAULT
+        };
         let mut world = World::new()
             .with_food(4.0)
             .with_cells(vec![
-                Cell::new(&cell_params, CellConstants::DEFAULT, 1.0, f32::MAX, f32::MAX, 3.0),
-                Cell::new(&cell_params, CellConstants::DEFAULT, 1.0, f32::MAX, f32::MAX, 1.0),
+                Cell::new(&cell_params, cell0_constants, 1.0, f32::MAX, f32::MAX, 3.0),
+                Cell::new(&cell_params, cell1_constants, 1.0, f32::MAX, f32::MAX, 1.0),
             ]);
         world.step();
         assert_eq!(world.food(), 1.0);
