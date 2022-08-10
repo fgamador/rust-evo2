@@ -9,14 +9,10 @@ pub struct Cell {
 }
 
 impl Cell {
-    pub fn new(bio_constants: &Rc<BioConstants>, _cell_constants: CellConstants, energy: f32, child_threshold_energy: f32, child_threshold_food: f32, attempted_eating_energy: f32) -> Self {
+    pub fn new(bio_constants: &Rc<BioConstants>, cell_constants: CellConstants, energy: f32, _child_threshold_energy: f32, _child_threshold_food: f32, _attempted_eating_energy: f32) -> Self {
         Cell {
             bio_constants: Rc::clone(bio_constants),
-            cell_constants: CellConstants {
-                child_threshold_energy,
-                child_threshold_food,
-                attempted_eating_energy,
-            },
+            cell_constants,
             health: 1.0,
             energy,
         }
@@ -270,6 +266,7 @@ mod tests {
         let cell_constants = CellConstants {
             child_threshold_energy: 4.0,
             child_threshold_food: 0.0,
+            attempted_eating_energy: 1.0,
             ..CellConstants::DEFAULT
         };
         let mut cell = Cell::new(&bio_constants, cell_constants, 10.0, 4.0, 0.0, 1.0);
