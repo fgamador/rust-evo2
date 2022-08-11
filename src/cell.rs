@@ -5,7 +5,6 @@ pub struct Cell {
     bio_constants: Rc<BioConstants>,
     cell_constants: CellConstants,
     state: CellState,
-    energy: f32,
 }
 
 impl Cell {
@@ -17,7 +16,6 @@ impl Cell {
                 health: 1.0,
                 energy,
             },
-            energy,
         }
     }
 
@@ -26,7 +24,7 @@ impl Cell {
     }
 
     pub fn energy(&self) -> f32 {
-        self.energy
+        self.state.energy
     }
 
     pub fn is_alive(&self) -> bool {
@@ -42,27 +40,27 @@ impl Cell {
     }
 
     fn try_reproduce(&mut self, environment: &CellEnvironment) -> Option<Cell> {
-        if self.energy < self.cell_constants.child_threshold_energy
+        if self.state.energy < self.cell_constants.child_threshold_energy
             || environment.food_per_cell < self.cell_constants.child_threshold_food
         { return None; }
 
         let mut child = self.clone();
-        self.energy -= self.cell_constants.child_threshold_energy;
-        child.energy = self.cell_constants.child_threshold_energy - self.bio_constants.create_child_energy;
+        self.state.energy -= self.cell_constants.child_threshold_energy;
+        child.state.energy = self.cell_constants.child_threshold_energy - self.bio_constants.create_child_energy;
         Some(child)
     }
 
     fn eat(&mut self, food_per_cell: f32) -> f32 {
-        self.energy -= self.cell_constants.attempted_eating_energy;
+        self.state.energy -= self.cell_constants.attempted_eating_energy;
         (self.cell_constants.attempted_eating_energy * self.bio_constants.food_yield_from_eating).min(food_per_cell)
     }
 
     fn digest(&mut self, food_amount: f32) {
-        self.energy += food_amount * self.bio_constants.energy_yield_from_digestion;
+        self.state.energy += food_amount * self.bio_constants.energy_yield_from_digestion;
     }
 
     fn maintain(&mut self) {
-        self.energy -= self.bio_constants.maintenance_energy_use;
+        self.state.energy -= self.bio_constants.maintenance_energy_use;
     }
 }
 
@@ -297,9 +295,8 @@ mod tests {
             },
             state: CellState {
                 health: 1.0,
-                energy: 10.0, // TODO 2.5
+                energy: 2.5,
             },
-            energy: 2.5,
         }));
         assert_eq!(5.0, cell.energy());
     }
