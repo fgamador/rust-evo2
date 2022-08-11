@@ -8,7 +8,7 @@ pub struct Cell {
 }
 
 impl Cell {
-    pub fn new(bio_constants: &Rc<BioConstants>, cell_constants: CellConstants, state: CellState, _energy: f32) -> Self {
+    pub fn new(bio_constants: &Rc<BioConstants>, cell_constants: CellConstants, state: CellState) -> Self {
         Cell {
             bio_constants: Rc::clone(bio_constants),
             cell_constants,
@@ -124,7 +124,7 @@ mod tests {
 
     #[test]
     fn new_cell_has_full_health() {
-        let cell = Cell::new(&Rc::new(BioConstants::DEFAULT), CellConstants::DEFAULT, CellState::DEFAULT, 0.0);
+        let cell = Cell::new(&Rc::new(BioConstants::DEFAULT), CellConstants::DEFAULT, CellState::DEFAULT);
         assert_eq!(cell.health(), 1.0);
     }
 
@@ -138,7 +138,7 @@ mod tests {
             energy: 10.0,
             ..CellState::DEFAULT
         };
-        let mut cell = Cell::new(&bio_constants, CellConstants::DEFAULT, state, 10.0);
+        let mut cell = Cell::new(&bio_constants, CellConstants::DEFAULT, state);
         cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(cell.energy(), 4.75);
     }
@@ -149,7 +149,7 @@ mod tests {
             energy: 0.0,
             ..CellState::DEFAULT
         };
-        let cell = Cell::new(&Rc::new(BioConstants::DEFAULT), CellConstants::DEFAULT, state, 0.0);
+        let cell = Cell::new(&Rc::new(BioConstants::DEFAULT), CellConstants::DEFAULT, state);
         assert!(!cell.is_alive());
     }
 
@@ -171,7 +171,7 @@ mod tests {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&bio_constants, cell_constants, state, 1.0);
+        let mut cell = Cell::new(&bio_constants, cell_constants, state);
         let (_, food_eaten) = cell.step(&environment);
         assert_eq!(food_eaten, 3.0);
     }
@@ -194,7 +194,7 @@ mod tests {
             food_per_cell: 2.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&bio_constants, cell_constants, state, 1.0);
+        let mut cell = Cell::new(&bio_constants, cell_constants, state);
         let (_, food_eaten) = cell.step(&environment);
         assert_eq!(food_eaten, 2.0);
     }
@@ -217,7 +217,7 @@ mod tests {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&bio_constants, cell_constants, state, 5.0);
+        let mut cell = Cell::new(&bio_constants, cell_constants, state);
         cell.step(&environment);
         assert_eq!(cell.energy(), 3.0);
     }
@@ -240,7 +240,7 @@ mod tests {
             food_per_cell: 0.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&bio_constants, cell_constants, state, 5.0);
+        let mut cell = Cell::new(&bio_constants, cell_constants, state);
         cell.step(&environment);
         assert_eq!(cell.energy(), 3.0);
     }
@@ -265,7 +265,7 @@ mod tests {
             food_per_cell: 10.0,
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&bio_constants, cell_constants, state, 10.0);
+        let mut cell = Cell::new(&bio_constants, cell_constants, state);
         cell.step(&environment);
         assert_eq!(cell.energy(), 11.0);
     }
@@ -280,7 +280,7 @@ mod tests {
             energy: 3.0,
             ..CellState::DEFAULT
         };
-        let mut cell = Cell::new(&Rc::new(BioConstants::DEFAULT), cell_constants, state, 3.0);
+        let mut cell = Cell::new(&Rc::new(BioConstants::DEFAULT), cell_constants, state);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, None);
     }
@@ -296,7 +296,7 @@ mod tests {
             energy: 1.0,
             ..CellState::DEFAULT
         };
-        let mut cell = Cell::new(&Rc::new(BioConstants::DEFAULT), cell_constants, state, 1.0);
+        let mut cell = Cell::new(&Rc::new(BioConstants::DEFAULT), cell_constants, state);
         let environment = CellEnvironment {
             food_per_cell: 3.0,
             ..CellEnvironment::DEFAULT
@@ -321,7 +321,7 @@ mod tests {
             energy: 10.0,
             ..CellState::DEFAULT
         };
-        let mut cell = Cell::new(&bio_constants, cell_constants, state, 10.0);
+        let mut cell = Cell::new(&bio_constants, cell_constants, state);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
             bio_constants: Rc::clone(&bio_constants),
