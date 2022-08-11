@@ -4,6 +4,7 @@ use std::rc::Rc;
 pub struct Cell {
     bio_constants: Rc<BioConstants>,
     cell_constants: CellConstants,
+    state: CellState,
     health: f32,
     energy: f32,
 }
@@ -13,6 +14,7 @@ impl Cell {
         Cell {
             bio_constants: Rc::clone(bio_constants),
             cell_constants,
+            state: CellState::DEFAULT,
             health: 1.0,
             energy,
         }
@@ -94,6 +96,16 @@ impl CellConstants {
         child_threshold_energy: f32::MAX,
         child_threshold_food: f32::MAX,
         attempted_eating_energy: 0.0,
+    };
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CellState {
+}
+
+impl CellState {
+    #[allow(dead_code)]
+    pub const DEFAULT: CellState = CellState {
     };
 }
 
@@ -277,6 +289,8 @@ mod tests {
                 child_threshold_energy: 4.0,
                 child_threshold_food: 0.0,
                 attempted_eating_energy: 1.0,
+            },
+            state: CellState {
             },
             health: 1.0,
             energy: 2.5,
