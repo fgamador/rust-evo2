@@ -1,7 +1,7 @@
 use clap::Parser;
 use rand_distr::Normal;
 use std::rc::Rc;
-use crate::cell::BioConstants;
+use crate::cell::CellConstants;
 use crate::food_sources::ConstantFoodSource;
 use crate::world;
 use crate::world::World;
@@ -16,7 +16,7 @@ const DEFAULT_MEAN_EATING_ENERGY: f32 = 0.0;
 const DEFAULT_STD_DEV_EATING_ENERGY: f32 = 0.0;
 
 pub fn create_and_run_world(args: &Args) {
-    let bio_constants = Rc::new(BioConstants {
+    let bio_constants = Rc::new(CellConstants {
         maintenance_energy_use: args.maint,
         food_yield_from_eating: args.eat_yield,
         energy_yield_from_digestion: args.digest_yield,
@@ -28,7 +28,7 @@ pub fn create_and_run_world(args: &Args) {
     run(&mut world, args.steps);
 }
 
-fn create_world(args: &Args, bio_constants: &Rc<BioConstants>) -> World {
+fn create_world(args: &Args, bio_constants: &Rc<CellConstants>) -> World {
     World::new()
         .with_cells(world::generate_cells(
             args.cells,
@@ -117,11 +117,11 @@ pub struct Args {
     sd_child_fd: f32,
 
     /// Energy cost of creating a child
-    #[clap(long, default_value_t = BioConstants::DEFAULT.create_child_energy)]
+    #[clap(long, default_value_t = CellConstants::DEFAULT.create_child_energy)]
     create_child: f32,
 
     /// Cell maintenance energy
-    #[clap(short('M'), long, default_value_t = BioConstants::DEFAULT.maintenance_energy_use)]
+    #[clap(short('M'), long, default_value_t = CellConstants::DEFAULT.maintenance_energy_use)]
     maint: f32,
 
     /// Mean of cell eating energies
@@ -133,10 +133,10 @@ pub struct Args {
     sd_eat: f32,
 
     /// Food gained per unit eating energy
-    #[clap(short('F'), long, default_value_t = BioConstants::DEFAULT.food_yield_from_eating)]
+    #[clap(short('F'), long, default_value_t = CellConstants::DEFAULT.food_yield_from_eating)]
     eat_yield: f32,
 
     /// Energy gained per unit food
-    #[clap(short('D'), long, default_value_t = BioConstants::DEFAULT.energy_yield_from_digestion)]
+    #[clap(short('D'), long, default_value_t = CellConstants::DEFAULT.energy_yield_from_digestion)]
     digest_yield: f32,
 }

@@ -1,7 +1,7 @@
 use rand::distributions::Distribution;
 use rand_distr::Normal;
 use std::rc::Rc;
-use crate::cell::{Cell, CellEnvironment, BioConstants, CellParams, CellState};
+use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams, CellState};
 use crate::food_sources::FoodSource;
 
 pub const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
@@ -127,7 +127,7 @@ pub fn generate_cells(
     eating_energies: Normal<f32>,
     child_threshold_energies: Normal<f32>,
     child_threshold_foods: Normal<f32>,
-    bio_constants: &Rc<BioConstants>,
+    constants: &Rc<CellConstants>,
 ) -> Vec<Cell> {
     let mut rng = rand::thread_rng();
     let mut cells = Vec::with_capacity(num_cells);
@@ -138,7 +138,7 @@ pub fn generate_cells(
             attempted_eating_energy: eating_energies.sample(&mut rng),
         };
         cells.push(Cell::new(
-            bio_constants,
+            constants,
             params,
             CellState {
                 energy: initial_energies.sample(&mut rng),
@@ -157,7 +157,7 @@ mod tests {
 
     #[test]
     fn world_counts_both_living_and_dead_cells() {
-        let bio_constants = Rc::new(BioConstants::DEFAULT);
+        let constants = Rc::new(CellConstants::DEFAULT);
         let live_state = CellState {
             energy: 1.0,
             ..CellState::DEFAULT
@@ -167,9 +167,9 @@ mod tests {
             ..CellState::DEFAULT
         };
         let world = World::new().with_cells(vec![
-            Cell::new(&bio_constants, CellParams::DEFAULT, live_state),
-            Cell::new(&bio_constants, CellParams::DEFAULT, dead_state),
-            Cell::new(&bio_constants, CellParams::DEFAULT, live_state),
+            Cell::new(&constants, CellParams::DEFAULT, live_state),
+            Cell::new(&constants, CellParams::DEFAULT, dead_state),
+            Cell::new(&constants, CellParams::DEFAULT, live_state),
         ]);
         assert_eq!(world.num_cells(), 3);
     }
@@ -181,7 +181,7 @@ mod tests {
 
     #[test]
     fn world_calculates_mean_energy() {
-        let bio_constants = Rc::new(BioConstants::DEFAULT);
+        let constants = Rc::new(CellConstants::DEFAULT);
         let state0 = CellState {
             energy: 1.0,
             ..CellState::DEFAULT
@@ -191,22 +191,22 @@ mod tests {
             ..CellState::DEFAULT
         };
         let world = World::new().with_cells(vec![
-            Cell::new(&bio_constants, CellParams::DEFAULT, state0),
-            Cell::new(&bio_constants, CellParams::DEFAULT, state1),
+            Cell::new(&constants, CellParams::DEFAULT, state0),
+            Cell::new(&constants, CellParams::DEFAULT, state1),
         ]);
         assert_eq!(world.mean_energy(), 1.5);
     }
 
     #[test]
     fn generate_cells_with_normal_energy_distribution() {
-        let bio_constants = Rc::new(BioConstants::DEFAULT);
+        let constants = Rc::new(CellConstants::DEFAULT);
         let cells = generate_cells(
             100,
             Normal::new(100.0, 5.0).unwrap(),
             Normal::new(0.0, 0.0).unwrap(),
             Normal::new(0.0, 0.0).unwrap(),
             Normal::new(f32::MAX, 0.0).unwrap(),
-            &bio_constants,
+            &constants,
         );
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e < 100.0));
         assert!(cells.iter().map(|cell| cell.energy()).any(|e| e > 100.0));
@@ -214,7 +214,7 @@ mod tests {
 
     #[test]
     fn world_adds_new_cells() {
-        let bio_constants = Rc::new(BioConstants::DEFAULT);
+        let constants = Rc::new(CellConstants::DEFAULT);
         let params = CellParams {
             child_threshold_energy: 4.0,
             child_threshold_food: 0.0,
@@ -227,7 +227,7 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&bio_constants, params, state),
+                Cell::new(&constants, params, state),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 2);
@@ -235,7 +235,7 @@ mod tests {
 
     #[test]
     fn world_reports_num_added() {
-        let bio_constants = Rc::new(BioConstants::DEFAULT);
+        let constants = Rc::new(CellConstants::DEFAULT);
         let params = CellParams {
             child_threshold_energy: 4.0,
             child_threshold_food: 0.0,
@@ -248,8 +248,8 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&bio_constants, params, state),
-                Cell::new(&bio_constants, params, state),
+                Cell::new(&constants, params, state),
+                Cell::new(&constants, params, state),
             ]);
         let (num_added, _) = world.step();
         assert_eq!(num_added, 2);
@@ -257,7 +257,7 @@ mod tests {
 
     #[test]
     fn world_removes_dead_cells() {
-        let bio_constants = Rc::new(BioConstants::DEFAULT);
+        let constants = Rc::new(CellConstants::DEFAULT);
         let state0 = CellState {
             energy: 1.0,
             ..CellState::DEFAULT
@@ -269,8 +269,8 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_cells(vec![
-                Cell::new(&bio_constants, CellParams::DEFAULT, state0),
-                Cell::new(&bio_constants, CellParams::DEFAULT, state1),
+                Cell::new(&constants, CellParams::DEFAULT, state0),
+                Cell::new(&constants, CellParams::DEFAULT, state1),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 1);
@@ -278,9 +278,9 @@ mod tests {
 
     #[test]
     fn world_reports_num_died() {
-        let bio_constants = Rc::new(BioConstants {
+        let constants = Rc::new(CellConstants {
             maintenance_energy_use: 5.0,
-            ..BioConstants::DEFAULT
+            ..CellConstants::DEFAULT
         });
         let state0 = CellState {
             energy: 10.0,
@@ -295,9 +295,9 @@ mod tests {
             ..CellState::DEFAULT
         };
         let mut world = World::new().with_cells(vec![
-            Cell::new(&bio_constants, CellParams::DEFAULT, state0),
-            Cell::new(&bio_constants, CellParams::DEFAULT, state1),
-            Cell::new(&bio_constants, CellParams::DEFAULT, state2),
+            Cell::new(&constants, CellParams::DEFAULT, state0),
+            Cell::new(&constants, CellParams::DEFAULT, state1),
+            Cell::new(&constants, CellParams::DEFAULT, state2),
         ]);
         let (_, num_died) = world.step();
         assert_eq!(num_died, 2);
@@ -305,7 +305,7 @@ mod tests {
 
     #[test]
     fn cells_consume_world_food() {
-        let bio_constants = Rc::new(BioConstants::DEFAULT);
+        let constants = Rc::new(CellConstants::DEFAULT);
         let cell0_constants = CellParams {
             attempted_eating_energy: 2.0,
             ..CellParams::DEFAULT
@@ -321,8 +321,8 @@ mod tests {
         let mut world = World::new()
             .with_food(10.0)
             .with_cells(vec![
-                Cell::new(&bio_constants, cell0_constants, state),
-                Cell::new(&bio_constants, cell1_constants, state),
+                Cell::new(&constants, cell0_constants, state),
+                Cell::new(&constants, cell1_constants, state),
             ]);
         world.step();
         assert_eq!(world.food(), 5.0);
@@ -330,7 +330,7 @@ mod tests {
 
     #[test]
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
-        let bio_constants = Rc::new(BioConstants::DEFAULT);
+        let constants = Rc::new(CellConstants::DEFAULT);
         let cell0_constants = CellParams {
             attempted_eating_energy: 3.0,
             ..CellParams::DEFAULT
@@ -346,8 +346,8 @@ mod tests {
         let mut world = World::new()
             .with_food(4.0)
             .with_cells(vec![
-                Cell::new(&bio_constants, cell0_constants, state),
-                Cell::new(&bio_constants, cell1_constants, state),
+                Cell::new(&constants, cell0_constants, state),
+                Cell::new(&constants, cell1_constants, state),
             ]);
         world.step();
         assert_eq!(world.food(), 1.0);
