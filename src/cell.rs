@@ -10,11 +10,14 @@ pub struct Cell {
 }
 
 impl Cell {
-    pub fn new(bio_constants: &Rc<BioConstants>, cell_constants: CellConstants, state: CellState, energy: f32) -> Self {
+    pub fn new(bio_constants: &Rc<BioConstants>, cell_constants: CellConstants, _state: CellState, energy: f32) -> Self {
         Cell {
             bio_constants: Rc::clone(bio_constants),
             cell_constants,
-            state,
+            state: CellState {
+                health: 1.0,
+                energy,
+            },
             health: 1.0,
             energy,
         }
@@ -101,11 +104,15 @@ impl CellConstants {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CellState {
+    pub health: f32,
+    pub energy: f32,
 }
 
 impl CellState {
     #[allow(dead_code)]
     pub const DEFAULT: CellState = CellState {
+        health: 1.0,
+        energy: 0.0,
     };
 }
 
@@ -291,6 +298,8 @@ mod tests {
                 attempted_eating_energy: 1.0,
             },
             state: CellState {
+                health: 1.0,
+                energy: 10.0, // TODO 2.5
             },
             health: 1.0,
             energy: 2.5,
