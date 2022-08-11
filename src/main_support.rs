@@ -21,6 +21,7 @@ pub fn create_and_run_world(args: &Args) {
         food_yield_from_eating: args.eat_yield,
         energy_yield_from_digestion: args.digest_yield,
         create_child_energy: args.create_child,
+        ..CellConstants::DEFAULT
     });
 
     let mut world = create_world(args, &bio_constants);

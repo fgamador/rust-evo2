@@ -63,6 +63,7 @@ impl Cell {
 
     fn maintain(&mut self) {
         self.state.energy -= self.constants.maintenance_energy_use;
+        self.state.health -= self.constants.maintenance_energy_use * self.constants.health_reduction_per_energy_used;
     }
 }
 
@@ -72,6 +73,7 @@ pub struct CellConstants {
     pub food_yield_from_eating: f32,
     pub energy_yield_from_digestion: f32,
     pub create_child_energy: f32,
+    pub health_reduction_per_energy_used: f32,
 }
 
 impl CellConstants {
@@ -81,6 +83,7 @@ impl CellConstants {
         food_yield_from_eating: 1.0,
         energy_yield_from_digestion: 1.0,
         create_child_energy: 0.0,
+        health_reduction_per_energy_used: 0.0,
     };
 }
 
@@ -142,6 +145,18 @@ mod tests {
         let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
         cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(cell.energy(), 4.75);
+    }
+
+    #[test]
+    fn expending_maintenance_energy_reduces_health() {
+        let constants = Rc::new(CellConstants {
+            maintenance_energy_use: 2.0,
+            health_reduction_per_energy_used: 0.125,
+            ..CellConstants::DEFAULT
+        });
+        let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
+        cell.step(&CellEnvironment::DEFAULT);
+        assert_eq!(cell.health(), 0.75);
     }
 
     #[test]
