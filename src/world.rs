@@ -132,14 +132,13 @@ pub fn generate_cells(
     let mut rng = rand::thread_rng();
     let mut cells = Vec::with_capacity(num_cells);
     for _ in 0..num_cells {
-        let params = CellParams {
-            child_threshold_energy: child_threshold_energies.sample(&mut rng),
-            child_threshold_food: child_threshold_foods.sample(&mut rng),
-            attempted_eating_energy: eating_energies.sample(&mut rng),
-        };
         cells.push(Cell::new(
             constants,
-            params,
+            CellParams {
+                child_threshold_energy: child_threshold_energies.sample(&mut rng),
+                child_threshold_food: child_threshold_foods.sample(&mut rng),
+                attempted_eating_energy: eating_energies.sample(&mut rng),
+            },
         ).with_energy(initial_energies.sample(&mut rng)));
     }
     cells
