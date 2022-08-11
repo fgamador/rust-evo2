@@ -8,14 +8,11 @@ pub struct Cell {
 }
 
 impl Cell {
-    pub fn new(bio_constants: &Rc<BioConstants>, cell_constants: CellConstants, _state: CellState, energy: f32) -> Self {
+    pub fn new(bio_constants: &Rc<BioConstants>, cell_constants: CellConstants, state: CellState, _energy: f32) -> Self {
         Cell {
             bio_constants: Rc::clone(bio_constants),
             cell_constants,
-            state: CellState {
-                health: 1.0,
-                energy,
-            },
+            state,
         }
     }
 
