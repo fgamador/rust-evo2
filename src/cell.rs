@@ -5,7 +5,6 @@ pub struct Cell {
     bio_constants: Rc<BioConstants>,
     cell_constants: CellConstants,
     state: CellState,
-    health: f32,
     energy: f32,
 }
 
@@ -18,13 +17,12 @@ impl Cell {
                 health: 1.0,
                 energy,
             },
-            health: 1.0,
             energy,
         }
     }
 
     pub fn health(&self) -> f32 {
-        self.health
+        self.state.health
     }
 
     pub fn energy(&self) -> f32 {
@@ -301,7 +299,6 @@ mod tests {
                 health: 1.0,
                 energy: 10.0, // TODO 2.5
             },
-            health: 1.0,
             energy: 2.5,
         }));
         assert_eq!(5.0, cell.energy());
