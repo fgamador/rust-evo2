@@ -149,7 +149,7 @@ impl Args {
         sd_en: 0.0,
         mean_child_en: f32::MAX,
         sd_child_en: 0.0,
-        mean_child_fd: f32::MAX,
+        mean_child_fd: 0.0,
         sd_child_fd: 0.0,
         create_child: CellConstants::DEFAULT.create_child_energy,
         maint: CellConstants::DEFAULT.maintenance_energy_use,
