@@ -4,8 +4,6 @@ use std::rc::Rc;
 use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams};
 use crate::food_sources::FoodSource;
 
-pub const DEFAULT_FOOD_AMOUNT: f32 = 0.0;
-
 pub struct World {
     cells: Vec<Cell>,
     food: f32,
