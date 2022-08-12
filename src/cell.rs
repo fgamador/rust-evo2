@@ -47,13 +47,13 @@ impl Cell {
         { return None; }
 
         let mut child = self.clone();
-        self.expend_energy(self.params.child_threshold_energy);
+        self.expend_energy_reducing_health(self.params.child_threshold_energy);
         child.state.energy = self.params.child_threshold_energy - self.constants.create_child_energy;
         Some(child)
     }
 
     fn eat(&mut self, food_per_cell: f32) -> f32 {
-        self.expend_energy(self.params.attempted_eating_energy);
+        self.expend_energy_reducing_health(self.params.attempted_eating_energy);
         (self.params.attempted_eating_energy * self.constants.food_yield_from_eating).min(food_per_cell)
     }
 
@@ -62,10 +62,10 @@ impl Cell {
     }
 
     fn maintain(&mut self) {
-        self.expend_energy(self.constants.maintenance_energy_use);
+        self.expend_energy_reducing_health(self.constants.maintenance_energy_use);
     }
 
-    fn expend_energy(&mut self, energy: f32) {
+    fn expend_energy_reducing_health(&mut self, energy: f32) {
         self.state.energy -= energy;
         self.state.health -= energy * self.constants.health_reduction_per_energy_used;
         self.state.health = self.state.health.max(0.0);
