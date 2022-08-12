@@ -7,20 +7,21 @@ use crate::world;
 use crate::world::World;
 
 pub fn create_and_run_world(args: &Args) {
-    let bio_constants = Rc::new(CellConstants {
+    let cell_constants = Rc::new(CellConstants {
         maintenance_energy_use: args.maint,
         food_yield_from_eating: args.eat_yield,
         energy_yield_from_digestion: args.digest_yield,
         create_child_energy: args.create_child,
+        health_reduction_per_energy_used: args.en_health_loss,
         ..CellConstants::DEFAULT
     });
 
-    let mut world = create_world(args, &bio_constants);
+    let mut world = create_world(args, &cell_constants);
 
     run(&mut world, args.steps);
 }
 
-fn create_world(args: &Args, bio_constants: &Rc<CellConstants>) -> World {
+fn create_world(args: &Args, cell_constants: &Rc<CellConstants>) -> World {
     World::new()
         .with_cells(world::generate_cells(
             args.cells,
@@ -28,7 +29,7 @@ fn create_world(args: &Args, bio_constants: &Rc<CellConstants>) -> World {
             Normal::new(args.mean_eat, args.sd_eat).unwrap(),
             Normal::new(args.mean_child_en, args.sd_child_en).unwrap(),
             Normal::new(args.mean_child_fd, args.sd_child_fd).unwrap(),
-            bio_constants,
+            cell_constants,
         ))
         .with_food(args.initial_food)
         .with_food_sources(vec![
@@ -131,6 +132,10 @@ pub struct Args {
     /// Energy gained per unit food
     #[clap(short('D'), long, default_value_t = Args::DEFAULT.digest_yield)]
     pub digest_yield: f32,
+
+    /// Health reduction per energy expended
+    #[clap(long, default_value_t = Args::DEFAULT.en_health_loss)]
+    pub en_health_loss: f32,
 }
 
 impl Args {
@@ -152,5 +157,6 @@ impl Args {
         sd_eat: 0.0,
         eat_yield: CellConstants::DEFAULT.food_yield_from_eating,
         digest_yield: CellConstants::DEFAULT.energy_yield_from_digestion,
+        en_health_loss: CellConstants::DEFAULT.health_reduction_per_energy_used,
     };
 }
