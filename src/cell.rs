@@ -47,7 +47,7 @@ impl Cell {
         { return None; }
 
         let mut child = self.clone();
-        self.state.energy -= self.params.child_threshold_energy;
+        self.expend_energy(self.params.child_threshold_energy);
         child.state.energy = self.params.child_threshold_energy - self.constants.create_child_energy;
         Some(child)
     }
@@ -348,5 +348,23 @@ mod tests {
             },
         }));
         assert_eq!(5.0, cell.energy());
+    }
+
+    #[test]
+    fn expending_reproduction_energy_reduces_health() {
+        let constants = Rc::new(CellConstants {
+            create_child_energy: 0.0,
+            health_reduction_per_energy_used: 0.125,
+            ..CellConstants::DEFAULT
+        });
+        let params = CellParams {
+            child_threshold_energy: 2.0,
+            child_threshold_food: 0.0,
+            ..CellParams::DEFAULT
+        };
+        let mut cell = Cell::new(&constants, params).with_energy(10.0);
+        let (child, _) = cell.step(&CellEnvironment::DEFAULT);
+        assert_ne!(child, None);
+        assert_eq!(cell.health(), 0.75);
     }
 }
