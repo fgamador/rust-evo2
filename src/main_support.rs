@@ -79,65 +79,65 @@ fn print_stats(world: &World, step: u32, num_created: usize, num_died: usize) {
 pub struct Args {
     /// Number of steps
     #[clap(short('s'), long, default_value_t = u32::MAX)]
-    steps: u32,
+    pub steps: u32,
 
     /// Initial world food
     #[clap(short('f'), long, default_value_t = world::DEFAULT_FOOD_AMOUNT)]
-    initial_food: f32,
+    pub initial_food: f32,
 
     /// World food added per step
     #[clap(long, default_value_t = 0.0)]
-    added_food: f32,
+    pub added_food: f32,
 
     /// Initial number of cells
     #[clap(short('n'), long, default_value_t = 100)]
-    cells: usize,
+    pub cells: usize,
 
     /// Mean of cell initial energies
     #[clap(short('e'), long, default_value_t = DEFAULT_MEAN_INITIAL_ENERGY)]
-    mean_en: f32,
+    pub mean_en: f32,
 
     /// Standard deviation of cell initial energies
     #[clap(long, default_value_t = DEFAULT_STD_DEV_INITIAL_ENERGY)]
-    sd_en: f32,
+    pub sd_en: f32,
 
     /// Mean of child threshold energies
     #[clap(short('C'), long, default_value_t = DEFAULT_MEAN_CHILD_THRESHOLD_ENERGY)]
-    mean_child_en: f32,
+    pub mean_child_en: f32,
 
     /// Standard deviation of child threshold energies
     #[clap(long, default_value_t = DEFAULT_STD_DEV_CHILD_THRESHOLD_ENERGY)]
-    sd_child_en: f32,
+    pub sd_child_en: f32,
 
     /// Mean of child threshold foods
     #[clap(long, default_value_t = DEFAULT_MEAN_CHILD_THRESHOLD_FOOD)]
-    mean_child_fd: f32,
+    pub mean_child_fd: f32,
 
     /// Standard deviation of child threshold foods
     #[clap(long, default_value_t = DEFAULT_STD_DEV_CHILD_THRESHOLD_FOOD)]
-    sd_child_fd: f32,
+    pub sd_child_fd: f32,
 
     /// Energy cost of creating a child
     #[clap(long, default_value_t = CellConstants::DEFAULT.create_child_energy)]
-    create_child: f32,
+    pub create_child: f32,
 
     /// Cell maintenance energy
     #[clap(short('M'), long, default_value_t = CellConstants::DEFAULT.maintenance_energy_use)]
-    maint: f32,
+    pub maint: f32,
 
     /// Mean of cell eating energies
     #[clap(short('E'), long, default_value_t = DEFAULT_MEAN_EATING_ENERGY)]
-    mean_eat: f32,
+    pub mean_eat: f32,
 
     /// Standard deviation of cell eating energies
     #[clap(long, default_value_t = DEFAULT_STD_DEV_EATING_ENERGY)]
-    sd_eat: f32,
+    pub sd_eat: f32,
 
     /// Food gained per unit eating energy
     #[clap(short('F'), long, default_value_t = CellConstants::DEFAULT.food_yield_from_eating)]
-    eat_yield: f32,
+    pub eat_yield: f32,
 
     /// Energy gained per unit food
     #[clap(short('D'), long, default_value_t = CellConstants::DEFAULT.energy_yield_from_digestion)]
-    digest_yield: f32,
+    pub digest_yield: f32,
 }
