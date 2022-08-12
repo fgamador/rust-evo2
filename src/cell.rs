@@ -153,21 +153,6 @@ mod tests {
     }
 
     #[test]
-    fn expending_eating_energy_reduces_health() {
-        let constants = Rc::new(CellConstants {
-            health_reduction_per_energy_used: 0.125,
-            ..CellConstants::DEFAULT
-        });
-        let params = CellParams {
-            attempted_eating_energy: 2.0,
-            ..CellParams::DEFAULT
-        };
-        let mut cell = Cell::new(&constants, params).with_energy(10.0);
-        cell.step(&CellEnvironment::DEFAULT);
-        assert_eq!(cell.health(), 0.75);
-    }
-
-    #[test]
     fn expending_maintenance_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
             maintenance_energy_use: 2.0,
@@ -292,6 +277,21 @@ mod tests {
         let mut cell = Cell::new(&constants, params).with_energy(10.0);
         cell.step(&environment);
         assert_eq!(cell.energy(), 11.0);
+    }
+
+    #[test]
+    fn expending_eating_energy_reduces_health() {
+        let constants = Rc::new(CellConstants {
+            health_reduction_per_energy_used: 0.125,
+            ..CellConstants::DEFAULT
+        });
+        let params = CellParams {
+            attempted_eating_energy: 2.0,
+            ..CellParams::DEFAULT
+        };
+        let mut cell = Cell::new(&constants, params).with_energy(10.0);
+        cell.step(&CellEnvironment::DEFAULT);
+        assert_eq!(cell.health(), 0.75);
     }
 
     #[test]
