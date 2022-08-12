@@ -165,18 +165,6 @@ mod tests {
     }
 
     #[test]
-    fn cannot_reduce_health_below_zero() {
-        let constants = Rc::new(CellConstants {
-            maintenance_energy_use: 2.0,
-            health_reduction_per_energy_used: 1.0,
-            ..CellConstants::DEFAULT
-        });
-        let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
-        cell.step(&CellEnvironment::DEFAULT);
-        assert_eq!(cell.health(), 0.0);
-    }
-
-    #[test]
     fn cell_with_no_energy_is_dead() {
         let cell = Cell::new(&Rc::new(CellConstants::DEFAULT), CellParams::DEFAULT).with_energy(0.0);
         assert!(!cell.is_alive());
@@ -292,6 +280,21 @@ mod tests {
         let mut cell = Cell::new(&constants, params).with_energy(10.0);
         cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(cell.health(), 0.75);
+    }
+
+    #[test]
+    fn expending_eating_energy_cannot_reduce_health_below_zero() {
+        let constants = Rc::new(CellConstants {
+            health_reduction_per_energy_used: 1.0,
+            ..CellConstants::DEFAULT
+        });
+        let params = CellParams {
+            attempted_eating_energy: 2.0,
+            ..CellParams::DEFAULT
+        };
+        let mut cell = Cell::new(&constants, params).with_energy(10.0);
+        cell.step(&CellEnvironment::DEFAULT);
+        assert_eq!(cell.health(), 0.0);
     }
 
     #[test]
