@@ -67,6 +67,7 @@ impl Cell {
 
     fn expend_energy(&mut self, energy: f32) {
         self.state.energy -= energy;
+        self.state.energy = self.state.energy.max(0.0);
         self.state.health -= energy * self.constants.health_reduction_per_energy_used;
         self.state.health = self.state.health.max(0.0);
     }
@@ -150,6 +151,17 @@ mod tests {
         let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
         cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(cell.energy(), 4.75);
+    }
+
+    #[test]
+    fn cell_cannot_expend_energy_below_zero() {
+        let constants = Rc::new(CellConstants {
+            maintenance_energy_use: 11.0,
+            ..CellConstants::DEFAULT
+        });
+        let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
+        cell.step(&CellEnvironment::DEFAULT);
+        assert_eq!(cell.energy(), 0.0);
     }
 
     #[test]
