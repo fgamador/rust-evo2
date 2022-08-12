@@ -62,8 +62,12 @@ impl Cell {
     }
 
     fn maintain(&mut self) {
-        self.state.energy -= self.constants.maintenance_energy_use;
-        self.state.health -= self.constants.maintenance_energy_use * self.constants.health_reduction_per_energy_used;
+        self.expend_energy(self.constants.maintenance_energy_use);
+    }
+
+    fn expend_energy(&mut self, energy: f32) {
+        self.state.energy -= energy;
+        self.state.health -= energy * self.constants.health_reduction_per_energy_used;
         self.state.health = self.state.health.max(0.0);
     }
 }
