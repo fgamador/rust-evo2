@@ -136,6 +136,7 @@ pub fn generate_cells(
                 child_threshold_energy: child_threshold_energies.sample(&mut rng),
                 child_threshold_food: child_threshold_foods.sample(&mut rng),
                 attempted_eating_energy: eating_energies.sample(&mut rng),
+                attempted_healing_energy: 0.0, // TODO
             },
         ).with_energy(initial_energies.sample(&mut rng)));
     }

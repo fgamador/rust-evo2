@@ -12,7 +12,7 @@ pub fn create_and_run_world(args: &Args) {
         food_yield_from_eating: args.eat_yield,
         energy_yield_from_digestion: args.digest_yield,
         create_child_energy: args.create_child,
-        health_reduction_per_energy_used: args.en_health_loss,
+        health_reduction_per_energy_expended: args.en_health_loss,
         ..CellConstants::DEFAULT
     });
 
@@ -157,6 +157,6 @@ impl Args {
         sd_eat: 0.0,
         eat_yield: CellConstants::DEFAULT.food_yield_from_eating,
         digest_yield: CellConstants::DEFAULT.energy_yield_from_digestion,
-        en_health_loss: CellConstants::DEFAULT.health_reduction_per_energy_used,
+        en_health_loss: CellConstants::DEFAULT.health_reduction_per_energy_expended,
     };
 }

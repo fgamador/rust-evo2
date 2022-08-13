@@ -16,6 +16,11 @@ impl Cell {
         }
     }
 
+    pub fn with_health(mut self, health: f32) -> Self {
+        self.state.health = health;
+        self
+    }
+
     pub fn with_energy(mut self, energy: f32) -> Self {
         self.state.energy = energy;
         self
@@ -38,6 +43,7 @@ impl Cell {
         let food = self.eat(environment.food_per_cell);
         self.digest(food);
         self.maintain();
+        self.heal();
         (child, food)
     }
 
@@ -65,10 +71,14 @@ impl Cell {
         self.expend_energy(self.constants.maintenance_energy_use);
     }
 
+    fn heal(&mut self) {
+        self.state.health += self.params.attempted_healing_energy * self.constants.health_increase_per_healing_energy;
+    }
+
     fn expend_energy(&mut self, energy: f32) {
         self.state.energy -= energy;
         self.state.energy = self.state.energy.max(0.0);
-        self.state.health -= energy * self.constants.health_reduction_per_energy_used;
+        self.state.health -= energy * self.constants.health_reduction_per_energy_expended;
         self.state.health = self.state.health.max(0.0);
     }
 }
@@ -79,7 +89,8 @@ pub struct CellConstants {
     pub food_yield_from_eating: f32,
     pub energy_yield_from_digestion: f32,
     pub create_child_energy: f32,
-    pub health_reduction_per_energy_used: f32,
+    pub health_reduction_per_energy_expended: f32,
+    pub health_increase_per_healing_energy: f32,
 }
 
 impl CellConstants {
@@ -89,7 +100,8 @@ impl CellConstants {
         food_yield_from_eating: 1.0,
         energy_yield_from_digestion: 1.0,
         create_child_energy: 0.0,
-        health_reduction_per_energy_used: 0.0,
+        health_reduction_per_energy_expended: 0.0,
+        health_increase_per_healing_energy: 0.0,
     };
 }
 
@@ -98,6 +110,7 @@ pub struct CellParams {
     pub child_threshold_energy: f32,
     pub child_threshold_food: f32,
     pub attempted_eating_energy: f32,
+    pub attempted_healing_energy: f32,
 }
 
 impl CellParams {
@@ -106,6 +119,7 @@ impl CellParams {
         child_threshold_energy: f32::MAX,
         child_threshold_food: f32::MAX,
         attempted_eating_energy: 0.0,
+        attempted_healing_energy: 0.0,
     };
 }
 
@@ -168,7 +182,7 @@ mod tests {
     fn expending_maintenance_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
             maintenance_energy_use: 2.0,
-            health_reduction_per_energy_used: 0.125,
+            health_reduction_per_energy_expended: 0.125,
             ..CellConstants::DEFAULT
         });
         let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
@@ -282,7 +296,7 @@ mod tests {
     #[test]
     fn expending_eating_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
-            health_reduction_per_energy_used: 0.125,
+            health_reduction_per_energy_expended: 0.125,
             ..CellConstants::DEFAULT
         });
         let params = CellParams {
@@ -297,7 +311,7 @@ mod tests {
     #[test]
     fn expending_eating_energy_cannot_reduce_health_below_zero() {
         let constants = Rc::new(CellConstants {
-            health_reduction_per_energy_used: 1.0,
+            health_reduction_per_energy_expended: 1.0,
             ..CellConstants::DEFAULT
         });
         let params = CellParams {
@@ -307,6 +321,21 @@ mod tests {
         let mut cell = Cell::new(&constants, params).with_energy(10.0);
         cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(cell.health(), 0.0);
+    }
+
+    #[test]
+    fn cell_can_heal() {
+        let constants = Rc::new(CellConstants {
+            health_increase_per_healing_energy: 0.25,
+            ..CellConstants::DEFAULT
+        });
+        let params = CellParams {
+            attempted_healing_energy: 1.0,
+            ..CellParams::DEFAULT
+        };
+        let mut cell = Cell::new(&constants, params).with_health(0.5).with_energy(10.0);
+        cell.step(&CellEnvironment::DEFAULT);
+        assert_eq!(cell.health(), 0.75);
     }
 
     #[test]
@@ -346,7 +375,7 @@ mod tests {
             child_threshold_energy: 4.0,
             child_threshold_food: 0.0,
             attempted_eating_energy: 1.0,
-            ..CellParams::DEFAULT
+            attempted_healing_energy: 1.5,
         };
         let mut cell = Cell::new(&constants, params).with_energy(10.0);
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
@@ -356,6 +385,7 @@ mod tests {
                 child_threshold_energy: 4.0,
                 child_threshold_food: 0.0,
                 attempted_eating_energy: 1.0,
+                attempted_healing_energy: 1.5,
             },
             state: CellState {
                 health: 1.0,
@@ -369,7 +399,7 @@ mod tests {
     fn expending_reproduction_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
             create_child_energy: 0.0,
-            health_reduction_per_energy_used: 0.125,
+            health_reduction_per_energy_expended: 0.125,
             ..CellConstants::DEFAULT
         });
         let params = CellParams {
