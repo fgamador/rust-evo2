@@ -5,6 +5,18 @@ pub struct F32Positive {
     value: f32,
 }
 
+impl F32Positive {
+    // TODO convert to macro with checking?
+    pub const fn unchecked(num: f32) -> Self {
+        // assert!(num >= 0.0);
+        F32Positive { value: num }
+    }
+
+    pub const fn value(&self) -> f32 {
+        self.value
+    }
+}
+
 impl From<F32Positive> for f32 {
     fn from(num: F32Positive) -> Self {
         num.value

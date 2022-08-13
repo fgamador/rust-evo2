@@ -1,4 +1,5 @@
 use std::rc::Rc;
+use crate::number_types::F32Positive;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Cell {
@@ -68,7 +69,7 @@ impl Cell {
     }
 
     fn maintain(&mut self) {
-        self.expend_energy(self.constants.maintenance_energy_use);
+        self.expend_energy(self.constants.maintenance_energy_use.into());
     }
 
     fn heal(&mut self) {
@@ -85,7 +86,7 @@ impl Cell {
 
 #[derive(Debug, PartialEq)]
 pub struct CellConstants {
-    pub maintenance_energy_use: f32,
+    pub maintenance_energy_use: F32Positive,
     pub food_yield_from_eating: f32,
     pub energy_yield_from_digestion: f32,
     pub create_child_energy: f32,
@@ -96,7 +97,7 @@ pub struct CellConstants {
 impl CellConstants {
     #[allow(dead_code)]
     pub const DEFAULT: CellConstants = CellConstants {
-        maintenance_energy_use: 0.0,
+        maintenance_energy_use: F32Positive::unchecked(0.0),
         food_yield_from_eating: 1.0,
         energy_yield_from_digestion: 1.0,
         create_child_energy: 0.0,
@@ -159,7 +160,7 @@ mod tests {
     #[test]
     fn cell_uses_energy() {
         let constants = Rc::new(CellConstants {
-            maintenance_energy_use: 5.25,
+            maintenance_energy_use: 5.25.into(),
             ..CellConstants::DEFAULT
         });
         let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
@@ -170,7 +171,7 @@ mod tests {
     #[test]
     fn cell_cannot_expend_energy_below_zero() {
         let constants = Rc::new(CellConstants {
-            maintenance_energy_use: 11.0,
+            maintenance_energy_use: 11.0.into(),
             ..CellConstants::DEFAULT
         });
         let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
@@ -181,7 +182,7 @@ mod tests {
     #[test]
     fn expending_maintenance_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
-            maintenance_energy_use: 2.0,
+            maintenance_energy_use: 2.0.into(),
             health_reduction_per_energy_expended: 0.125,
             ..CellConstants::DEFAULT
         });
@@ -275,7 +276,7 @@ mod tests {
     #[test]
     fn cell_digests_food() {
         let constants = Rc::new(CellConstants {
-            maintenance_energy_use: 0.0,
+            maintenance_energy_use: 0.0.into(),
             food_yield_from_eating: 1.0,
             energy_yield_from_digestion: 1.5,
             ..CellConstants::DEFAULT
