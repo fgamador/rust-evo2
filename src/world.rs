@@ -73,7 +73,7 @@ impl World {
         self.step_food_sources();
 
         let environment = CellEnvironment {
-            food_per_cell: self.food / (self.cells.len() as f32),
+            food_per_cell: (self.food / (self.cells.len() as f32)).into(),
         };
         let mut new_cells = vec![];
         let mut dead_cell_indexes = Vec::with_capacity(self.cells.len());

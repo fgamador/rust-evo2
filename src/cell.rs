@@ -45,12 +45,12 @@ impl Cell {
         self.digest(food);
         self.maintain();
         self.heal();
-        (child, food)
+        (child, food.into())
     }
 
     fn try_reproduce(&mut self, environment: &CellEnvironment) -> Option<Cell> {
         if self.state.energy < self.params.child_threshold_energy.value()
-            || environment.food_per_cell < self.params.child_threshold_food.value()
+            || environment.food_per_cell < self.params.child_threshold_food
         { return None; }
 
         let mut child = self.clone();
@@ -59,13 +59,14 @@ impl Cell {
         Some(child)
     }
 
-    fn eat(&mut self, food_per_cell: f32) -> f32 {
+    fn eat(&mut self, food_per_cell: F32Positive) -> F32Positive {
         self.expend_energy(self.params.attempted_eating_energy.value());
-        (self.params.attempted_eating_energy.value() * self.constants.food_yield_from_eating.value()).min(food_per_cell)
+        (self.params.attempted_eating_energy.value() * self.constants.food_yield_from_eating.value())
+            .min(food_per_cell.into()).into()
     }
 
-    fn digest(&mut self, food_amount: f32) {
-        self.state.energy += food_amount * self.constants.energy_yield_from_digestion.value();
+    fn digest(&mut self, food_amount: F32Positive) {
+        self.state.energy += food_amount.value() * self.constants.energy_yield_from_digestion.value();
     }
 
     fn maintain(&mut self) {
@@ -139,12 +140,12 @@ impl CellState {
 }
 
 pub struct CellEnvironment {
-    pub food_per_cell: f32,
+    pub food_per_cell: F32Positive,
 }
 
 impl CellEnvironment {
     #[allow(dead_code)]
-    pub const DEFAULT: CellEnvironment = CellEnvironment { food_per_cell: 0.0 };
+    pub const DEFAULT: CellEnvironment = CellEnvironment { food_per_cell: F32Positive::unchecked(0.0) };
 }
 
 #[cfg(test)]
@@ -208,7 +209,7 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let environment = CellEnvironment {
-            food_per_cell: 10.0,
+            food_per_cell: 10.0.into(),
             ..CellEnvironment::DEFAULT
         };
         let mut cell = Cell::new(&constants, params).with_energy(1.0);
@@ -227,7 +228,7 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let environment = CellEnvironment {
-            food_per_cell: 2.0,
+            food_per_cell: 2.0.into(),
             ..CellEnvironment::DEFAULT
         };
         let mut cell = Cell::new(&constants, params).with_energy(1.0);
@@ -246,7 +247,7 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let environment = CellEnvironment {
-            food_per_cell: 10.0,
+            food_per_cell: 10.0.into(),
             ..CellEnvironment::DEFAULT
         };
         let mut cell = Cell::new(&constants, params).with_energy(5.0);
@@ -265,7 +266,7 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let environment = CellEnvironment {
-            food_per_cell: 0.0,
+            food_per_cell: 0.0.into(),
             ..CellEnvironment::DEFAULT
         };
         let mut cell = Cell::new(&constants, params).with_energy(5.0);
@@ -286,7 +287,7 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let environment = CellEnvironment {
-            food_per_cell: 10.0,
+            food_per_cell: 10.0.into(),
             ..CellEnvironment::DEFAULT
         };
         let mut cell = Cell::new(&constants, params).with_energy(10.0);
@@ -359,7 +360,7 @@ mod tests {
         };
         let mut cell = Cell::new(&Rc::new(CellConstants::DEFAULT), params).with_energy(1.0);
         let environment = CellEnvironment {
-            food_per_cell: 3.0,
+            food_per_cell: 3.0.into(),
             ..CellEnvironment::DEFAULT
         };
         let (child, _) = cell.step(&environment);
