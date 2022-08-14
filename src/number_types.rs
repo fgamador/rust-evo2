@@ -27,6 +27,10 @@ impl F32Positive {
     pub const fn value(&self) -> f32 {
         self.value
     }
+
+    pub fn min(self, other: F32Positive) -> F32Positive {
+        Self::unchecked(self.value.min(other.value))
+    }
 }
 
 impl fmt::Display for F32Positive {

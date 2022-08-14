@@ -61,8 +61,7 @@ impl Cell {
 
     fn eat(&mut self, food_per_cell: F32Positive) -> F32Positive {
         self.expend_energy(self.params.attempted_eating_energy);
-        (self.params.attempted_eating_energy.value() * self.constants.food_yield_from_eating.value())
-            .min(food_per_cell.into()).into()
+        (self.params.attempted_eating_energy * self.constants.food_yield_from_eating).min(food_per_cell)
     }
 
     fn digest(&mut self, food_amount: F32Positive) {
