@@ -73,6 +73,7 @@ impl Cell {
     }
 
     fn heal(&mut self) {
+        self.state.energy -= self.params.attempted_healing_energy;
         self.state.health += self.params.attempted_healing_energy * self.constants.health_increase_per_healing_energy;
     }
 

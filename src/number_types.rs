@@ -190,3 +190,22 @@ impl Mul<F32ZeroToOnePerF32Positive> for F32Positive {
         other.mul(self)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn f32_positive_clips() {
+        assert_eq!(F32Positive::clipped(-0.5), 0.0.into());
+        assert_eq!(F32Positive::clipped(0.5), 0.5.into());
+        assert_eq!(F32Positive::clipped(1.5), 1.5.into());
+    }
+
+    #[test]
+    fn f32_zero_to_one_clips() {
+        assert_eq!(F32ZeroToOne::clipped(-0.5), 0.0.into());
+        assert_eq!(F32ZeroToOne::clipped(0.5), 0.5.into());
+        assert_eq!(F32ZeroToOne::clipped(1.5), 1.0.into());
+    }
+}
