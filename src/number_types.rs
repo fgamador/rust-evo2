@@ -128,3 +128,45 @@ impl SubAssign for F32ZeroToOne {
         *self = Self::clipped(self.value() - other.value());
     }
 }
+
+#[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
+pub struct F32ZeroToOnePerF32Positive {
+    value: f32,
+}
+
+impl F32ZeroToOnePerF32Positive {
+    pub fn checked(value: f32) -> Self {
+        assert!((0.0..=1.0).contains(&value));
+        Self { value }
+    }
+
+    pub const fn unchecked(value: f32) -> Self {
+        Self { value }
+    }
+
+    pub fn clipped(value: f32) -> Self {
+        Self { value: value.max(0.0).min(1.0) }
+    }
+
+    pub const fn value(&self) -> f32 {
+        self.value
+    }
+}
+
+impl fmt::Display for F32ZeroToOnePerF32Positive {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.value())
+    }
+}
+
+impl From<F32ZeroToOnePerF32Positive> for f32 {
+    fn from(num: F32ZeroToOnePerF32Positive) -> Self {
+        num.value()
+    }
+}
+
+impl From<f32> for F32ZeroToOnePerF32Positive {
+    fn from(num: f32) -> Self {
+        Self::checked(num)
+    }
+}

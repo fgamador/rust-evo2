@@ -1,5 +1,5 @@
 use std::rc::Rc;
-use crate::number_types::{F32Positive, F32ZeroToOne};
+use crate::number_types::{F32Positive, F32ZeroToOne, F32ZeroToOnePerF32Positive};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Cell {
@@ -89,8 +89,8 @@ pub struct CellConstants {
     pub food_yield_from_eating: F32Positive,
     pub energy_yield_from_digestion: F32Positive,
     pub create_child_energy: F32Positive,
-    pub health_reduction_per_energy_expended: F32ZeroToOne,
-    pub health_increase_per_healing_energy: F32ZeroToOne,
+    pub health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive,
+    pub health_increase_per_healing_energy: F32ZeroToOnePerF32Positive,
 }
 
 impl CellConstants {
@@ -100,8 +100,8 @@ impl CellConstants {
         food_yield_from_eating: F32Positive::unchecked(1.0),
         energy_yield_from_digestion: F32Positive::unchecked(1.0),
         create_child_energy: F32Positive::unchecked(0.0),
-        health_reduction_per_energy_expended: F32ZeroToOne::unchecked(0.0),
-        health_increase_per_healing_energy: F32ZeroToOne::unchecked(0.0),
+        health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive::unchecked(0.0),
+        health_increase_per_healing_energy: F32ZeroToOnePerF32Positive::unchecked(0.0),
     };
 }
 
