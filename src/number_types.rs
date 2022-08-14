@@ -1,5 +1,7 @@
 use std::convert::From;
 use std::fmt;
+use std::ops::AddAssign;
+use std::ops::SubAssign;
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct F32Positive {
@@ -21,6 +23,20 @@ impl F32Positive {
 impl fmt::Display for F32Positive {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.value)
+    }
+}
+
+impl AddAssign for F32Positive {
+    fn add_assign(&mut self, other: Self) {
+        *self = Self {
+            value: self.value() + other.value
+        };
+    }
+}
+
+impl SubAssign for F32Positive {
+    fn sub_assign(&mut self, other: Self) {
+        *self = (self.value() - other.value).into();
     }
 }
 

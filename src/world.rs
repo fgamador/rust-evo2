@@ -3,10 +3,11 @@ use rand_distr::Normal;
 use std::rc::Rc;
 use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams};
 use crate::food_sources::FoodSource;
+use crate::number_types::F32Positive;
 
 pub struct World {
     cells: Vec<Cell>,
-    food: f32,
+    food: F32Positive,
     food_sources: Vec<Box<dyn FoodSource>>,
 }
 
@@ -14,7 +15,7 @@ impl World {
     pub fn new() -> Self {
         World {
             cells: vec![],
-            food: 0.0,
+            food: 0.0.into(),
             food_sources: vec![],
         }
     }
@@ -30,7 +31,7 @@ impl World {
         self
     }
 
-    pub fn with_food(mut self, food: f32) -> Self {
+    pub fn with_food(mut self, food: F32Positive) -> Self {
         self.food = food;
         self
     }
@@ -65,7 +66,7 @@ impl World {
         self.cells.iter().map(|cell| cell.energy()).sum::<f32>() / self.cells.len() as f32
     }
 
-    pub fn food(&self) -> f32 {
+    pub fn food(&self) -> F32Positive {
         self.food
     }
 
@@ -73,7 +74,7 @@ impl World {
         self.step_food_sources();
 
         let environment = CellEnvironment {
-            food_per_cell: (self.food / (self.cells.len() as f32)).into(),
+            food_per_cell: (self.food.value() / (self.cells.len() as f32)).into(),
         };
         let mut new_cells = vec![];
         let mut dead_cell_indexes = Vec::with_capacity(self.cells.len());
@@ -89,7 +90,7 @@ impl World {
 
     fn step_food_sources(&mut self) {
         for food_source in &self.food_sources {
-            self.food += food_source.food_this_step().value();
+            self.food += food_source.food_this_step();
         }
     }
 
@@ -99,7 +100,7 @@ impl World {
             if let Some(child) = child {
                 new_cells.push(child);
             }
-            self.food -= food_eaten;
+            self.food -= food_eaten.into();
             if !cell.is_alive() {
                 dead_cell_indexes.push(index);
             }
@@ -199,7 +200,7 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let mut world = World::new()
-            .with_food(0.0)
+            .with_food(0.0.into())
             .with_cells(vec![
                 Cell::new(&constants, params).with_energy(10.0),
             ]);
@@ -216,7 +217,7 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let mut world = World::new()
-            .with_food(0.0)
+            .with_food(0.0.into())
             .with_cells(vec![
                 Cell::new(&constants, params).with_energy(10.0),
                 Cell::new(&constants, params).with_energy(10.0),
@@ -229,7 +230,7 @@ mod tests {
     fn world_removes_dead_cells() {
         let constants = Rc::new(CellConstants::DEFAULT);
         let mut world = World::new()
-            .with_food(0.0)
+            .with_food(0.0.into())
             .with_cells(vec![
                 Cell::new(&constants, CellParams::DEFAULT).with_energy(1.0),
                 Cell::new(&constants, CellParams::DEFAULT).with_energy(0.0),
@@ -265,13 +266,13 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let mut world = World::new()
-            .with_food(10.0)
+            .with_food(10.0.into())
             .with_cells(vec![
                 Cell::new(&constants, cell0_constants).with_energy(1.0),
                 Cell::new(&constants, cell1_constants).with_energy(1.0),
             ]);
         world.step();
-        assert_eq!(world.food(), 5.0);
+        assert_eq!(world.food().value(), 5.0);
     }
 
     #[test]
@@ -286,24 +287,24 @@ mod tests {
             ..CellParams::DEFAULT
         };
         let mut world = World::new()
-            .with_food(4.0)
+            .with_food(4.0.into())
             .with_cells(vec![
                 Cell::new(&constants, cell0_constants).with_energy(1.0),
                 Cell::new(&constants, cell1_constants).with_energy(1.0),
             ]);
         world.step();
-        assert_eq!(world.food(), 1.0);
+        assert_eq!(world.food().value(), 1.0);
     }
 
     #[test]
     fn food_sources_add_to_world_food() {
         let mut world = World::new()
-            .with_food(0.0)
+            .with_food(0.0.into())
             .with_food_sources(vec![
                 Box::new(ConstantFoodSource::new(2.0.into())),
                 Box::new(ConstantFoodSource::new(3.0.into())),
             ]);
         world.step();
-        assert_eq!(world.food(), 5.0);
+        assert_eq!(world.food().value(), 5.0);
     }
 }

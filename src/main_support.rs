@@ -31,7 +31,7 @@ fn create_world(args: &Args, cell_constants: &Rc<CellConstants>) -> World {
             Normal::new(args.mean_child_fd, args.sd_child_fd).unwrap(),
             cell_constants,
         ))
-        .with_food(args.initial_food)
+        .with_food(args.initial_food.into())
         .with_food_sources(vec![
             Box::new(ConstantFoodSource::new(args.added_food.into()))
         ])
