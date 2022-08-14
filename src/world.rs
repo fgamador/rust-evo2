@@ -100,7 +100,7 @@ impl World {
             if let Some(child) = child {
                 new_cells.push(child);
             }
-            self.food -= food_eaten.into();
+            self.food -= food_eaten;
             if !cell.is_alive() {
                 dead_cell_indexes.push(index);
             }

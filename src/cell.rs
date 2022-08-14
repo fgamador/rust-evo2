@@ -70,16 +70,16 @@ impl Cell {
     }
 
     fn maintain(&mut self) {
-        self.expend_energy(self.constants.maintenance_energy_use.into());
+        self.expend_energy(self.constants.maintenance_energy_use);
     }
 
     fn heal(&mut self) {
-        self.state.health += F32ZeroToOne::clipped(self.params.attempted_healing_energy.value() * self.constants.health_increase_per_healing_energy.value());
+        self.state.health += self.params.attempted_healing_energy * self.constants.health_increase_per_healing_energy;
     }
 
     fn expend_energy(&mut self, energy: F32Positive) {
         self.state.energy -= energy;
-        self.state.health -= F32ZeroToOne::clipped(energy.value() * self.constants.health_reduction_per_energy_expended.value());
+        self.state.health -= energy * self.constants.health_reduction_per_energy_expended;
     }
 }
 

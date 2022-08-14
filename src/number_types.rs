@@ -35,6 +35,18 @@ impl fmt::Display for F32Positive {
     }
 }
 
+impl From<F32Positive> for f32 {
+    fn from(num: F32Positive) -> Self {
+        num.value()
+    }
+}
+
+impl From<f32> for F32Positive {
+    fn from(num: f32) -> Self {
+        Self::checked(num)
+    }
+}
+
 impl AddAssign for F32Positive {
     fn add_assign(&mut self, other: Self) {
         *self = Self::unchecked(self.value() + other.value());
@@ -60,18 +72,6 @@ impl Sub for F32Positive {
 impl SubAssign for F32Positive {
     fn sub_assign(&mut self, other: Self) {
         *self = Self::clipped(self.value() - other.value());
-    }
-}
-
-impl From<F32Positive> for f32 {
-    fn from(num: F32Positive) -> Self {
-        num.value()
-    }
-}
-
-impl From<f32> for F32Positive {
-    fn from(num: f32) -> Self {
-        Self::checked(num)
     }
 }
 
@@ -168,5 +168,21 @@ impl From<F32ZeroToOnePerF32Positive> for f32 {
 impl From<f32> for F32ZeroToOnePerF32Positive {
     fn from(num: f32) -> Self {
         Self::checked(num)
+    }
+}
+
+impl Mul<F32Positive> for F32ZeroToOnePerF32Positive {
+    type Output = F32ZeroToOne;
+
+    fn mul(self, other: F32Positive) -> Self::Output {
+        F32ZeroToOne::clipped(self.value() * other.value())
+    }
+}
+
+impl Mul<F32ZeroToOnePerF32Positive> for F32Positive {
+    type Output = F32ZeroToOne;
+
+    fn mul(self, other: F32ZeroToOnePerF32Positive) -> Self::Output {
+        other.mul(self)
     }
 }
