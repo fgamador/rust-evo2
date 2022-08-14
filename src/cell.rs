@@ -1,5 +1,5 @@
 use std::rc::Rc;
-use crate::number_types::F32Positive;
+use crate::number_types::{F32Positive, F32ZeroToOne};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Cell {
@@ -79,7 +79,7 @@ impl Cell {
     fn expend_energy(&mut self, energy: f32) {
         self.state.energy -= energy;
         self.state.energy = self.state.energy.max(0.0);
-        self.state.health -= energy * self.constants.health_reduction_per_energy_expended;
+        self.state.health -= energy * self.constants.health_reduction_per_energy_expended.value();
         self.state.health = self.state.health.max(0.0);
     }
 }
@@ -90,7 +90,7 @@ pub struct CellConstants {
     pub food_yield_from_eating: F32Positive,
     pub energy_yield_from_digestion: F32Positive,
     pub create_child_energy: F32Positive,
-    pub health_reduction_per_energy_expended: f32,
+    pub health_reduction_per_energy_expended: F32ZeroToOne,
     pub health_increase_per_healing_energy: f32,
 }
 
@@ -101,7 +101,7 @@ impl CellConstants {
         food_yield_from_eating: F32Positive::unchecked(1.0),
         energy_yield_from_digestion: F32Positive::unchecked(1.0),
         create_child_energy: F32Positive::unchecked(0.0),
-        health_reduction_per_energy_expended: 0.0,
+        health_reduction_per_energy_expended: F32ZeroToOne::unchecked(0.0),
         health_increase_per_healing_energy: 0.0,
     };
 }
@@ -183,7 +183,7 @@ mod tests {
     fn expending_maintenance_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
             maintenance_energy_use: 2.0.into(),
-            health_reduction_per_energy_expended: 0.125,
+            health_reduction_per_energy_expended: 0.125.into(),
             ..CellConstants::DEFAULT
         });
         let mut cell = Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0);
@@ -297,7 +297,7 @@ mod tests {
     #[test]
     fn expending_eating_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
-            health_reduction_per_energy_expended: 0.125,
+            health_reduction_per_energy_expended: 0.125.into(),
             ..CellConstants::DEFAULT
         });
         let params = CellParams {
@@ -312,7 +312,7 @@ mod tests {
     #[test]
     fn expending_eating_energy_cannot_reduce_health_below_zero() {
         let constants = Rc::new(CellConstants {
-            health_reduction_per_energy_expended: 1.0,
+            health_reduction_per_energy_expended: 1.0.into(),
             ..CellConstants::DEFAULT
         });
         let params = CellParams {
@@ -400,7 +400,7 @@ mod tests {
     fn expending_reproduction_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
             create_child_energy: 0.0.into(),
-            health_reduction_per_energy_expended: 0.125,
+            health_reduction_per_energy_expended: 0.125.into(),
             ..CellConstants::DEFAULT
         });
         let params = CellParams {

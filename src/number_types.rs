@@ -35,6 +35,18 @@ pub struct F32ZeroToOne {
     value: f32,
 }
 
+impl F32ZeroToOne {
+    // TODO convert to macro with checking?
+    pub const fn unchecked(num: f32) -> Self {
+        // assert!(num >= 0.0);
+        F32ZeroToOne { value: num }
+    }
+
+    pub const fn value(&self) -> f32 {
+        self.value
+    }
+}
+
 impl From<F32ZeroToOne> for f32 {
     fn from(num: F32ZeroToOne) -> Self {
         num.value
