@@ -55,7 +55,7 @@ impl Cell {
 
         let mut child = self.clone();
         self.expend_energy(self.params.child_threshold_energy);
-        child.state.energy = self.params.child_threshold_energy - self.constants.create_child_energy;
+        child.state.energy = self.params.child_threshold_energy - self.constants.create_child_energy.value();
         Some(child)
     }
 
@@ -89,7 +89,7 @@ pub struct CellConstants {
     pub maintenance_energy_use: F32Positive,
     pub food_yield_from_eating: F32Positive,
     pub energy_yield_from_digestion: F32Positive,
-    pub create_child_energy: f32,
+    pub create_child_energy: F32Positive,
     pub health_reduction_per_energy_expended: f32,
     pub health_increase_per_healing_energy: f32,
 }
@@ -100,7 +100,7 @@ impl CellConstants {
         maintenance_energy_use: F32Positive::unchecked(0.0),
         food_yield_from_eating: F32Positive::unchecked(1.0),
         energy_yield_from_digestion: F32Positive::unchecked(1.0),
-        create_child_energy: 0.0,
+        create_child_energy: F32Positive::unchecked(0.0),
         health_reduction_per_energy_expended: 0.0,
         health_increase_per_healing_energy: 0.0,
     };
@@ -369,7 +369,7 @@ mod tests {
     #[test]
     fn cell_passes_energy_to_child() {
         let constants = Rc::new(CellConstants {
-            create_child_energy: 1.5,
+            create_child_energy: 1.5.into(),
             ..CellConstants::DEFAULT
         });
         let params = CellParams {
@@ -399,7 +399,7 @@ mod tests {
     #[test]
     fn expending_reproduction_energy_reduces_health() {
         let constants = Rc::new(CellConstants {
-            create_child_energy: 0.0,
+            create_child_energy: 0.0.into(),
             health_reduction_per_energy_expended: 0.125,
             ..CellConstants::DEFAULT
         });

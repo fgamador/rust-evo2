@@ -11,7 +11,7 @@ pub fn create_and_run_world(args: &Args) {
         maintenance_energy_use: args.maint.into(),
         food_yield_from_eating: args.eat_yield.into(),
         energy_yield_from_digestion: args.digest_yield.into(),
-        create_child_energy: args.create_child,
+        create_child_energy: args.create_child.into(),
         health_reduction_per_energy_expended: args.en_health_loss,
         ..CellConstants::DEFAULT
     });
@@ -151,7 +151,7 @@ impl Args {
         sd_child_en: 0.0,
         mean_child_fd: 0.0,
         sd_child_fd: 0.0,
-        create_child: CellConstants::DEFAULT.create_child_energy,
+        create_child: CellConstants::DEFAULT.create_child_energy.value(),
         maint: CellConstants::DEFAULT.maintenance_energy_use.value(),
         mean_eat: 0.0,
         sd_eat: 0.0,
