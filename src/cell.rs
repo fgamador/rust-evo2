@@ -39,13 +39,13 @@ impl Cell {
         self.energy() > 0.0
     }
 
-    pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, f32) {
+    pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         let child = self.try_reproduce(environment);
         let food = self.eat(environment.food_per_cell);
         self.digest(food);
         self.maintain();
         self.heal();
-        (child, food.into())
+        (child, food)
     }
 
     fn try_reproduce(&mut self, environment: &CellEnvironment) -> Option<Cell> {
@@ -214,7 +214,7 @@ mod tests {
         };
         let mut cell = Cell::new(&constants, params).with_energy(1.0);
         let (_, food_eaten) = cell.step(&environment);
-        assert_eq!(food_eaten, 3.0);
+        assert_eq!(food_eaten.value(), 3.0);
     }
 
     #[test]
@@ -233,7 +233,7 @@ mod tests {
         };
         let mut cell = Cell::new(&constants, params).with_energy(1.0);
         let (_, food_eaten) = cell.step(&environment);
-        assert_eq!(food_eaten, 2.0);
+        assert_eq!(food_eaten.value(), 2.0);
     }
 
     #[test]
