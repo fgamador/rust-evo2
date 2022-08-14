@@ -43,7 +43,7 @@ impl From<F32ZeroToOne> for f32 {
 
 impl From<f32> for F32ZeroToOne {
     fn from(num: f32) -> Self {
-        assert!(0.0 <= num && num <= 1.0);
+        assert!((0.0..=1.0).contains(&num));
         F32ZeroToOne { value: num }
     }
 }
