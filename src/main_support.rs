@@ -9,7 +9,7 @@ use crate::world::World;
 pub fn create_and_run_world(args: &Args) {
     let cell_constants = Rc::new(CellConstants {
         maintenance_energy_use: args.maint.into(),
-        food_yield_from_eating: args.eat_yield,
+        food_yield_from_eating: args.eat_yield.into(),
         energy_yield_from_digestion: args.digest_yield,
         create_child_energy: args.create_child,
         health_reduction_per_energy_expended: args.en_health_loss,
@@ -155,7 +155,7 @@ impl Args {
         maint: CellConstants::DEFAULT.maintenance_energy_use.value(),
         mean_eat: 0.0,
         sd_eat: 0.0,
-        eat_yield: CellConstants::DEFAULT.food_yield_from_eating,
+        eat_yield: CellConstants::DEFAULT.food_yield_from_eating.value(),
         digest_yield: CellConstants::DEFAULT.energy_yield_from_digestion,
         en_health_loss: CellConstants::DEFAULT.health_reduction_per_energy_expended,
     };
