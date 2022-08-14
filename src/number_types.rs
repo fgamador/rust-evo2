@@ -24,7 +24,7 @@ impl F32Positive {
         Self { value: value.max(0.0) }
     }
 
-    pub const fn value(&self) -> f32 {
+    pub const fn value(self) -> f32 {
         self.value
     }
 
@@ -98,7 +98,7 @@ impl F32ZeroToOne {
         Self { value: value.max(0.0).min(1.0) }
     }
 
-    pub const fn value(&self) -> f32 {
+    pub const fn value(self) -> f32 {
         self.value
     }
 }
@@ -152,7 +152,7 @@ impl F32ZeroToOnePerF32Positive {
         Self { value: value.max(0.0).min(1.0) }
     }
 
-    pub const fn value(&self) -> f32 {
+    pub const fn value(self) -> f32 {
         self.value
     }
 }
