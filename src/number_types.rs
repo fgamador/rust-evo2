@@ -1,6 +1,8 @@
 use std::convert::From;
 use std::fmt;
 use std::ops::AddAssign;
+use std::ops::Mul;
+use std::ops::Sub;
 use std::ops::SubAssign;
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
@@ -36,6 +38,22 @@ impl fmt::Display for F32Positive {
 impl AddAssign for F32Positive {
     fn add_assign(&mut self, other: Self) {
         *self = Self::unchecked(self.value() + other.value());
+    }
+}
+
+impl Mul for F32Positive {
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self::Output {
+        Self::unchecked(self.value() * other.value())
+    }
+}
+
+impl Sub for F32Positive {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self::Output {
+        Self::clipped(self.value() - other.value())
     }
 }
 
@@ -96,5 +114,17 @@ impl From<F32ZeroToOne> for f32 {
 impl From<f32> for F32ZeroToOne {
     fn from(num: f32) -> Self {
         Self::checked(num)
+    }
+}
+
+impl AddAssign for F32ZeroToOne {
+    fn add_assign(&mut self, other: Self) {
+        *self = Self::clipped(self.value() + other.value());
+    }
+}
+
+impl SubAssign for F32ZeroToOne {
+    fn sub_assign(&mut self, other: Self) {
+        *self = Self::clipped(self.value() - other.value());
     }
 }
