@@ -33,7 +33,7 @@ fn create_world(args: &Args, cell_constants: &Rc<CellConstants>) -> World {
         ))
         .with_food(args.initial_food)
         .with_food_sources(vec![
-            Box::new(ConstantFoodSource::new(args.added_food))
+            Box::new(ConstantFoodSource::new(args.added_food.into()))
         ])
 }
 

@@ -89,7 +89,7 @@ impl World {
 
     fn step_food_sources(&mut self) {
         for food_source in &self.food_sources {
-            self.food += food_source.food_this_step();
+            self.food += food_source.food_this_step().value();
         }
     }
 
@@ -300,8 +300,8 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0)
             .with_food_sources(vec![
-                Box::new(ConstantFoodSource::new(2.0)),
-                Box::new(ConstantFoodSource::new(3.0)),
+                Box::new(ConstantFoodSource::new(2.0.into())),
+                Box::new(ConstantFoodSource::new(3.0.into())),
             ]);
         world.step();
         assert_eq!(world.food(), 5.0);
