@@ -73,7 +73,7 @@ impl Cell {
     }
 
     fn heal(&mut self) {
-        self.state.health += self.params.attempted_healing_energy * self.constants.health_increase_per_healing_energy;
+        self.state.health += self.params.attempted_healing_energy * self.constants.health_increase_per_healing_energy.value();
     }
 
     fn expend_energy(&mut self, energy: f32) {
@@ -91,7 +91,7 @@ pub struct CellConstants {
     pub energy_yield_from_digestion: F32Positive,
     pub create_child_energy: F32Positive,
     pub health_reduction_per_energy_expended: F32ZeroToOne,
-    pub health_increase_per_healing_energy: f32,
+    pub health_increase_per_healing_energy: F32ZeroToOne,
 }
 
 impl CellConstants {
@@ -102,7 +102,7 @@ impl CellConstants {
         energy_yield_from_digestion: F32Positive::unchecked(1.0),
         create_child_energy: F32Positive::unchecked(0.0),
         health_reduction_per_energy_expended: F32ZeroToOne::unchecked(0.0),
-        health_increase_per_healing_energy: 0.0,
+        health_increase_per_healing_energy: F32ZeroToOne::unchecked(0.0),
     };
 }
 
@@ -327,7 +327,7 @@ mod tests {
     #[test]
     fn cell_can_heal() {
         let constants = Rc::new(CellConstants {
-            health_increase_per_healing_energy: 0.25,
+            health_increase_per_healing_energy: 0.25.into(),
             ..CellConstants::DEFAULT
         });
         let params = CellParams {
