@@ -9,10 +9,17 @@ pub struct F32Positive {
 }
 
 impl F32Positive {
-    // TODO convert to macro with checking?
-    pub const fn unchecked(num: f32) -> Self {
-        // assert!(num >= 0.0);
-        F32Positive { value: num }
+    pub fn checked(value: f32) -> Self {
+        assert!(value >= 0.0);
+        F32Positive { value }
+    }
+
+    pub const fn unchecked(value: f32) -> Self {
+        F32Positive { value }
+    }
+
+    pub fn clipped(value: f32) -> Self {
+        F32Positive { value: value.max(0.0) }
     }
 
     pub const fn value(&self) -> f32 {
@@ -28,15 +35,13 @@ impl fmt::Display for F32Positive {
 
 impl AddAssign for F32Positive {
     fn add_assign(&mut self, other: Self) {
-        *self = Self {
-            value: self.value() + other.value
-        };
+        *self = Self::unchecked(self.value() + other.value);
     }
 }
 
 impl SubAssign for F32Positive {
     fn sub_assign(&mut self, other: Self) {
-        *self = (self.value() - other.value).into();
+        *self = Self::clipped(self.value() - other.value);
     }
 }
 
@@ -48,8 +53,7 @@ impl From<F32Positive> for f32 {
 
 impl From<f32> for F32Positive {
     fn from(num: f32) -> Self {
-        assert!(num >= 0.0);
-        F32Positive { value: num }
+        F32Positive::checked(num)
     }
 }
 
