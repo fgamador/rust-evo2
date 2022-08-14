@@ -133,10 +133,10 @@ pub fn generate_cells(
         cells.push(Cell::new(
             constants,
             CellParams {
-                child_threshold_energy: child_threshold_energies.sample(&mut rng),
-                child_threshold_food: child_threshold_foods.sample(&mut rng),
-                attempted_eating_energy: eating_energies.sample(&mut rng),
-                attempted_healing_energy: 0.0, // TODO
+                child_threshold_energy: child_threshold_energies.sample(&mut rng).into(),
+                child_threshold_food: child_threshold_foods.sample(&mut rng).into(),
+                attempted_eating_energy: eating_energies.sample(&mut rng).into(),
+                attempted_healing_energy: 0.0.into(), // TODO
             },
         ).with_energy(initial_energies.sample(&mut rng)));
     }
@@ -194,8 +194,8 @@ mod tests {
     fn world_adds_new_cells() {
         let constants = Rc::new(CellConstants::DEFAULT);
         let params = CellParams {
-            child_threshold_energy: 4.0,
-            child_threshold_food: 0.0,
+            child_threshold_energy: 4.0.into(),
+            child_threshold_food: 0.0.into(),
             ..CellParams::DEFAULT
         };
         let mut world = World::new()
@@ -211,8 +211,8 @@ mod tests {
     fn world_reports_num_added() {
         let constants = Rc::new(CellConstants::DEFAULT);
         let params = CellParams {
-            child_threshold_energy: 4.0,
-            child_threshold_food: 0.0,
+            child_threshold_energy: 4.0.into(),
+            child_threshold_food: 0.0.into(),
             ..CellParams::DEFAULT
         };
         let mut world = World::new()
@@ -257,11 +257,11 @@ mod tests {
     fn cells_consume_world_food() {
         let constants = Rc::new(CellConstants::DEFAULT);
         let cell0_constants = CellParams {
-            attempted_eating_energy: 2.0,
+            attempted_eating_energy: 2.0.into(),
             ..CellParams::DEFAULT
         };
         let cell1_constants = CellParams {
-            attempted_eating_energy: 3.0,
+            attempted_eating_energy: 3.0.into(),
             ..CellParams::DEFAULT
         };
         let mut world = World::new()
@@ -278,11 +278,11 @@ mod tests {
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
         let constants = Rc::new(CellConstants::DEFAULT);
         let cell0_constants = CellParams {
-            attempted_eating_energy: 3.0,
+            attempted_eating_energy: 3.0.into(),
             ..CellParams::DEFAULT
         };
         let cell1_constants = CellParams {
-            attempted_eating_energy: 1.0,
+            attempted_eating_energy: 1.0.into(),
             ..CellParams::DEFAULT
         };
         let mut world = World::new()
