@@ -65,7 +65,7 @@ impl Cell {
     }
 
     fn digest(&mut self, food_amount: f32) {
-        self.state.energy += food_amount * self.constants.energy_yield_from_digestion;
+        self.state.energy += food_amount * self.constants.energy_yield_from_digestion.value();
     }
 
     fn maintain(&mut self) {
@@ -88,7 +88,7 @@ impl Cell {
 pub struct CellConstants {
     pub maintenance_energy_use: F32Positive,
     pub food_yield_from_eating: F32Positive,
-    pub energy_yield_from_digestion: f32,
+    pub energy_yield_from_digestion: F32Positive,
     pub create_child_energy: f32,
     pub health_reduction_per_energy_expended: f32,
     pub health_increase_per_healing_energy: f32,
@@ -99,7 +99,7 @@ impl CellConstants {
     pub const DEFAULT: CellConstants = CellConstants {
         maintenance_energy_use: F32Positive::unchecked(0.0),
         food_yield_from_eating: F32Positive::unchecked(1.0),
-        energy_yield_from_digestion: 1.0,
+        energy_yield_from_digestion: F32Positive::unchecked(1.0),
         create_child_energy: 0.0,
         health_reduction_per_energy_expended: 0.0,
         health_increase_per_healing_energy: 0.0,
@@ -278,7 +278,7 @@ mod tests {
         let constants = Rc::new(CellConstants {
             maintenance_energy_use: 0.0.into(),
             food_yield_from_eating: 1.0.into(),
-            energy_yield_from_digestion: 1.5,
+            energy_yield_from_digestion: 1.5.into(),
             ..CellConstants::DEFAULT
         });
         let params = CellParams {
