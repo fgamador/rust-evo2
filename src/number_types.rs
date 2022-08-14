@@ -1,4 +1,5 @@
 use std::convert::From;
+use std::fmt;
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct F32Positive {
@@ -14,6 +15,12 @@ impl F32Positive {
 
     pub const fn value(&self) -> f32 {
         self.value
+    }
+}
+
+impl fmt::Display for F32Positive {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.value)
     }
 }
 
@@ -44,6 +51,12 @@ impl F32ZeroToOne {
 
     pub const fn value(&self) -> f32 {
         self.value
+    }
+}
+
+impl fmt::Display for F32ZeroToOne {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.value)
     }
 }
 
