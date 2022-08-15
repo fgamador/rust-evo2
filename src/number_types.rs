@@ -1,6 +1,7 @@
 use std::convert::From;
 use std::fmt;
 use std::ops::AddAssign;
+use std::ops::Div;
 use std::ops::Mul;
 use std::ops::Sub;
 use std::ops::SubAssign;
@@ -24,7 +25,7 @@ impl F32Positive {
         Self { value: value.max(0.0) }
     }
 
-    pub const fn value(self) -> f32 {
+    pub const fn value(&self) -> f32 {
         self.value
     }
 
@@ -54,6 +55,14 @@ impl From<f32> for F32Positive {
 impl AddAssign for F32Positive {
     fn add_assign(&mut self, other: Self) {
         *self = Self::unchecked(self.value() + other.value());
+    }
+}
+
+impl Div for F32Positive {
+    type Output = Self;
+
+    fn div(self, other: Self) -> Self::Output {
+        Self::unchecked(self.value() / other.value())
     }
 }
 
@@ -98,7 +107,7 @@ impl F32ZeroToOne {
         Self { value: value.max(0.0).min(1.0) }
     }
 
-    pub const fn value(self) -> f32 {
+    pub const fn value(&self) -> f32 {
         self.value
     }
 }
@@ -152,7 +161,7 @@ impl F32ZeroToOnePerF32Positive {
         Self { value: value.max(0.0).min(1.0) }
     }
 
-    pub const fn value(self) -> f32 {
+    pub const fn value(&self) -> f32 {
         self.value
     }
 }

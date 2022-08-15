@@ -150,16 +150,22 @@ impl CellEnvironment {
 mod tests {
     use super::*;
 
-    fn budget<const N: usize>(_available: F32Positive, _desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
-        (0.0.into(), [5.0.into(); N])
+    fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
+        let desired_sum: F32Positive = desired.iter().map(F32Positive::value).sum::<f32>().into();
+        let reduction_factor = available / desired_sum;
+        let mut budgeted = [0.0.into(); N];
+        for i in 0..N {
+            budgeted[i] = desired[i] * reduction_factor;
+        }
+        (0.0.into(), budgeted)
     }
 
     #[test]
     fn budgeting_adjusts_downward_proportionally() {
-        let desired: [F32Positive; 2] = [10.0.into(), 10.0.into()];
-        let (remaining, budgeted) = budget(10.0.into(), &desired);
+        let desired: [F32Positive; 2] = [10.0.into(), 5.0.into()];
+        let (remaining, budgeted) = budget(7.5.into(), &desired);
         assert_eq!(remaining, 0.0.into());
-        assert_eq!(budgeted, [5.0.into(), 5.0.into()]);
+        assert_eq!(budgeted, [5.0.into(), 2.5.into()]);
     }
 
     #[test]
