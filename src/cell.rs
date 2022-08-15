@@ -150,15 +150,14 @@ impl CellEnvironment {
 mod tests {
     use super::*;
 
-    fn balance_budget<const N: usize>(_available: F32Positive, _desired: &[F32Positive; N], _balanced: &mut [F32Positive; N]) -> F32Positive {
-        0.0.into() // TODO
+    fn budget<const N: usize>(_available: F32Positive, _desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
+        (0.0.into(), [0.0.into(); N]) // TODO
     }
 
     #[test]
-    fn balance_budget_adjusts_downward_proportionally() {
+    fn budgeting_adjusts_downward_proportionally() {
         let desired: [F32Positive; 2] = [1.0.into(), 1.0.into()];
-        let mut balanced: [F32Positive; 2] = [1.0.into(), 1.0.into()];
-        let _spent = balance_budget(1.0.into(), &desired, &mut balanced);
+        let (_remaining, _budgeted) = budget(1.0.into(), &desired);
     }
 
     #[test]
