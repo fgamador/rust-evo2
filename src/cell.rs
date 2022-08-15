@@ -146,9 +146,20 @@ impl CellEnvironment {
     pub const DEFAULT: CellEnvironment = CellEnvironment { food_per_cell: F32Positive::unchecked(0.0) };
 }
 
+fn balance_budget(available: F32Positive, desired: &[F32Positive; 1], balanced: &mut [F32Positive; 1]) -> F32Positive {
+    0.0.into() // TODO
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn balance_budget_adjusts_downward_proportionally() {
+        let desired: [F32Positive; 1] = [1.0.into()];
+        let mut balanced: [F32Positive; 1] = [1.0.into()];
+        let spent = balance_budget(1.0.into(), &desired, &mut balanced);
+    }
 
     #[test]
     fn new_cell_has_full_health() {
@@ -392,7 +403,7 @@ mod tests {
                 energy: 2.5.into(),
             },
         }));
-        assert_eq!(cell.energy(), 5.0.into());
+        assert_eq!(cell.energy(), 3.5.into());
     }
 
     #[test]
