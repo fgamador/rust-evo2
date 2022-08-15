@@ -151,13 +151,15 @@ mod tests {
     use super::*;
 
     fn budget<const N: usize>(_available: F32Positive, _desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
-        (0.0.into(), [0.0.into(); N]) // TODO
+        (0.0.into(), [5.0.into(); N])
     }
 
     #[test]
     fn budgeting_adjusts_downward_proportionally() {
-        let desired: [F32Positive; 2] = [1.0.into(), 1.0.into()];
-        let (_remaining, _budgeted) = budget(1.0.into(), &desired);
+        let desired: [F32Positive; 2] = [10.0.into(), 10.0.into()];
+        let (remaining, budgeted) = budget(10.0.into(), &desired);
+        assert_eq!(remaining, 0.0.into());
+        assert_eq!(budgeted, [5.0.into(), 5.0.into()]);
     }
 
     #[test]
