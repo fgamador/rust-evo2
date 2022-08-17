@@ -40,10 +40,9 @@ impl Cell {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
-        let reproduction_energy = self.params.child_threshold_energy;
-
-        let [eating_energy, maintenance_energy, healing_energy ] =
-            Self::budget(&[self.params.attempted_eating_energy,
+        let [reproduction_energy, eating_energy, maintenance_energy, healing_energy ] =
+            Self::budget(&[self.params.child_threshold_energy,
+                self.params.attempted_eating_energy,
                 self.constants.maintenance_energy_use,
                 self.params.attempted_healing_energy]);
 
