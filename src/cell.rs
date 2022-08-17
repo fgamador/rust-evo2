@@ -46,7 +46,7 @@ impl Cell {
             &[self.params.attempted_eating_energy,
                 self.constants.maintenance_energy_use,
                 self.params.attempted_healing_energy];
-        let budgeted = *desired;
+        let budgeted = Self::budget(desired);
         let [eating_energy,
         maintenance_energy,
         healing_energy ] = budgeted;
@@ -59,6 +59,10 @@ impl Cell {
         self.heal(healing_energy);
 
         (child, food)
+    }
+
+    fn budget<const N: usize>(desired: &[F32Positive; N]) -> [F32Positive; N] {
+        *desired
     }
 
     fn try_reproduce(&mut self, environment: &CellEnvironment) -> Option<Cell> {
