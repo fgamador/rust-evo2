@@ -43,13 +43,14 @@ impl Cell {
         let child = self.try_reproduce(environment);
 
         let eating_energy = self.params.attempted_eating_energy;
+        let maintenance_energy = self.constants.maintenance_energy_use;
+        let healing_energy = self.params.attempted_healing_energy;
+
         let food = self.eat(eating_energy, environment.food_per_cell);
         self.digest(food);
 
-        let maintenance_energy = self.constants.maintenance_energy_use;
         self.maintenance(maintenance_energy);
 
-        let healing_energy = self.params.attempted_healing_energy;
         self.heal(healing_energy);
 
         (child, food)
