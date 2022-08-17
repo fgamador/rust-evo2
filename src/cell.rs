@@ -168,7 +168,7 @@ mod tests {
     fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
         let desired_sum: F32Positive = desired.iter().map(F32Positive::value).sum::<f32>().into();
         if available >= desired_sum {
-            return (available - desired_sum, *desired);
+            return (desired_sum, *desired);
         }
 
         let reduction_factor = available / desired_sum;
@@ -176,22 +176,22 @@ mod tests {
         for i in 0..N {
             budgeted[i] = desired[i] * reduction_factor;
         }
-        (0.0.into(), budgeted)
+        (available, budgeted)
     }
 
     #[test]
     fn budgeting_adjusts_downward_proportionally() {
         let desired: [F32Positive; 2] = [10.0.into(), 5.0.into()];
-        let (remaining, budgeted) = budget(7.5.into(), &desired);
-        assert_eq!(remaining, 0.0.into());
+        let (used, budgeted) = budget(7.5.into(), &desired);
+        assert_eq!(used, 7.5.into());
         assert_eq!(budgeted, [5.0.into(), 2.5.into()]);
     }
 
     #[test]
     fn budgeting_leaves_satisfiable_requests_unchanged() {
         let desired: [F32Positive; 2] = [10.0.into(), 5.0.into()];
-        let (remaining, budgeted) = budget(20.0.into(), &desired);
-        assert_eq!(remaining, 5.0.into());
+        let (used, budgeted) = budget(20.0.into(), &desired);
+        assert_eq!(used, 15.0.into());
         assert_eq!(budgeted, [10.0.into(), 5.0.into()]);
     }
 
