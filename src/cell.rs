@@ -42,9 +42,14 @@ impl Cell {
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         let child = self.try_reproduce(environment);
 
-        let eating_energy = self.params.attempted_eating_energy;
-        let maintenance_energy = self.constants.maintenance_energy_use;
-        let healing_energy = self.params.attempted_healing_energy;
+        let desired =
+            [self.params.attempted_eating_energy,
+                self.constants.maintenance_energy_use,
+                self.params.attempted_healing_energy];
+        let budgeted = desired;
+        let [eating_energy,
+        maintenance_energy,
+        healing_energy ] = budgeted;
 
         let food = self.eat(eating_energy, environment.food_per_cell);
         self.digest(food);
