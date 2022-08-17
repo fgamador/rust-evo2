@@ -73,6 +73,7 @@ impl Cell {
 
         let mut child = self.clone();
         self.expend_energy(reproduction_energy);
+        child.state.health = 1.0.into();
         child.state.energy = reproduction_energy - self.constants.create_child_energy;
         Some(child)
     }
@@ -409,6 +410,7 @@ mod tests {
         assert_eq!(child, None);
     }
 
+    // TODO break into three tests: clone, energy, health
     #[test]
     fn cell_passes_energy_to_child() {
         let constants = Rc::new(CellConstants {
@@ -421,7 +423,7 @@ mod tests {
             attempted_eating_energy: 1.0.into(),
             attempted_healing_energy: 1.5.into(),
         };
-        let mut cell = Cell::new(&constants, params).with_energy(10.0.into());
+        let mut cell = Cell::new(&constants, params).with_health(0.9.into()).with_energy(10.0.into());
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
         assert_eq!(child, Some(Cell {
             constants: Rc::clone(&constants),
