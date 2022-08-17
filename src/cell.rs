@@ -43,10 +43,10 @@ impl Cell {
         let child = self.try_reproduce(environment);
 
         let desired =
-            [self.params.attempted_eating_energy,
+            &[self.params.attempted_eating_energy,
                 self.constants.maintenance_energy_use,
                 self.params.attempted_healing_energy];
-        let budgeted = desired;
+        let budgeted = *desired;
         let [eating_energy,
         maintenance_energy,
         healing_energy ] = budgeted;
@@ -166,7 +166,7 @@ mod tests {
     fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
         let desired_sum: F32Positive = desired.iter().map(F32Positive::value).sum::<f32>().into();
         if available >= desired_sum {
-            return (available - desired_sum, desired.clone());
+            return (available - desired_sum, *desired);
         }
 
         let reduction_factor = available / desired_sum;
