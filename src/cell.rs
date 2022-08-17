@@ -88,7 +88,7 @@ impl Cell {
     }
 
     fn heal(&mut self, healing_energy: F32Positive) {
-        self.state.energy -= healing_energy;
+        self.expend_energy(healing_energy);
         self.state.health += healing_energy * self.constants.health_increase_per_healing_energy;
     }
 
