@@ -41,10 +41,17 @@ impl Cell {
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         let child = self.try_reproduce(environment);
-        let food = self.eat(environment.food_per_cell);
+
+        let eating_energy = self.params.attempted_eating_energy;
+        let food = self.eat(eating_energy, environment.food_per_cell);
         self.digest(food);
-        self.maintain();
-        self.heal();
+
+        let maintenance_energy = self.constants.maintenance_energy_use;
+        self.maintenance(maintenance_energy);
+
+        let healing_energy = self.params.attempted_healing_energy;
+        self.heal(healing_energy);
+
         (child, food)
     }
 
@@ -59,22 +66,22 @@ impl Cell {
         Some(child)
     }
 
-    fn eat(&mut self, food_per_cell: F32Positive) -> F32Positive {
-        self.expend_energy(self.params.attempted_eating_energy);
-        (self.params.attempted_eating_energy * self.constants.food_yield_from_eating).min(food_per_cell)
+    fn eat(&mut self, eating_energy: F32Positive, food_per_cell: F32Positive) -> F32Positive {
+        self.expend_energy(eating_energy);
+        (eating_energy * self.constants.food_yield_from_eating).min(food_per_cell)
     }
 
     fn digest(&mut self, food_amount: F32Positive) {
         self.state.energy += food_amount * self.constants.energy_yield_from_digestion;
     }
 
-    fn maintain(&mut self) {
-        self.expend_energy(self.constants.maintenance_energy_use);
+    fn maintenance(&mut self, maintenance_energy: F32Positive) {
+        self.expend_energy(maintenance_energy);
     }
 
-    fn heal(&mut self) {
-        self.state.energy -= self.params.attempted_healing_energy;
-        self.state.health += self.params.attempted_healing_energy * self.constants.health_increase_per_healing_energy;
+    fn heal(&mut self, healing_energy: F32Positive) {
+        self.state.energy -= healing_energy;
+        self.state.health += healing_energy * self.constants.health_increase_per_healing_energy;
     }
 
     fn expend_energy(&mut self, energy: F32Positive) {
