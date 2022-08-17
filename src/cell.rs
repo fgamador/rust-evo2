@@ -49,11 +49,14 @@ impl Cell {
 
         let child = self.try_reproduce(reproduction_energy, environment);
 
+        self.expend_energy(eating_energy);
         let food = self.eat(eating_energy, environment.food_per_cell);
         self.digest(food);
 
+        self.expend_energy(maintenance_energy);
         self.maintenance(maintenance_energy);
 
+        self.expend_energy(healing_energy);
         self.heal(healing_energy);
 
         (child, food)
@@ -75,7 +78,6 @@ impl Cell {
     }
 
     fn eat(&mut self, eating_energy: F32Positive, food_per_cell: F32Positive) -> F32Positive {
-        self.expend_energy(eating_energy);
         (eating_energy * self.constants.food_yield_from_eating).min(food_per_cell)
     }
 
@@ -83,12 +85,9 @@ impl Cell {
         self.state.energy += food_amount * self.constants.energy_yield_from_digestion;
     }
 
-    fn maintenance(&mut self, maintenance_energy: F32Positive) {
-        self.expend_energy(maintenance_energy);
-    }
+    fn maintenance(&mut self, _maintenance_energy: F32Positive) {}
 
     fn heal(&mut self, healing_energy: F32Positive) {
-        self.expend_energy(healing_energy);
         self.state.health += healing_energy * self.constants.health_increase_per_healing_energy;
     }
 
