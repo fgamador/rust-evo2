@@ -41,10 +41,11 @@ impl Cell {
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         let [reproduction_energy, eating_energy, maintenance_energy, healing_energy ] =
-            Self::budget(&[self.params.child_threshold_energy,
-                self.params.attempted_eating_energy,
-                self.constants.maintenance_energy_use,
-                self.params.attempted_healing_energy]);
+            Self::budget(self.state.energy,
+                         &[self.params.child_threshold_energy,
+                             self.params.attempted_eating_energy,
+                             self.constants.maintenance_energy_use,
+                             self.params.attempted_healing_energy]);
 
         let child = self.try_reproduce(reproduction_energy, environment);
 
@@ -58,7 +59,7 @@ impl Cell {
         (child, food)
     }
 
-    fn budget<const N: usize>(desired: &[F32Positive; N]) -> [F32Positive; N] {
+    fn budget<const N: usize>(_available: F32Positive, desired: &[F32Positive; N]) -> [F32Positive; N] {
         *desired
     }
 
