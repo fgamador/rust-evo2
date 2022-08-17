@@ -40,12 +40,14 @@ impl Cell {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
-        let child = self.try_reproduce(environment);
+        let reproduction_energy = self.params.child_threshold_energy;
 
         let [eating_energy, maintenance_energy, healing_energy ] =
             Self::budget(&[self.params.attempted_eating_energy,
                 self.constants.maintenance_energy_use,
                 self.params.attempted_healing_energy]);
+
+        let child = self.try_reproduce(reproduction_energy, environment);
 
         let food = self.eat(eating_energy, environment.food_per_cell);
         self.digest(food);
@@ -61,14 +63,14 @@ impl Cell {
         *desired
     }
 
-    fn try_reproduce(&mut self, environment: &CellEnvironment) -> Option<Cell> {
-        if self.state.energy < self.params.child_threshold_energy
+    fn try_reproduce(&mut self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> Option<Cell> {
+        if self.state.energy < reproduction_energy
             || environment.food_per_cell < self.params.child_threshold_food
         { return None; }
 
         let mut child = self.clone();
-        self.expend_energy(self.params.child_threshold_energy);
-        child.state.energy = self.params.child_threshold_energy - self.constants.create_child_energy;
+        self.expend_energy(reproduction_energy);
+        child.state.energy = reproduction_energy - self.constants.create_child_energy;
         Some(child)
     }
 
