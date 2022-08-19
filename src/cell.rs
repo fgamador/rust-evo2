@@ -67,10 +67,18 @@ impl Cell {
     }
 
     fn try_reproduce(&mut self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> Option<Cell> {
-        if self.state.energy < reproduction_energy
-            || environment.food_per_cell < self.params.child_threshold_food
+        if self.can_reproduce(reproduction_energy, environment)
         { return None; }
 
+        self.reproduce(reproduction_energy)
+    }
+
+    fn can_reproduce(&self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> bool {
+        self.state.energy < reproduction_energy
+            || environment.food_per_cell < self.params.child_threshold_food
+    }
+
+    fn reproduce(&mut self, reproduction_energy: F32Positive) -> Option<Cell> {
         let mut child = self.clone();
         self.expend_energy(reproduction_energy);
         child.state.health = 1.0.into();
