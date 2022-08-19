@@ -76,8 +76,8 @@ impl Cell {
     }
 
     fn reproduce(&mut self, reproduction_energy: F32Positive) -> Option<Cell> {
-        let mut child = self.clone();
         self.expend_energy(reproduction_energy);
+        let mut child = self.clone();
         child.state.health = 1.0.into();
         child.state.energy = reproduction_energy - self.constants.create_child_energy;
         Some(child)
