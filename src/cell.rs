@@ -67,10 +67,11 @@ impl Cell {
     }
 
     fn try_reproduce(&mut self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> Option<Cell> {
-        if !self.can_reproduce(reproduction_energy, environment)
-        { return None; }
-
-        self.reproduce(reproduction_energy)
+        if self.can_reproduce(reproduction_energy, environment) {
+            self.reproduce(reproduction_energy)
+        } else {
+            None
+        }
     }
 
     fn can_reproduce(&self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> bool {
