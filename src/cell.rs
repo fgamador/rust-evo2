@@ -410,7 +410,29 @@ mod tests {
         assert_eq!(child, None);
     }
 
-    // TODO break into three tests: clone, energy, health
+    #[test]
+    fn reproduction_clones_cell_params() {
+        let params = CellParams {
+            child_threshold_energy: 1.0.into(),
+            child_threshold_food: 2.0.into(),
+            attempted_eating_energy: 3.0.into(),
+            attempted_healing_energy: 4.0.into(),
+        };
+        let mut cell = Cell::new(&Rc::new(CellConstants::DEFAULT), params).with_energy(10.0.into());
+        let environment = CellEnvironment {
+            food_per_cell: 10.0.into(),
+            ..CellEnvironment::DEFAULT
+        };
+        let (child, _) = cell.step(&environment);
+        assert_ne!(child, None);
+        assert_eq!(child.unwrap().params, CellParams {
+            child_threshold_energy: 1.0.into(),
+            child_threshold_food: 2.0.into(),
+            attempted_eating_energy: 3.0.into(),
+            attempted_healing_energy: 4.0.into(),
+        });
+    }
+
     #[test]
     fn cell_passes_energy_to_child() {
         let constants = Rc::new(CellConstants {
@@ -420,25 +442,27 @@ mod tests {
         let params = CellParams {
             child_threshold_energy: 4.0.into(),
             child_threshold_food: 0.0.into(),
-            attempted_eating_energy: 1.0.into(),
-            attempted_healing_energy: 1.5.into(),
+            ..CellParams::DEFAULT
         };
-        let mut cell = Cell::new(&constants, params).with_health(0.9.into()).with_energy(10.0.into());
+        let mut cell = Cell::new(&constants, params).with_energy(10.0.into());
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
-        assert_eq!(child, Some(Cell {
-            constants: Rc::clone(&constants),
-            params: CellParams {
-                child_threshold_energy: 4.0.into(),
-                child_threshold_food: 0.0.into(),
-                attempted_eating_energy: 1.0.into(),
-                attempted_healing_energy: 1.5.into(),
-            },
-            state: CellState {
-                health: 1.0.into(),
-                energy: 2.5.into(),
-            },
-        }));
-        assert_eq!(cell.energy(), 3.5.into());
+        assert_ne!(child, None);
+        assert_eq!(child.unwrap().state.energy, 2.5.into());
+        assert_eq!(cell.energy(), 6.0.into());
+    }
+
+    #[test]
+    fn child_starts_with_full_health() {
+        let params = CellParams {
+            child_threshold_energy: 1.0.into(),
+            child_threshold_food: 0.0.into(),
+            ..CellParams::DEFAULT
+        };
+        let mut cell = Cell::new(&Rc::new(CellConstants::DEFAULT), params)
+            .with_health(0.5.into()).with_energy(10.0.into());
+        let (child, _) = cell.step(&CellEnvironment::DEFAULT);
+        assert_ne!(child, None);
+        assert_eq!(child.unwrap().state.health, 1.0.into());
     }
 
     #[test]
