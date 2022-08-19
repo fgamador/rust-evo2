@@ -48,6 +48,7 @@ impl Cell {
                              self.params.attempted_healing_energy]);
 
         let child = if self.can_reproduce(reproduction_energy, environment) {
+            self.expend_energy(reproduction_energy);
             self.reproduce(reproduction_energy)
         } else {
             None
@@ -76,7 +77,6 @@ impl Cell {
     }
 
     fn reproduce(&mut self, reproduction_energy: F32Positive) -> Option<Cell> {
-        self.expend_energy(reproduction_energy);
         let mut child = self.clone();
         child.state.health = 1.0.into();
         child.state.energy = reproduction_energy - self.constants.create_child_energy;
