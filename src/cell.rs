@@ -47,7 +47,11 @@ impl Cell {
                              self.constants.maintenance_energy_use,
                              self.params.attempted_healing_energy]);
 
-        let child = self.try_reproduce(reproduction_energy, environment);
+        let child = if self.can_reproduce(reproduction_energy, environment) {
+            self.reproduce(reproduction_energy)
+        } else {
+            None
+        };
 
         self.expend_energy(eating_energy);
         let food = self.eat(eating_energy, environment.food_per_cell);
@@ -64,14 +68,6 @@ impl Cell {
 
     fn budget<const N: usize>(_available: F32Positive, desired: &[F32Positive; N]) -> [F32Positive; N] {
         *desired
-    }
-
-    fn try_reproduce(&mut self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> Option<Cell> {
-        if self.can_reproduce(reproduction_energy, environment) {
-            self.reproduce(reproduction_energy)
-        } else {
-            None
-        }
     }
 
     fn can_reproduce(&self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> bool {
