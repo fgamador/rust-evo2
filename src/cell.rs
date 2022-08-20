@@ -41,11 +41,11 @@ impl Cell {
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         let (_used, [reproduction_energy, eating_energy, maintenance_energy, healing_energy ]) =
-            Self::budget(self.state.energy,
-                         &[self.params.child_threshold_energy,
-                             self.params.attempted_eating_energy,
-                             self.constants.maintenance_energy_use,
-                             self.params.attempted_healing_energy]);
+            budget(self.state.energy,
+                   &[self.params.child_threshold_energy,
+                       self.params.attempted_eating_energy,
+                       self.constants.maintenance_energy_use,
+                       self.params.attempted_healing_energy]);
 
         let child = if self.can_reproduce(reproduction_energy, environment) {
             self.expend_energy(reproduction_energy);
@@ -65,10 +65,6 @@ impl Cell {
         self.heal(healing_energy);
 
         (child, food)
-    }
-
-    fn budget<const N: usize>(_available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
-        (0.0.into(), *desired)
     }
 
     fn can_reproduce(&self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> bool {
@@ -101,6 +97,10 @@ impl Cell {
         self.state.energy -= energy;
         self.state.health -= energy * self.constants.health_reduction_per_energy_expended;
     }
+}
+
+fn budget<const N: usize>(_available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
+    (0.0.into(), *desired)
 }
 
 #[derive(Debug, PartialEq)]
