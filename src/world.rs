@@ -268,8 +268,8 @@ mod tests {
         let mut world = World::new()
             .with_food(10.0.into())
             .with_cells(vec![
-                Cell::new(&constants, cell0_constants).with_energy(1.0.into()),
-                Cell::new(&constants, cell1_constants).with_energy(1.0.into()),
+                Cell::new(&constants, cell0_constants).with_energy(10.0.into()),
+                Cell::new(&constants, cell1_constants).with_energy(10.0.into()),
             ]);
         world.step();
         assert_eq!(world.food().value(), 5.0);
@@ -289,8 +289,8 @@ mod tests {
         let mut world = World::new()
             .with_food(4.0.into())
             .with_cells(vec![
-                Cell::new(&constants, cell0_constants).with_energy(1.0.into()),
-                Cell::new(&constants, cell1_constants).with_energy(1.0.into()),
+                Cell::new(&constants, cell0_constants).with_energy(10.0.into()),
+                Cell::new(&constants, cell1_constants).with_energy(10.0.into()),
             ]);
         world.step();
         assert_eq!(world.food().value(), 1.0);

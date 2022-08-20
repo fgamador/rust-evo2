@@ -63,7 +63,7 @@ impl Cell {
             None
         };
 
-        self.expend_energy(_total_budgeted);
+        //self.expend_energy(_total_budgeted);
 
         self.expend_energy(budgeted_eating_energy);
         let food = self.eat(budgeted_eating_energy, environment.food_per_cell);
@@ -271,7 +271,7 @@ mod tests {
             food_per_cell: 10.0.into(),
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&constants, params).with_energy(1.0.into());
+        let mut cell = Cell::new(&constants, params).with_energy(10.0.into());
         let (_, food_eaten) = cell.step(&environment);
         assert_eq!(food_eaten, 3.0.into());
     }
@@ -290,7 +290,7 @@ mod tests {
             food_per_cell: 2.0.into(),
             ..CellEnvironment::DEFAULT
         };
-        let mut cell = Cell::new(&constants, params).with_energy(1.0.into());
+        let mut cell = Cell::new(&constants, params).with_energy(10.0.into());
         let (_, food_eaten) = cell.step(&environment);
         assert_eq!(food_eaten, 2.0.into());
     }
