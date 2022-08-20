@@ -40,29 +40,40 @@ impl Cell {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
-        let (_used, [reproduction_energy, eating_energy, maintenance_energy, healing_energy ]) =
+        let (mut _total_budgeted,
+            [budgeted_reproduction_energy,
+            mut budgeted_eating_energy,
+            mut budgeted_maintenance_energy,
+            mut budgeted_healing_energy ]) =
             budget(self.state.energy,
                    &[self.params.child_threshold_energy,
                        self.params.attempted_eating_energy,
                        self.constants.maintenance_energy_use,
                        self.params.attempted_healing_energy]);
 
-        let child = if self.can_reproduce(reproduction_energy, environment) {
-            self.expend_energy(reproduction_energy);
-            self.reproduce(reproduction_energy)
+        let child = if self.can_reproduce(budgeted_reproduction_energy, environment) {
+            self.expend_energy(budgeted_reproduction_energy);
+            self.reproduce(budgeted_reproduction_energy)
         } else {
+            (_total_budgeted, [budgeted_eating_energy, budgeted_maintenance_energy, budgeted_healing_energy]) =
+                budget(self.state.energy,
+                       &[self.params.attempted_eating_energy,
+                           self.constants.maintenance_energy_use,
+                           self.params.attempted_healing_energy]);
             None
         };
 
-        self.expend_energy(eating_energy);
-        let food = self.eat(eating_energy, environment.food_per_cell);
+        self.expend_energy(_total_budgeted);
+
+        self.expend_energy(budgeted_eating_energy);
+        let food = self.eat(budgeted_eating_energy, environment.food_per_cell);
         self.digest(food);
 
-        self.expend_energy(maintenance_energy);
-        self.maintenance(maintenance_energy);
+        self.expend_energy(budgeted_maintenance_energy);
+        self.maintenance(budgeted_maintenance_energy);
 
-        self.expend_energy(healing_energy);
-        self.heal(healing_energy);
+        self.expend_energy(budgeted_healing_energy);
+        self.heal(budgeted_healing_energy);
 
         (child, food)
     }
