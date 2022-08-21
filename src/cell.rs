@@ -432,6 +432,26 @@ mod tests {
     }
 
     #[test]
+    fn cell_can_fully_heal_despite_health_damage_from_energy_use() {
+        let mut cell = Cell::new(
+            &Rc::new(CellConstants {
+                health_increase_per_healing_energy: 0.75.into(),
+                health_reduction_per_energy_expended: 0.25.into(),
+                ..CellConstants::DEFAULT
+            }),
+            CellParams {
+                attempted_healing_energy: 1.0.into(),
+                ..CellParams::DEFAULT
+            })
+            .with_health(0.5.into())
+            .with_energy(10.0.into());
+
+        cell.step(&CellEnvironment::DEFAULT);
+
+        assert_eq!(cell.health(), 1.0.into());
+    }
+
+    #[test]
     fn cell_with_insufficient_energy_does_not_reproduce() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants::DEFAULT),
