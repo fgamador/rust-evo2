@@ -498,4 +498,32 @@ mod tests {
         assert_ne!(child, None);
         assert_eq!(cell.health(), 0.75.into());
     }
+
+    #[test]
+    fn cell_behavior_is_limited_by_energy_budget() {
+        let constants = Rc::new(CellConstants {
+            maintenance_energy_use: 2.0.into(),
+            food_yield_from_eating: 1.0.into(),
+            energy_yield_from_digestion: 0.0.into(),
+            health_increase_per_healing_energy: 0.25.into(),
+            ..CellConstants::DEFAULT
+        });
+        let params = CellParams {
+            attempted_eating_energy: 2.0.into(),
+            attempted_healing_energy: 2.0.into(),
+            child_threshold_energy: 2.0.into(),
+            child_threshold_food: 0.0.into(),
+        };
+        let mut cell = Cell::new(&constants, params)
+            .with_health(0.25.into()).with_energy(8.0.into());
+        let environment = CellEnvironment {
+            food_per_cell: 10.0.into(),
+            ..CellEnvironment::DEFAULT
+        };
+        let (child, food) = cell.step(&environment);
+        assert_ne!(child, None);
+        assert_eq!(food, 2.0.into());
+        assert_eq!(cell.health(), 0.75.into());
+        assert_eq!(cell.energy(), 0.0.into());
+    }
 }
