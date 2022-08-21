@@ -1,10 +1,7 @@
 use std::convert::From;
 use std::fmt;
-use std::ops::AddAssign;
-use std::ops::Div;
-use std::ops::Mul;
-use std::ops::Sub;
-use std::ops::SubAssign;
+use std::iter::Sum;
+use std::ops::{Add, AddAssign, Div, Mul, Sub, SubAssign};
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct F32Positive {
@@ -52,6 +49,14 @@ impl From<f32> for F32Positive {
     }
 }
 
+impl Add for F32Positive {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self::Output {
+        Self::unchecked(self.value() + other.value())
+    }
+}
+
 impl AddAssign for F32Positive {
     fn add_assign(&mut self, other: Self) {
         *self = Self::unchecked(self.value() + other.value());
@@ -85,6 +90,14 @@ impl Sub for F32Positive {
 impl SubAssign for F32Positive {
     fn sub_assign(&mut self, other: Self) {
         *self = Self::clipped(self.value() - other.value());
+    }
+}
+
+impl<'a> Sum<&'a Self> for F32Positive {
+    fn sum<I>(iter: I) -> Self
+        where I: Iterator<Item=&'a Self>,
+    {
+        iter.fold(Self::unchecked(0.0), |a, b| a + *b)
     }
 }
 
@@ -213,9 +226,15 @@ mod tests {
 
     #[test]
     fn f32_positive_subassign_clips() {
-        let mut num = F32Positive::unchecked(1.0);
-        num -= F32Positive::unchecked(1.5);
+        let mut num: F32Positive = 1.0.into();
+        num -= 1.5.into();
         assert_eq!(num, 0.0.into());
+    }
+
+    #[test]
+    fn f32_positive_sums() {
+        let nums: [F32Positive; 2] = [1.0.into(), 2.0.into()];
+        assert_eq!(nums.iter().sum::<F32Positive>(), 3.0.into());
     }
 
     #[test]
