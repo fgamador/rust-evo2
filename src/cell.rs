@@ -40,7 +40,7 @@ impl Cell {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
-        let (mut _total_budgeted,
+        let (mut total_budgeted,
             [budgeted_reproduction_energy,
             mut budgeted_eating_energy,
             mut budgeted_maintenance_energy,
@@ -52,10 +52,9 @@ impl Cell {
                        self.params.attempted_healing_energy]);
 
         let child = if self.can_reproduce(budgeted_reproduction_energy, environment) {
-            self.expend_energy(budgeted_reproduction_energy);
             self.reproduce(budgeted_reproduction_energy)
         } else {
-            (_total_budgeted, [budgeted_eating_energy, budgeted_maintenance_energy, budgeted_healing_energy]) =
+            (total_budgeted, [budgeted_eating_energy, budgeted_maintenance_energy, budgeted_healing_energy]) =
                 budget(self.state.energy,
                        &[self.params.attempted_eating_energy,
                            self.constants.maintenance_energy_use,
@@ -63,16 +62,11 @@ impl Cell {
             None
         };
 
-        // TODO self.expend_energy(_total_budgeted);
+        self.expend_energy(total_budgeted);
 
-        self.expend_energy(budgeted_eating_energy);
         let food = self.eat(budgeted_eating_energy, environment.food_per_cell);
         self.digest(food);
-
-        self.expend_energy(budgeted_maintenance_energy);
         self.maintenance(budgeted_maintenance_energy);
-
-        self.expend_energy(budgeted_healing_energy);
         self.heal(budgeted_healing_energy);
 
         (child, food)
