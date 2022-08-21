@@ -212,6 +212,13 @@ mod tests {
     }
 
     #[test]
+    fn f32_positive_subassign_clips() {
+        let mut num = F32Positive::unchecked(1.0);
+        num -= F32Positive::unchecked(1.5);
+        assert_eq!(num, 0.0.into());
+    }
+
+    #[test]
     fn f32_zero_to_one_clips() {
         assert_eq!(F32ZeroToOne::clipped(-0.5), 0.0.into());
         assert_eq!(F32ZeroToOne::clipped(0.5), 0.5.into());
