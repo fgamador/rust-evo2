@@ -93,6 +93,14 @@ impl SubAssign for F32Positive {
     }
 }
 
+impl Sum<Self> for F32Positive {
+    fn sum<I>(iter: I) -> Self
+        where I: Iterator<Item=Self>,
+    {
+        iter.fold(Self::unchecked(0.0), |a, b| a + b)
+    }
+}
+
 impl<'a> Sum<&'a Self> for F32Positive {
     fn sum<I>(iter: I) -> Self
         where I: Iterator<Item=&'a Self>,
