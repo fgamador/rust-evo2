@@ -117,10 +117,7 @@ fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) ->
     }
 
     let reduction_factor = available / desired_sum;
-    let mut budgeted = [0.0.into(); N];
-    for i in 0..N {
-        budgeted[i] = desired[i] * reduction_factor;
-    }
+    let budgeted = desired.map(|item| { item * reduction_factor });
     (available, budgeted)
 }
 
