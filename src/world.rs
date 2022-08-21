@@ -194,15 +194,17 @@ mod tests {
     #[test]
     fn world_adds_new_cells() {
         let constants = Rc::new(CellConstants::DEFAULT);
-        let params = CellParams {
-            child_threshold_energy: 4.0.into(),
-            child_threshold_food: 0.0.into(),
-            ..CellParams::DEFAULT
-        };
         let mut world = World::new()
             .with_food(0.0.into())
             .with_cells(vec![
-                Cell::new(&constants, params).with_energy(10.0.into()),
+                Cell::new(
+                    &constants,
+                    CellParams {
+                        child_threshold_energy: 4.0.into(),
+                        child_threshold_food: 0.0.into(),
+                        ..CellParams::DEFAULT
+                    })
+                    .with_energy(10.0.into()),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 2);
@@ -260,19 +262,23 @@ mod tests {
             food_yield_from_eating: F32Positive::unchecked(1.0),
             ..CellConstants::DEFAULT
         });
-        let cell0_constants = CellParams {
-            attempted_eating_energy: 2.0.into(),
-            ..CellParams::DEFAULT
-        };
-        let cell1_constants = CellParams {
-            attempted_eating_energy: 3.0.into(),
-            ..CellParams::DEFAULT
-        };
         let mut world = World::new()
             .with_food(10.0.into())
             .with_cells(vec![
-                Cell::new(&constants, cell0_constants).with_energy(10.0.into()),
-                Cell::new(&constants, cell1_constants).with_energy(10.0.into()),
+                Cell::new(
+                    &constants,
+                    CellParams {
+                        attempted_eating_energy: 2.0.into(),
+                        ..CellParams::DEFAULT
+                    })
+                    .with_energy(10.0.into()),
+                Cell::new(
+                    &constants,
+                    CellParams {
+                        attempted_eating_energy: 3.0.into(),
+                        ..CellParams::DEFAULT
+                    })
+                    .with_energy(10.0.into()),
             ]);
         world.step();
         assert_eq!(world.food().value(), 5.0);
@@ -284,19 +290,23 @@ mod tests {
             food_yield_from_eating: F32Positive::unchecked(1.0),
             ..CellConstants::DEFAULT
         });
-        let cell0_constants = CellParams {
-            attempted_eating_energy: 3.0.into(),
-            ..CellParams::DEFAULT
-        };
-        let cell1_constants = CellParams {
-            attempted_eating_energy: 1.0.into(),
-            ..CellParams::DEFAULT
-        };
         let mut world = World::new()
             .with_food(4.0.into())
             .with_cells(vec![
-                Cell::new(&constants, cell0_constants).with_energy(10.0.into()),
-                Cell::new(&constants, cell1_constants).with_energy(10.0.into()),
+                Cell::new(
+                    &constants,
+                    CellParams {
+                        attempted_eating_energy: 3.0.into(),
+                        ..CellParams::DEFAULT
+                    })
+                    .with_energy(10.0.into()),
+                Cell::new(
+                    &constants,
+                    CellParams {
+                        attempted_eating_energy: 1.0.into(),
+                        ..CellParams::DEFAULT
+                    })
+                    .with_energy(10.0.into()),
             ]);
         world.step();
         assert_eq!(world.food().value(), 1.0);
