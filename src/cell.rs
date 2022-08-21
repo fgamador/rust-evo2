@@ -119,55 +119,55 @@ fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) ->
 
 #[derive(Debug, PartialEq)]
 pub struct CellConstants {
-    pub maintenance_energy_use: F32Positive,
-    pub food_yield_from_eating: F32Positive,
-    pub energy_yield_from_digestion: F32Positive,
     pub create_child_energy: F32Positive,
-    pub health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive,
+    pub energy_yield_from_digestion: F32Positive,
+    pub food_yield_from_eating: F32Positive,
     pub health_increase_per_healing_energy: F32ZeroToOnePerF32Positive,
+    pub health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive,
+    pub maintenance_energy_use: F32Positive,
 }
 
 impl CellConstants {
     #[allow(dead_code)]
     pub const DEFAULT: CellConstants = CellConstants {
-        maintenance_energy_use: F32Positive::unchecked(0.0),
-        food_yield_from_eating: F32Positive::unchecked(1.0),
-        energy_yield_from_digestion: F32Positive::unchecked(1.0),
         create_child_energy: F32Positive::unchecked(0.0),
-        health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive::unchecked(0.0),
+        energy_yield_from_digestion: F32Positive::unchecked(1.0),
+        food_yield_from_eating: F32Positive::unchecked(1.0),
         health_increase_per_healing_energy: F32ZeroToOnePerF32Positive::unchecked(0.0),
+        health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive::unchecked(0.0),
+        maintenance_energy_use: F32Positive::unchecked(0.0),
     };
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CellParams {
-    pub child_threshold_energy: F32Positive,
-    pub child_threshold_food: F32Positive,
     pub attempted_eating_energy: F32Positive,
     pub attempted_healing_energy: F32Positive,
+    pub child_threshold_energy: F32Positive,
+    pub child_threshold_food: F32Positive,
 }
 
 impl CellParams {
     #[allow(dead_code)]
     pub const DEFAULT: CellParams = CellParams {
-        child_threshold_energy: F32Positive::unchecked(f32::MAX),
-        child_threshold_food: F32Positive::unchecked(f32::MAX),
         attempted_eating_energy: F32Positive::unchecked(0.0),
         attempted_healing_energy: F32Positive::unchecked(0.0),
+        child_threshold_energy: F32Positive::unchecked(f32::MAX),
+        child_threshold_food: F32Positive::unchecked(f32::MAX),
     };
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CellState {
-    pub health: F32ZeroToOne,
     pub energy: F32Positive,
+    pub health: F32ZeroToOne,
 }
 
 impl CellState {
     #[allow(dead_code)]
     pub const DEFAULT: CellState = CellState {
-        health: F32ZeroToOne::unchecked(1.0),
         energy: F32Positive::unchecked(0.0),
+        health: F32ZeroToOne::unchecked(1.0),
     };
 }
 
