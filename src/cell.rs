@@ -113,12 +113,12 @@ impl Cell {
 fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
     let desired_sum = desired.iter().sum::<F32Positive>();
     if available >= desired_sum {
-        return (desired_sum, *desired);
+        (desired_sum, *desired)
+    } else {
+        let reduction_factor = available / desired_sum;
+        let budgeted = desired.map(|item| { item * reduction_factor });
+        (available, budgeted)
     }
-
-    let reduction_factor = available / desired_sum;
-    let budgeted = desired.map(|item| { item * reduction_factor });
-    (available, budgeted)
 }
 
 #[derive(Debug, PartialEq)]
