@@ -131,8 +131,8 @@ impl CellConstants {
     #[allow(dead_code)]
     pub const DEFAULT: CellConstants = CellConstants {
         create_child_energy: F32Positive::unchecked(0.0),
-        energy_yield_from_digestion: F32Positive::unchecked(1.0),
-        food_yield_from_eating: F32Positive::unchecked(1.0),
+        energy_yield_from_digestion: F32Positive::unchecked(0.0),
+        food_yield_from_eating: F32Positive::unchecked(0.0),
         health_increase_per_healing_energy: F32ZeroToOnePerF32Positive::unchecked(0.0),
         health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive::unchecked(0.0),
         maintenance_energy_use: F32Positive::unchecked(0.0),

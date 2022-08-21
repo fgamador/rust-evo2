@@ -256,7 +256,10 @@ mod tests {
 
     #[test]
     fn cells_consume_world_food() {
-        let constants = Rc::new(CellConstants::DEFAULT);
+        let constants = Rc::new(CellConstants {
+            food_yield_from_eating: F32Positive::unchecked(1.0),
+            ..CellConstants::DEFAULT
+        });
         let cell0_constants = CellParams {
             attempted_eating_energy: 2.0.into(),
             ..CellParams::DEFAULT
@@ -277,7 +280,10 @@ mod tests {
 
     #[test]
     fn cells_cannot_consume_more_than_their_share_of_world_food() {
-        let constants = Rc::new(CellConstants::DEFAULT);
+        let constants = Rc::new(CellConstants {
+            food_yield_from_eating: F32Positive::unchecked(1.0),
+            ..CellConstants::DEFAULT
+        });
         let cell0_constants = CellParams {
             attempted_eating_energy: 3.0.into(),
             ..CellParams::DEFAULT
