@@ -111,7 +111,7 @@ impl Cell {
 }
 
 fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
-    let desired_sum: F32Positive = desired.iter().map(F32Positive::value).sum::<f32>().into();
+    let desired_sum = desired.iter().sum::<F32Positive>();
     if available >= desired_sum {
         return (desired_sum, *desired);
     }
