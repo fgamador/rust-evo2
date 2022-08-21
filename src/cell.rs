@@ -40,6 +40,7 @@ impl Cell {
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
+        // Budget including reproduction.
         let (mut total_budgeted,
             [budgeted_reproduction_energy,
             mut budgeted_eating_energy,
@@ -54,6 +55,7 @@ impl Cell {
         let child = if self.can_reproduce(budgeted_reproduction_energy, environment) {
             self.reproduce(budgeted_reproduction_energy)
         } else {
+            // Re-budget excluding reproduction.
             (total_budgeted, [budgeted_eating_energy, budgeted_maintenance_energy, budgeted_healing_energy]) =
                 budget(self.state.energy,
                        &[self.params.attempted_eating_energy,
