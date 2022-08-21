@@ -79,7 +79,7 @@ impl Cell {
     }
 
     fn can_reproduce(&self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> bool {
-        self.state.energy >= reproduction_energy
+        reproduction_energy >= self.params.child_threshold_energy
             && environment.food_per_cell >= self.params.child_threshold_food
     }
 
@@ -110,8 +110,18 @@ impl Cell {
     }
 }
 
-fn budget<const N: usize>(_available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
-    (0.0.into(), *desired)
+fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
+    let desired_sum: F32Positive = desired.iter().map(F32Positive::value).sum::<f32>().into();
+    if available >= desired_sum {
+        return (desired_sum, *desired);
+    }
+
+    let reduction_factor = available / desired_sum;
+    let mut budgeted = [0.0.into(); N];
+    for i in 0..N {
+        budgeted[i] = desired[i] * reduction_factor;
+    }
+    (available, budgeted)
 }
 
 #[derive(Debug, PartialEq)]
@@ -180,20 +190,6 @@ impl CellEnvironment {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn budget<const N: usize>(available: F32Positive, desired: &[F32Positive; N]) -> (F32Positive, [F32Positive; N]) {
-        let desired_sum: F32Positive = desired.iter().map(F32Positive::value).sum::<f32>().into();
-        if available >= desired_sum {
-            return (desired_sum, *desired);
-        }
-
-        let reduction_factor = available / desired_sum;
-        let mut budgeted = [0.0.into(); N];
-        for i in 0..N {
-            budgeted[i] = desired[i] * reduction_factor;
-        }
-        (available, budgeted)
-    }
 
     #[test]
     fn budgeting_adjusts_downward_proportionally() {
@@ -403,6 +399,7 @@ mod tests {
     fn cell_with_insufficient_energy_does_not_reproduce() {
         let params = CellParams {
             child_threshold_energy: 4.0.into(),
+            child_threshold_food: 0.0.into(),
             ..CellParams::DEFAULT
         };
         let mut cell = Cell::new(&Rc::new(CellConstants::DEFAULT), params).with_energy(3.0.into());
@@ -413,7 +410,7 @@ mod tests {
     #[test]
     fn cell_with_insufficient_food_does_not_reproduce() {
         let params = CellParams {
-            child_threshold_energy: 1.0.into(),
+            child_threshold_energy: 0.0.into(),
             child_threshold_food: 4.0.into(),
             ..CellParams::DEFAULT
         };
@@ -515,15 +512,15 @@ mod tests {
             child_threshold_food: 0.0.into(),
         };
         let mut cell = Cell::new(&constants, params)
-            .with_health(0.25.into()).with_energy(8.0.into());
+            .with_health(0.25.into()).with_energy(3.0.into());
         let environment = CellEnvironment {
             food_per_cell: 10.0.into(),
             ..CellEnvironment::DEFAULT
         };
         let (child, food) = cell.step(&environment);
-        assert_ne!(child, None);
-        assert_eq!(food, 2.0.into());
-        assert_eq!(cell.health(), 0.75.into());
+        assert_eq!(child, None);
+        assert_eq!(food, 1.0.into());
+        assert_eq!(cell.health(), 0.5.into());
         assert_eq!(cell.energy(), 0.0.into());
     }
 }
