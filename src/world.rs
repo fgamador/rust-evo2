@@ -244,7 +244,7 @@ mod tests {
     #[test]
     fn world_reports_num_died() {
         let constants = Rc::new(CellConstants {
-            maintenance_energy_use: 5.0.into(),
+            maintenance_energy: 5.0.into(),
             ..CellConstants::DEFAULT
         });
         let mut world = World::new().with_cells(vec![

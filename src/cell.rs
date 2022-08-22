@@ -49,7 +49,7 @@ impl Cell {
             budget(self.state.energy,
                    &[self.params.child_threshold_energy,
                        self.params.attempted_eating_energy,
-                       self.constants.maintenance_energy_use,
+                       self.constants.maintenance_energy,
                        self.params.attempted_healing_energy]);
 
         let child = if self.can_reproduce(budgeted_reproduction_energy, environment) {
@@ -59,7 +59,7 @@ impl Cell {
             (total_budgeted, [budgeted_eating_energy, budgeted_maintenance_energy, budgeted_healing_energy]) =
                 budget(self.state.energy,
                        &[self.params.attempted_eating_energy,
-                           self.constants.maintenance_energy_use,
+                           self.constants.maintenance_energy,
                            self.params.attempted_healing_energy]);
             None
         };
@@ -124,7 +124,7 @@ pub struct CellConstants {
     pub food_yield_from_eating: F32Positive,
     pub health_increase_per_healing_energy: F32ZeroToOnePerF32Positive,
     pub health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive,
-    pub maintenance_energy_use: F32Positive,
+    pub maintenance_energy: F32Positive,
 }
 
 impl CellConstants {
@@ -135,7 +135,7 @@ impl CellConstants {
         food_yield_from_eating: F32Positive::unchecked(0.0),
         health_increase_per_healing_energy: F32ZeroToOnePerF32Positive::unchecked(0.0),
         health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive::unchecked(0.0),
-        maintenance_energy_use: F32Positive::unchecked(0.0),
+        maintenance_energy: F32Positive::unchecked(0.0),
     };
 }
 
@@ -217,7 +217,7 @@ mod tests {
     fn cell_uses_energy() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                maintenance_energy_use: 5.25.into(),
+                maintenance_energy: 5.25.into(),
                 ..CellConstants::DEFAULT
             }),
             CellParams::DEFAULT)
@@ -232,7 +232,7 @@ mod tests {
     fn cell_cannot_expend_energy_below_zero() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                maintenance_energy_use: 11.0.into(),
+                maintenance_energy: 11.0.into(),
                 ..CellConstants::DEFAULT
             }),
             CellParams::DEFAULT)
@@ -247,7 +247,7 @@ mod tests {
     fn expending_maintenance_energy_reduces_health() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                maintenance_energy_use: 2.0.into(),
+                maintenance_energy: 2.0.into(),
                 health_reduction_per_energy_expended: 0.125.into(),
                 ..CellConstants::DEFAULT
             }),
@@ -357,7 +357,7 @@ mod tests {
     fn cell_digests_food() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                maintenance_energy_use: 0.0.into(),
+                maintenance_energy: 0.0.into(),
                 food_yield_from_eating: 1.0.into(),
                 energy_yield_from_digestion: 1.5.into(),
                 ..CellConstants::DEFAULT
@@ -576,7 +576,7 @@ mod tests {
     fn cell_behavior_is_limited_by_energy_budget() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                maintenance_energy_use: 2.0.into(),
+                maintenance_energy: 2.0.into(),
                 food_yield_from_eating: 1.0.into(),
                 energy_yield_from_digestion: 0.0.into(),
                 health_increase_per_healing_energy: 0.25.into(),

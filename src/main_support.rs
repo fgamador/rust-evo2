@@ -8,12 +8,12 @@ use crate::world::World;
 
 pub fn create_and_run_world(args: &Args) {
     let cell_constants = Rc::new(CellConstants {
-        maintenance_energy_use: args.maint.into(),
-        food_yield_from_eating: args.eat_yield.into(),
-        energy_yield_from_digestion: args.digest_yield.into(),
-        create_child_energy: args.create_child.into(),
-        health_reduction_per_energy_expended: args.en_health_loss.into(),
-        ..CellConstants::DEFAULT
+        create_child_energy: args.create_child_energy.into(),
+        energy_yield_from_digestion: args.energy_yield_from_digestion.into(),
+        food_yield_from_eating: args.food_yield_from_eating.into(),
+        health_increase_per_healing_energy: args.health_increase_per_healing_energy.into(),
+        health_reduction_per_energy_expended: args.health_reduction_per_energy_expended.into(),
+        maintenance_energy: args.maintenance_energy.into(),
     });
 
     let mut world = create_world(args, &cell_constants);
@@ -25,10 +25,10 @@ fn create_world(args: &Args, cell_constants: &Rc<CellConstants>) -> World {
     World::new()
         .with_cells(world::generate_cells(
             args.cells,
-            Normal::new(args.mean_en, args.sd_en).unwrap(),
-            Normal::new(args.mean_eat, args.sd_eat).unwrap(),
-            Normal::new(args.mean_child_en, args.sd_child_en).unwrap(),
-            Normal::new(args.mean_child_fd, args.sd_child_fd).unwrap(),
+            Normal::new(args.initial_energy_mean, args.initial_energy_stdev).unwrap(),
+            Normal::new(args.attempted_eating_energy_mean, args.attempted_eating_energy_stdev).unwrap(),
+            Normal::new(args.child_threshold_energy_mean, args.child_threshold_energy_stdev).unwrap(),
+            Normal::new(args.child_threshold_food_mean, args.child_threshold_food_stdev).unwrap(),
             cell_constants,
         ))
         .with_food(args.initial_food.into())
@@ -85,57 +85,61 @@ pub struct Args {
     #[clap(short('n'), long, default_value_t = Args::DEFAULT.cells)]
     pub cells: usize,
 
-    /// Mean of cell initial energies
-    #[clap(short('e'), long, default_value_t = Args::DEFAULT.mean_en)]
-    pub mean_en: f32,
-
-    /// Standard deviation of cell initial energies
-    #[clap(long, default_value_t = Args::DEFAULT.sd_en)]
-    pub sd_en: f32,
-
-    /// Mean of child threshold energies
-    #[clap(short('C'), long, default_value_t = Args::DEFAULT.mean_child_en)]
-    pub mean_child_en: f32,
-
-    /// Standard deviation of child threshold energies
-    #[clap(long, default_value_t = Args::DEFAULT.sd_child_en)]
-    pub sd_child_en: f32,
-
-    /// Mean of child threshold foods
-    #[clap(long, default_value_t = Args::DEFAULT.mean_child_fd)]
-    pub mean_child_fd: f32,
-
-    /// Standard deviation of child threshold foods
-    #[clap(long, default_value_t = Args::DEFAULT.sd_child_fd)]
-    pub sd_child_fd: f32,
-
-    /// Energy cost of creating a child
-    #[clap(long, default_value_t = Args::DEFAULT.create_child)]
-    pub create_child: f32,
-
-    /// Cell maintenance energy
-    #[clap(short('M'), long, default_value_t = Args::DEFAULT.maint)]
-    pub maint: f32,
-
     /// Mean of cell eating energies
-    #[clap(short('E'), long, default_value_t = Args::DEFAULT.mean_eat)]
-    pub mean_eat: f32,
+    #[clap(short('E'), long, default_value_t = Args::DEFAULT.attempted_eating_energy_mean)]
+    pub attempted_eating_energy_mean: f32,
 
     /// Standard deviation of cell eating energies
-    #[clap(long, default_value_t = Args::DEFAULT.sd_eat)]
-    pub sd_eat: f32,
+    #[clap(long, default_value_t = Args::DEFAULT.attempted_eating_energy_stdev)]
+    pub attempted_eating_energy_stdev: f32,
 
-    /// Food gained per unit eating energy
-    #[clap(short('F'), long, default_value_t = Args::DEFAULT.eat_yield)]
-    pub eat_yield: f32,
+    /// Mean of child threshold energies
+    #[clap(short('C'), long, default_value_t = Args::DEFAULT.child_threshold_energy_mean)]
+    pub child_threshold_energy_mean: f32,
+
+    /// Standard deviation of child threshold energies
+    #[clap(long, default_value_t = Args::DEFAULT.child_threshold_energy_stdev)]
+    pub child_threshold_energy_stdev: f32,
+
+    /// Mean of child threshold foods
+    #[clap(long, default_value_t = Args::DEFAULT.child_threshold_food_mean)]
+    pub child_threshold_food_mean: f32,
+
+    /// Standard deviation of child threshold foods
+    #[clap(long, default_value_t = Args::DEFAULT.child_threshold_food_stdev)]
+    pub child_threshold_food_stdev: f32,
+
+    /// Energy cost of creating a child
+    #[clap(long, default_value_t = Args::DEFAULT.create_child_energy)]
+    pub create_child_energy: f32,
 
     /// Energy gained per unit food
-    #[clap(short('D'), long, default_value_t = Args::DEFAULT.digest_yield)]
-    pub digest_yield: f32,
+    #[clap(short('D'), long, default_value_t = Args::DEFAULT.energy_yield_from_digestion)]
+    pub energy_yield_from_digestion: f32,
+
+    /// Food gained per unit eating energy
+    #[clap(short('F'), long, default_value_t = Args::DEFAULT.food_yield_from_eating)]
+    pub food_yield_from_eating: f32,
+
+    /// Health increase per energy expended
+    #[clap(long, default_value_t = Args::DEFAULT.health_increase_per_healing_energy)]
+    pub health_increase_per_healing_energy: f32,
 
     /// Health reduction per energy expended
-    #[clap(long, default_value_t = Args::DEFAULT.en_health_loss)]
-    pub en_health_loss: f32,
+    #[clap(long, default_value_t = Args::DEFAULT.health_reduction_per_energy_expended)]
+    pub health_reduction_per_energy_expended: f32,
+
+    /// Mean of cell initial energies
+    #[clap(short('e'), long, default_value_t = Args::DEFAULT.initial_energy_mean)]
+    pub initial_energy_mean: f32,
+
+    /// Standard deviation of cell initial energies
+    #[clap(long, default_value_t = Args::DEFAULT.initial_energy_stdev)]
+    pub initial_energy_stdev: f32,
+
+    /// Cell maintenance energy
+    #[clap(short('M'), long, default_value_t = Args::DEFAULT.maintenance_energy)]
+    pub maintenance_energy: f32,
 }
 
 impl Args {
@@ -145,18 +149,19 @@ impl Args {
         initial_food: 0.0,
         added_food: 0.0,
         cells: 100,
-        mean_en: 100.0,
-        sd_en: 0.0,
-        mean_child_en: f32::MAX,
-        sd_child_en: 0.0,
-        mean_child_fd: 0.0,
-        sd_child_fd: 0.0,
-        create_child: CellConstants::DEFAULT.create_child_energy.value(),
-        maint: CellConstants::DEFAULT.maintenance_energy_use.value(),
-        mean_eat: 0.0,
-        sd_eat: 0.0,
-        eat_yield: CellConstants::DEFAULT.food_yield_from_eating.value(),
-        digest_yield: CellConstants::DEFAULT.energy_yield_from_digestion.value(),
-        en_health_loss: CellConstants::DEFAULT.health_reduction_per_energy_expended.value(),
+        attempted_eating_energy_mean: 0.0,
+        attempted_eating_energy_stdev: 0.0,
+        child_threshold_energy_mean: f32::MAX,
+        child_threshold_energy_stdev: 0.0,
+        child_threshold_food_mean: 0.0,
+        child_threshold_food_stdev: 0.0,
+        create_child_energy: CellConstants::DEFAULT.create_child_energy.value(),
+        energy_yield_from_digestion: CellConstants::DEFAULT.energy_yield_from_digestion.value(),
+        food_yield_from_eating: CellConstants::DEFAULT.food_yield_from_eating.value(),
+        health_increase_per_healing_energy: CellConstants::DEFAULT.health_increase_per_healing_energy.value(),
+        health_reduction_per_energy_expended: CellConstants::DEFAULT.health_reduction_per_energy_expended.value(),
+        initial_energy_mean: 100.0,
+        initial_energy_stdev: 0.0,
+        maintenance_energy: CellConstants::DEFAULT.maintenance_energy.value(),
     };
 }
