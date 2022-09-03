@@ -234,8 +234,8 @@ mod tests {
         let mut world = World::new()
             .with_food(0.0.into())
             .with_cells(vec![
-                Cell::new(&constants, CellParams::DEFAULT).with_energy(1.0.into()),
-                Cell::new(&constants, CellParams::DEFAULT).with_energy(0.0.into()),
+                Cell::new(&constants, CellParams::DEFAULT).with_health(1.0.into()),
+                Cell::new(&constants, CellParams::DEFAULT).with_health(0.0.into()),
             ]);
         world.step();
         assert_eq!(world.num_cells(), 1);
@@ -244,13 +244,17 @@ mod tests {
     #[test]
     fn world_reports_num_died() {
         let constants = Rc::new(CellConstants {
-            maintenance_energy: 5.0.into(),
+            health_reduction_per_energy_expended: 0.2.into(),
             ..CellConstants::DEFAULT
         });
+        let hungry_params = CellParams {
+            attempted_eating_energy: 5.0.into(),
+            ..CellParams::DEFAULT
+        };
         let mut world = World::new().with_cells(vec![
             Cell::new(&constants, CellParams::DEFAULT).with_energy(10.0.into()),
-            Cell::new(&constants, CellParams::DEFAULT).with_energy(5.0.into()),
-            Cell::new(&constants, CellParams::DEFAULT).with_energy(5.0.into()),
+            Cell::new(&constants, hungry_params).with_energy(5.0.into()),
+            Cell::new(&constants, hungry_params).with_energy(5.0.into()),
         ]);
         let (_, num_died) = world.step();
         assert_eq!(num_died, 2);

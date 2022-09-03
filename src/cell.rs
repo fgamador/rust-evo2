@@ -36,7 +36,7 @@ impl Cell {
     }
 
     pub fn is_alive(&self) -> bool {
-        self.energy().value() > 0.0
+        self.health().value() > 0.0
     }
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
@@ -260,13 +260,25 @@ mod tests {
     }
 
     #[test]
-    fn cell_with_no_energy_is_dead() {
+    fn cell_with_zero_health_is_dead() {
         let cell = Cell::new(
             &Rc::new(CellConstants::DEFAULT),
             CellParams::DEFAULT)
-            .with_energy(0.0.into());
+            .with_health(0.0.into())
+            .with_energy(1.0.into());
 
         assert!(!cell.is_alive());
+    }
+
+    #[test]
+    fn cell_with_health_but_no_energy_is_alive() {
+        let cell = Cell::new(
+            &Rc::new(CellConstants::DEFAULT),
+            CellParams::DEFAULT)
+            .with_health(1.0.into())
+            .with_energy(0.0.into());
+
+        assert!(cell.is_alive());
     }
 
     #[test]
