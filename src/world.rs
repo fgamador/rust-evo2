@@ -124,6 +124,7 @@ pub fn generate_cells(
     num_cells: usize,
     initial_energies: Normal<f32>,
     eating_energies: Normal<f32>,
+    healing_energies: Normal<f32>,
     child_threshold_energies: Normal<f32>,
     child_threshold_foods: Normal<f32>,
     constants: &Rc<CellConstants>,
@@ -137,7 +138,7 @@ pub fn generate_cells(
                 child_threshold_energy: child_threshold_energies.sample(&mut rng).into(),
                 child_threshold_food: child_threshold_foods.sample(&mut rng).into(),
                 attempted_eating_energy: eating_energies.sample(&mut rng).into(),
-                attempted_healing_energy: 0.0.into(), // TODO
+                attempted_healing_energy: healing_energies.sample(&mut rng).into(),
             },
         ).with_energy(initial_energies.sample(&mut rng).into()));
     }
@@ -182,6 +183,7 @@ mod tests {
         let cells = generate_cells(
             100,
             Normal::new(100.0, 5.0).unwrap(),
+            Normal::new(0.0, 0.0).unwrap(),
             Normal::new(0.0, 0.0).unwrap(),
             Normal::new(0.0, 0.0).unwrap(),
             Normal::new(f32::MAX, 0.0).unwrap(),

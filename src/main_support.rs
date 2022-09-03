@@ -27,6 +27,7 @@ fn create_world(args: &Args, cell_constants: &Rc<CellConstants>) -> World {
             args.cells,
             Normal::new(args.initial_energy_mean, args.initial_energy_stdev).unwrap(),
             Normal::new(args.attempted_eating_energy_mean, args.attempted_eating_energy_stdev).unwrap(),
+            Normal::new(args.attempted_healing_energy_mean, args.attempted_healing_energy_stdev).unwrap(),
             Normal::new(args.child_threshold_energy_mean, args.child_threshold_energy_stdev).unwrap(),
             Normal::new(args.child_threshold_food_mean, args.child_threshold_food_stdev).unwrap(),
             cell_constants,
@@ -93,6 +94,14 @@ pub struct Args {
     #[clap(long, default_value_t = Args::DEFAULT.attempted_eating_energy_stdev)]
     pub attempted_eating_energy_stdev: f32,
 
+    /// Mean of cell healing energies
+    #[clap(long, default_value_t = Args::DEFAULT.attempted_healing_energy_mean)]
+    pub attempted_healing_energy_mean: f32,
+
+    /// Standard deviation of cell healing energies
+    #[clap(long, default_value_t = Args::DEFAULT.attempted_healing_energy_stdev)]
+    pub attempted_healing_energy_stdev: f32,
+
     /// Mean of child threshold energies
     #[clap(short('C'), long, default_value_t = Args::DEFAULT.child_threshold_energy_mean)]
     pub child_threshold_energy_mean: f32,
@@ -151,6 +160,8 @@ impl Args {
         cells: 100,
         attempted_eating_energy_mean: 0.0,
         attempted_eating_energy_stdev: 0.0,
+        attempted_healing_energy_mean: 0.0,
+        attempted_healing_energy_stdev: 0.0,
         child_threshold_energy_mean: f32::MAX,
         child_threshold_energy_stdev: 0.0,
         child_threshold_food_mean: 0.0,
