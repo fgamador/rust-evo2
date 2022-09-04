@@ -12,6 +12,7 @@ pub fn create_and_run_world(args: &Args) {
         energy_yield_from_digestion: args.energy_yield_from_digestion.into(),
         food_yield_from_eating: args.food_yield_from_eating.into(),
         health_increase_per_healing_energy: args.health_increase_per_healing_energy.into(),
+        health_reduction_from_entropy: args.health_reduction_from_entropy.into(),
         health_reduction_per_energy_expended: args.health_reduction_per_energy_expended.into(),
         maintenance_energy: args.maintenance_energy.into(),
     });
@@ -134,6 +135,10 @@ pub struct Args {
     #[clap(long, default_value_t = Args::DEFAULT.health_increase_per_healing_energy)]
     pub health_increase_per_healing_energy: f32,
 
+    /// Health reduction due to entropy
+    #[clap(long, default_value_t = Args::DEFAULT.health_reduction_from_entropy)]
+    pub health_reduction_from_entropy: f32,
+
     /// Health reduction per energy expended
     #[clap(long, default_value_t = Args::DEFAULT.health_reduction_per_energy_expended)]
     pub health_reduction_per_energy_expended: f32,
@@ -170,6 +175,7 @@ impl Args {
         energy_yield_from_digestion: CellConstants::DEFAULT.energy_yield_from_digestion.value(),
         food_yield_from_eating: CellConstants::DEFAULT.food_yield_from_eating.value(),
         health_increase_per_healing_energy: CellConstants::DEFAULT.health_increase_per_healing_energy.value(),
+        health_reduction_from_entropy: CellConstants::DEFAULT.health_reduction_from_entropy.value(),
         health_reduction_per_energy_expended: CellConstants::DEFAULT.health_reduction_per_energy_expended.value(),
         initial_energy_mean: 100.0,
         initial_energy_stdev: 0.0,

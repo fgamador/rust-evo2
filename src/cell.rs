@@ -68,6 +68,7 @@ impl Cell {
 
         let food = self.eat(budgeted_eating_energy, environment.food_per_cell);
         self.digest(food);
+        self.entropy();
         self.maintenance(budgeted_maintenance_energy);
         self.heal(budgeted_healing_energy);
 
@@ -92,6 +93,10 @@ impl Cell {
 
     fn digest(&mut self, food_amount: F32Positive) {
         self.state.energy += food_amount * self.constants.energy_yield_from_digestion;
+    }
+
+    fn entropy(&mut self) {
+        self.state.health -= self.constants.health_reduction_from_entropy;
     }
 
     fn maintenance(&mut self, _maintenance_energy: F32Positive) {}
@@ -123,6 +128,7 @@ pub struct CellConstants {
     pub energy_yield_from_digestion: F32Positive,
     pub food_yield_from_eating: F32Positive,
     pub health_increase_per_healing_energy: F32ZeroToOnePerF32Positive,
+    pub health_reduction_from_entropy: F32ZeroToOne,
     pub health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive,
     pub maintenance_energy: F32Positive,
 }
@@ -134,6 +140,7 @@ impl CellConstants {
         energy_yield_from_digestion: F32Positive::unchecked(0.0),
         food_yield_from_eating: F32Positive::unchecked(0.0),
         health_increase_per_healing_energy: F32ZeroToOnePerF32Positive::unchecked(0.0),
+        health_reduction_from_entropy: F32ZeroToOne::unchecked(0.0),
         health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive::unchecked(0.0),
         maintenance_energy: F32Positive::unchecked(0.0),
     };
@@ -211,6 +218,21 @@ mod tests {
             CellParams::DEFAULT);
 
         assert_eq!(cell.health(), 1.0.into());
+    }
+
+    #[test]
+    fn cell_suffers_entropic_damage() {
+        let mut cell = Cell::new(
+            &Rc::new(CellConstants {
+                health_reduction_from_entropy: 0.25.into(),
+                ..CellConstants::DEFAULT
+            }),
+            CellParams::DEFAULT)
+            .with_health(1.0.into());
+
+        cell.step(&CellEnvironment::DEFAULT);
+
+        assert_eq!(cell.health(), 0.75.into());
     }
 
     #[test]
