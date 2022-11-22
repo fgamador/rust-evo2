@@ -43,9 +43,9 @@ impl Cell {
         // Budget including reproduction.
         let (mut total_budgeted,
             [budgeted_reproduction_energy,
-            mut budgeted_eating_energy,
-            mut budgeted_maintenance_energy,
-            mut budgeted_healing_energy ]) =
+            budgeted_eating_energy,
+            budgeted_maintenance_energy,
+            budgeted_healing_energy ]) =
             budget(self.state.energy,
                    &[self.params.child_threshold_energy,
                        self.params.attempted_eating_energy,
@@ -62,17 +62,12 @@ impl Cell {
             self.reproduce(budgeted_energies.reproduction)
         } else {
             // Re-budget excluding reproduction.
-            (total_budgeted, [budgeted_eating_energy, budgeted_maintenance_energy, budgeted_healing_energy]) =
+            (total_budgeted, [budgeted_energies.eating, budgeted_energies.maintenance, budgeted_energies.healing]) =
                 budget(self.state.energy,
                        &[self.params.attempted_eating_energy,
                            self.constants.maintenance_energy,
                            self.params.attempted_healing_energy]);
-            budgeted_energies = CellEnergies {
-                reproduction: 0.0.into(),
-                eating: budgeted_eating_energy,
-                maintenance: budgeted_maintenance_energy,
-                healing: budgeted_healing_energy,
-            };
+            budgeted_energies.reproduction = 0.0.into();
             None
         };
 
