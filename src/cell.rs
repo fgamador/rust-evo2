@@ -41,21 +41,18 @@ impl Cell {
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         // Budget including reproduction.
+        let mut total_budgeted: F32Positive = 0.0.into();
         let mut budgeted_energies = CellEnergies::new();
-        let (mut total_budgeted,
-            [budgeted_reproduction_energy,
-            budgeted_eating_energy,
-            budgeted_maintenance_energy,
-            budgeted_healing_energy ]) =
+        (total_budgeted,
+         [budgeted_energies.reproduction,
+             budgeted_energies.eating,
+             budgeted_energies.maintenance,
+             budgeted_energies.healing]) =
             budget(self.state.energy,
                    &[self.params.child_threshold_energy,
                        self.params.attempted_eating_energy,
                        self.constants.maintenance_energy,
                        self.params.attempted_healing_energy]);
-        budgeted_energies.reproduction = budgeted_reproduction_energy;
-        budgeted_energies.eating = budgeted_eating_energy;
-        budgeted_energies.maintenance = budgeted_maintenance_energy;
-        budgeted_energies.healing = budgeted_healing_energy;
 
         let child = if self.can_reproduce(budgeted_energies.reproduction, environment) {
             self.reproduce(budgeted_energies.reproduction)
