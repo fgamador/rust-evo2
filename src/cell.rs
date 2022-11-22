@@ -51,9 +51,15 @@ impl Cell {
                        self.params.attempted_eating_energy,
                        self.constants.maintenance_energy,
                        self.params.attempted_healing_energy]);
+        let mut budgeted_energies = CellEnergies {
+            reproduction: budgeted_reproduction_energy,
+            eating: budgeted_eating_energy,
+            maintenance: budgeted_maintenance_energy,
+            healing: budgeted_healing_energy,
+        };
 
-        let child = if self.can_reproduce(budgeted_reproduction_energy, environment) {
-            self.reproduce(budgeted_reproduction_energy)
+        let child = if self.can_reproduce(budgeted_energies.reproduction, environment) {
+            self.reproduce(budgeted_energies.reproduction)
         } else {
             // Re-budget excluding reproduction.
             (total_budgeted, [budgeted_eating_energy, budgeted_maintenance_energy, budgeted_healing_energy]) =
@@ -61,16 +67,22 @@ impl Cell {
                        &[self.params.attempted_eating_energy,
                            self.constants.maintenance_energy,
                            self.params.attempted_healing_energy]);
+            budgeted_energies = CellEnergies {
+                reproduction: 0.0.into(),
+                eating: budgeted_eating_energy,
+                maintenance: budgeted_maintenance_energy,
+                healing: budgeted_healing_energy,
+            };
             None
         };
 
         self.expend_energy(total_budgeted);
 
-        let food = self.eat(budgeted_eating_energy, environment.food_per_cell);
+        let food = self.eat(budgeted_energies.eating, environment.food_per_cell);
         self.digest(food);
         self.entropy();
-        self.maintenance(budgeted_maintenance_energy);
-        self.heal(budgeted_healing_energy);
+        self.maintenance(budgeted_energies.maintenance);
+        self.heal(budgeted_energies.healing);
 
         (child, food)
     }
@@ -185,6 +197,13 @@ pub struct CellEnvironment {
 impl CellEnvironment {
     #[allow(dead_code)]
     pub const DEFAULT: CellEnvironment = CellEnvironment { food_per_cell: F32Positive::unchecked(0.0) };
+}
+
+struct CellEnergies {
+    reproduction: F32Positive,
+    eating: F32Positive,
+    maintenance: F32Positive,
+    healing: F32Positive,
 }
 
 #[cfg(test)]
