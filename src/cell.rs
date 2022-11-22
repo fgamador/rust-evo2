@@ -41,6 +41,7 @@ impl Cell {
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         // Budget including reproduction.
+        let mut budgeted_energies = CellEnergies::new();
         let (mut total_budgeted,
             [budgeted_reproduction_energy,
             budgeted_eating_energy,
@@ -51,7 +52,6 @@ impl Cell {
                        self.params.attempted_eating_energy,
                        self.constants.maintenance_energy,
                        self.params.attempted_healing_energy]);
-        let mut budgeted_energies = CellEnergies::new();
         budgeted_energies.reproduction = budgeted_reproduction_energy;
         budgeted_energies.eating = budgeted_eating_energy;
         budgeted_energies.maintenance = budgeted_maintenance_energy;
