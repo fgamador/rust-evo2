@@ -51,12 +51,11 @@ impl Cell {
                        self.params.attempted_eating_energy,
                        self.constants.maintenance_energy,
                        self.params.attempted_healing_energy]);
-        let mut budgeted_energies = CellEnergies {
-            reproduction: budgeted_reproduction_energy,
-            eating: budgeted_eating_energy,
-            maintenance: budgeted_maintenance_energy,
-            healing: budgeted_healing_energy,
-        };
+        let mut budgeted_energies = CellEnergies::new();
+        budgeted_energies.reproduction = budgeted_reproduction_energy;
+        budgeted_energies.eating = budgeted_eating_energy;
+        budgeted_energies.maintenance = budgeted_maintenance_energy;
+        budgeted_energies.healing = budgeted_healing_energy;
 
         let child = if self.can_reproduce(budgeted_energies.reproduction, environment) {
             self.reproduce(budgeted_energies.reproduction)
@@ -199,6 +198,17 @@ struct CellEnergies {
     eating: F32Positive,
     maintenance: F32Positive,
     healing: F32Positive,
+}
+
+impl CellEnergies {
+    fn new() -> Self {
+        CellEnergies {
+            reproduction: 0.0.into(),
+            eating: 0.0.into(),
+            maintenance: 0.0.into(),
+            healing: 0.0.into(),
+        }
+    }
 }
 
 #[cfg(test)]
