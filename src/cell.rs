@@ -41,18 +41,7 @@ impl Cell {
 
     pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         // Budget including reproduction.
-        let mut total_budgeted: F32Positive = 0.0.into();
-        let mut budgeted_energies = CellEnergies::new();
-        (total_budgeted,
-         [budgeted_energies.reproduction,
-             budgeted_energies.eating,
-             budgeted_energies.maintenance,
-             budgeted_energies.healing]) =
-            budget(self.state.energy,
-                   &[self.params.child_threshold_energy,
-                       self.params.attempted_eating_energy,
-                       self.constants.maintenance_energy,
-                       self.params.attempted_healing_energy]);
+        let (mut total_budgeted, mut budgeted_energies) = self.budget_including_reproduction();
 
         let child = if self.can_reproduce(budgeted_energies.reproduction, environment) {
             self.reproduce(budgeted_energies.reproduction)
@@ -76,6 +65,22 @@ impl Cell {
         self.heal(budgeted_energies.healing);
 
         (child, food)
+    }
+
+    fn budget_including_reproduction(&self) -> (F32Positive, CellEnergies) {
+        let mut total_budgeted: F32Positive = 0.0.into();
+        let mut budgeted_energies = CellEnergies::new();
+        (total_budgeted,
+         [budgeted_energies.reproduction,
+             budgeted_energies.eating,
+             budgeted_energies.maintenance,
+             budgeted_energies.healing]) =
+            budget(self.state.energy,
+                   &[self.params.child_threshold_energy,
+                       self.params.attempted_eating_energy,
+                       self.constants.maintenance_energy,
+                       self.params.attempted_healing_energy]);
+        (total_budgeted, budgeted_energies)
     }
 
     fn can_reproduce(&self, reproduction_energy: F32Positive, environment: &CellEnvironment) -> bool {
