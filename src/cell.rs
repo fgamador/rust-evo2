@@ -46,12 +46,8 @@ impl Cell {
             self.reproduce(budgeted_energies.reproduction)
         } else {
             // Re-budget excluding reproduction.
-            (total_budgeted, [budgeted_energies.eating, budgeted_energies.maintenance, budgeted_energies.healing]) =
-                budget(self.state.energy,
-                       &[self.params.attempted_eating_energy,
-                           self.constants.maintenance_energy,
-                           self.params.attempted_healing_energy]);
-            budgeted_energies.reproduction = 0.0.into();
+            let (total_budgeted2, budgeted_energies2) = self.budget_excluding_reproduction();
+            (total_budgeted, budgeted_energies) = (total_budgeted2, budgeted_energies2);
             None
         };
 
@@ -79,6 +75,18 @@ impl Cell {
                        self.params.attempted_eating_energy,
                        self.constants.maintenance_energy,
                        self.params.attempted_healing_energy]);
+        (total_budgeted, budgeted_energies)
+    }
+
+    fn budget_excluding_reproduction(&mut self) -> (F32Positive, CellEnergies) {
+        let mut total_budgeted: F32Positive = 0.0.into();
+        let mut budgeted_energies = CellEnergies::new();
+        (total_budgeted, [budgeted_energies.eating, budgeted_energies.maintenance, budgeted_energies.healing]) =
+            budget(self.state.energy,
+                   &[self.params.attempted_eating_energy,
+                       self.constants.maintenance_energy,
+                       self.params.attempted_healing_energy]);
+        budgeted_energies.reproduction = 0.0.into();
         (total_budgeted, budgeted_energies)
     }
 
