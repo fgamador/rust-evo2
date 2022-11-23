@@ -45,9 +45,7 @@ impl Cell {
         let child = if self.can_reproduce(budgeted_energies.reproduction, environment) {
             self.reproduce(budgeted_energies.reproduction)
         } else {
-            // Re-budget excluding reproduction.
-            let (total_budgeted2, budgeted_energies2) = self.budget_excluding_reproduction();
-            (total_budgeted, budgeted_energies) = (total_budgeted2, budgeted_energies2);
+            (total_budgeted, budgeted_energies) = self.budget_excluding_reproduction();
             None
         };
 
