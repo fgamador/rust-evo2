@@ -61,7 +61,7 @@ impl Cell {
     }
 
     fn budget_including_reproduction(&self) -> (F32Positive, CellEnergies) {
-        let mut total_budgeted: F32Positive = 0.0.into();
+        let total_budgeted;
         let mut budgeted_energies = CellEnergies::new();
         (total_budgeted,
          [budgeted_energies.reproduction,
@@ -77,7 +77,7 @@ impl Cell {
     }
 
     fn budget_excluding_reproduction(&mut self) -> (F32Positive, CellEnergies) {
-        let mut total_budgeted: F32Positive = 0.0.into();
+        let total_budgeted;
         let mut budgeted_energies = CellEnergies::new();
         (total_budgeted, [budgeted_energies.eating, budgeted_energies.maintenance, budgeted_energies.healing]) =
             budget(self.state.energy,
