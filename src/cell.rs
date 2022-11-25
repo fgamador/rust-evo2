@@ -59,11 +59,12 @@ impl Cell {
         let child;
         if self.can_reproduce(budgeted_energies.reproduction, environment) {
             child = self.reproduce(budgeted_energies.reproduction);
+            return (total_budgeted, budgeted_energies, child);
         } else {
             (total_budgeted, budgeted_energies) = self.budget_excluding_reproduction();
             child = None;
+            return (total_budgeted, budgeted_energies, child);
         };
-        (total_budgeted, budgeted_energies, child)
     }
 
     fn budget_including_reproduction(&self) -> (F32Positive, CellEnergies) {
