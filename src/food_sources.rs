@@ -53,5 +53,6 @@ mod tests {
         let mut source = LinearlyGrowingFoodSource::new(100.0.into(), 10.0.into());
         assert_eq!(source.food_this_step(), 100.0.into());
         assert_eq!(source.food_this_step(), 110.0.into());
+        assert_eq!(source.food_this_step(), 120.0.into());
     }
 }
