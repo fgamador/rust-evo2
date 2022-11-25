@@ -66,8 +66,9 @@ impl Cell {
         }
     }
 
+    #[allow(unused_assignments)]
     fn budget_including_reproduction(&self) -> (F32Positive, CellEnergies) {
-        let total_budgeted;
+        let mut total_budgeted = 0.0.into(); // make Rust plugin shut up about uninitialized var
         let mut budgeted_energies = CellEnergies::new();
         (total_budgeted,
          [budgeted_energies.reproduction,
@@ -82,8 +83,9 @@ impl Cell {
         (total_budgeted, budgeted_energies)
     }
 
+    #[allow(unused_assignments)]
     fn budget_excluding_reproduction(&mut self) -> (F32Positive, CellEnergies) {
-        let total_budgeted;
+        let mut total_budgeted = 0.0.into(); // make Rust plugin shut up about uninitialized var
         let mut budgeted_energies = CellEnergies::new();
         (total_budgeted, [budgeted_energies.eating, budgeted_energies.maintenance, budgeted_energies.healing]) =
             budget(self.state.energy,
