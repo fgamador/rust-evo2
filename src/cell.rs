@@ -277,11 +277,11 @@ mod tests {
     #[test]
     fn cell_uses_energy() {
         let mut cell = Cell::new(
-            &Rc::new(CellConstants {
-                maintenance_energy: 5.25.into(),
-                ..CellConstants::DEFAULT
-            }),
-            CellParams::DEFAULT)
+            &Rc::new(CellConstants::DEFAULT),
+            CellParams {
+                attempted_eating_energy: 5.25.into(),
+                ..CellParams::DEFAULT
+            })
             .with_energy(10.0.into());
 
         cell.step(&CellEnvironment::DEFAULT);
@@ -292,11 +292,11 @@ mod tests {
     #[test]
     fn cell_cannot_expend_energy_below_zero() {
         let mut cell = Cell::new(
-            &Rc::new(CellConstants {
-                maintenance_energy: 11.0.into(),
-                ..CellConstants::DEFAULT
-            }),
-            CellParams::DEFAULT)
+            &Rc::new(CellConstants::DEFAULT),
+            CellParams {
+                attempted_eating_energy: 11.0.into(),
+                ..CellParams::DEFAULT
+            })
             .with_energy(10.0.into());
 
         cell.step(&CellEnvironment::DEFAULT);
@@ -430,7 +430,6 @@ mod tests {
     fn cell_digests_food() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                maintenance_energy: 0.0.into(),
                 food_yield_from_eating: 1.0.into(),
                 energy_yield_from_digestion: 1.5.into(),
                 ..CellConstants::DEFAULT
