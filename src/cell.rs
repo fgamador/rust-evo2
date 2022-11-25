@@ -56,11 +56,12 @@ impl Cell {
 
     fn budget_and_maybe_reproduce(&mut self, environment: &CellEnvironment) -> (F32Positive, CellEnergies, Option<Cell>) {
         let (mut total_budgeted, mut budgeted_energies) = self.budget_including_reproduction();
-        let child = if self.can_reproduce(budgeted_energies.reproduction, environment) {
-            self.reproduce(budgeted_energies.reproduction)
+        let child;
+        if self.can_reproduce(budgeted_energies.reproduction, environment) {
+            child = self.reproduce(budgeted_energies.reproduction);
         } else {
             (total_budgeted, budgeted_energies) = self.budget_excluding_reproduction();
-            None
+            child = None;
         };
         (total_budgeted, budgeted_energies, child)
     }
