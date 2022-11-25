@@ -305,22 +305,6 @@ mod tests {
     }
 
     #[test]
-    fn expending_maintenance_energy_reduces_health() {
-        let mut cell = Cell::new(
-            &Rc::new(CellConstants {
-                maintenance_energy: 2.0.into(),
-                health_reduction_per_energy_expended: 0.125.into(),
-                ..CellConstants::DEFAULT
-            }),
-            CellParams::DEFAULT)
-            .with_energy(10.0.into());
-
-        cell.step(&CellEnvironment::DEFAULT);
-
-        assert_eq!(cell.health(), 0.75.into());
-    }
-
-    #[test]
     fn cell_with_zero_health_is_dead() {
         let cell = Cell::new(
             &Rc::new(CellConstants::DEFAULT),
