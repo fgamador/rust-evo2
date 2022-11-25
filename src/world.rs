@@ -89,7 +89,7 @@ impl World {
     }
 
     fn step_food_sources(&mut self) {
-        for food_source in &self.food_sources {
+        for food_source in &mut self.food_sources {
             self.food += food_source.food_this_step();
         }
     }

@@ -1,7 +1,7 @@
 use crate::number_types::F32Positive;
 
 pub trait FoodSource {
-    fn food_this_step(&self) -> F32Positive;
+    fn food_this_step(&mut self) -> F32Positive;
 }
 
 pub struct ConstantFoodSource {
@@ -17,7 +17,7 @@ impl ConstantFoodSource {
 }
 
 impl FoodSource for ConstantFoodSource {
-    fn food_this_step(&self) -> F32Positive {
+    fn food_this_step(&mut self) -> F32Positive {
         self.food_per_step
     }
 }
