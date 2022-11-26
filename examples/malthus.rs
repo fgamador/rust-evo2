@@ -20,6 +20,7 @@ fn main() {
                     attempted_eating_energy: 1.0.into(),
                     attempted_healing_energy: 2.0.into(),
                     child_threshold_energy: 2.0.into(),
+                    child_threshold_food: 1.0.into(),
                     ..CellParams::DEFAULT
                 })
                 .with_energy(10.0.into()),
