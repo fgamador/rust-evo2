@@ -632,7 +632,6 @@ mod tests {
     fn cell_behavior_is_limited_by_energy_budget() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                maintenance_energy: 2.0.into(),
                 food_yield_from_eating: 1.0.into(),
                 energy_yield_from_digestion: 0.0.into(),
                 health_increase_per_healing_energy: 0.25.into(),
@@ -645,7 +644,7 @@ mod tests {
                 child_threshold_food: 0.0.into(),
             })
             .with_health(0.25.into())
-            .with_energy(3.0.into());
+            .with_energy(2.0.into());
 
         let (child, food_eaten) = cell.step(
             &CellEnvironment {
