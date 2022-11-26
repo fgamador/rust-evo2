@@ -38,7 +38,7 @@ fn create_world(args: &Args, cell_constants: &Rc<CellConstants>) -> World {
         ])
 }
 
-fn run(world: &mut World, steps: u32) {
+pub fn run(world: &mut World, steps: u32) {
     print_stats_header();
 
     let mut step = 0;
