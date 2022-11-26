@@ -23,5 +23,6 @@ fn main() {
                 .with_energy(10.0.into()),
         ])
         .with_food(50.0.into());
+
     run(&mut world, 1000);
 }
