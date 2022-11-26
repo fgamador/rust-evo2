@@ -49,6 +49,12 @@ impl From<f32> for F32Positive {
     }
 }
 
+impl From<i32> for F32Positive {
+    fn from(num: i32) -> Self {
+        Self::checked(num as f32)
+    }
+}
+
 impl Add for F32Positive {
     type Output = Self;
 
