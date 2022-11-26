@@ -8,24 +8,24 @@ fn main() {
         .with_cells(vec![
             Cell::new(
                 &Rc::new(CellConstants {
-                    create_child_energy: 1.0.into(),
-                    energy_yield_from_digestion: 1.0.into(),
-                    food_yield_from_eating: 10.0.into(),
+                    create_child_energy: 1.into(),
+                    energy_yield_from_digestion: 1.into(),
+                    food_yield_from_eating: 10.into(),
                     health_increase_per_healing_energy: 0.5.into(),
                     health_reduction_from_entropy: 0.5.into(),
                     health_reduction_per_energy_expended: 0.1.into(),
                     ..CellConstants::DEFAULT
                 }),
                 CellParams {
-                    attempted_eating_energy: 1.0.into(),
-                    attempted_healing_energy: 2.0.into(),
-                    child_threshold_energy: 2.0.into(),
-                    child_threshold_food: 1.0.into(),
+                    attempted_eating_energy: 1.into(),
+                    attempted_healing_energy: 2.into(),
+                    child_threshold_energy: 2.into(),
+                    child_threshold_food: 1.into(),
                     ..CellParams::DEFAULT
                 })
-                .with_energy(10.0.into()),
+                .with_energy(10.into()),
         ])
-        .with_food(100.0.into());
+        .with_food(100.into());
 
     run(&mut world, 1000);
 }
