@@ -14,7 +14,6 @@ pub fn create_and_run_world(args: &Args) {
         health_increase_per_healing_energy: args.health_increase_per_healing_energy.into(),
         health_reduction_from_entropy: args.health_reduction_from_entropy.into(),
         health_reduction_per_energy_expended: args.health_reduction_per_energy_expended.into(),
-        maintenance_energy: args.maintenance_energy.into(),
     });
 
     let mut world = create_world(args, &cell_constants);
@@ -150,10 +149,6 @@ pub struct Args {
     /// Standard deviation of cell initial energies
     #[clap(long, default_value_t = Args::DEFAULT.initial_energy_stdev)]
     pub initial_energy_stdev: f32,
-
-    /// Cell maintenance energy
-    #[clap(short('M'), long, default_value_t = Args::DEFAULT.maintenance_energy)]
-    pub maintenance_energy: f32,
 }
 
 impl Args {
@@ -179,6 +174,5 @@ impl Args {
         health_reduction_per_energy_expended: CellConstants::DEFAULT.health_reduction_per_energy_expended.value(),
         initial_energy_mean: 100.0,
         initial_energy_stdev: 0.0,
-        maintenance_energy: CellConstants::DEFAULT.maintenance_energy.value(),
     };
 }

@@ -28,6 +28,7 @@ struct LinearlyGrowingFoodSource {
 }
 
 impl LinearlyGrowingFoodSource {
+    #[allow(dead_code)]
     pub fn new(starting_food: F32Positive, food_increase_per_step: F32Positive) -> Self {
         LinearlyGrowingFoodSource {
             next_food: starting_food,

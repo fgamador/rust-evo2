@@ -48,7 +48,6 @@ impl Cell {
         let food = self.eat(budgeted_energies.eating, environment.food_per_cell);
         self.digest(food);
         self.entropy();
-        self.maintenance(budgeted_energies.maintenance);
         self.heal(budgeted_energies.healing);
 
         (child, food)
@@ -73,12 +72,10 @@ impl Cell {
         (total_budgeted,
          [budgeted_energies.reproduction,
              budgeted_energies.eating,
-             budgeted_energies.maintenance,
              budgeted_energies.healing]) =
             budget(self.state.energy,
                    &[self.params.child_threshold_energy,
                        self.params.attempted_eating_energy,
-                       self.constants.maintenance_energy,
                        self.params.attempted_healing_energy]);
         (total_budgeted, budgeted_energies)
     }
@@ -87,10 +84,9 @@ impl Cell {
     fn budget_excluding_reproduction(&mut self) -> (F32Positive, CellEnergies) {
         let mut total_budgeted = 0.0.into(); // make Rust plugin shut up about uninitialized var
         let mut budgeted_energies = CellEnergies::new();
-        (total_budgeted, [budgeted_energies.eating, budgeted_energies.maintenance, budgeted_energies.healing]) =
+        (total_budgeted, [budgeted_energies.eating, budgeted_energies.healing]) =
             budget(self.state.energy,
                    &[self.params.attempted_eating_energy,
-                       self.constants.maintenance_energy,
                        self.params.attempted_healing_energy]);
         budgeted_energies.reproduction = 0.0.into();
         (total_budgeted, budgeted_energies)
@@ -119,8 +115,6 @@ impl Cell {
     fn entropy(&mut self) {
         self.state.health -= self.constants.health_reduction_from_entropy;
     }
-
-    fn maintenance(&mut self, _maintenance_energy: F32Positive) {}
 
     fn heal(&mut self, healing_energy: F32Positive) {
         self.state.health += healing_energy * self.constants.health_increase_per_healing_energy;
@@ -151,7 +145,6 @@ pub struct CellConstants {
     pub health_increase_per_healing_energy: F32ZeroToOnePerF32Positive,
     pub health_reduction_from_entropy: F32ZeroToOne,
     pub health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive,
-    pub maintenance_energy: F32Positive,
 }
 
 impl CellConstants {
@@ -163,7 +156,6 @@ impl CellConstants {
         health_increase_per_healing_energy: F32ZeroToOnePerF32Positive::unchecked(0.0),
         health_reduction_from_entropy: F32ZeroToOne::unchecked(0.0),
         health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive::unchecked(0.0),
-        maintenance_energy: F32Positive::unchecked(0.0),
     };
 }
 
@@ -211,7 +203,6 @@ impl CellEnvironment {
 struct CellEnergies {
     reproduction: F32Positive,
     eating: F32Positive,
-    maintenance: F32Positive,
     healing: F32Positive,
 }
 
@@ -220,7 +211,6 @@ impl CellEnergies {
         CellEnergies {
             reproduction: 0.0.into(),
             eating: 0.0.into(),
-            maintenance: 0.0.into(),
             healing: 0.0.into(),
         }
     }

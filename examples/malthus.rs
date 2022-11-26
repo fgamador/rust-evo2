@@ -10,7 +10,6 @@ fn main() {
         energy_yield_from_digestion: 1.0,
         child_threshold_energy_mean: 2.0,
         create_child_energy: 1.0,
-        maintenance_energy: 1.0,
         ..Args::DEFAULT
     });
 }
