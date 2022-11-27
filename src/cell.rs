@@ -67,7 +67,7 @@ impl Cell {
 
     #[allow(unused_assignments)]
     fn budget_including_reproduction(&self) -> (F32Positive, CellEnergies) {
-        let mut total_budgeted = 0.0.into(); // make Rust plugin shut up about uninitialized var
+        let mut total_budgeted = 0.into(); // make Rust plugin shut up about uninitialized var
         let mut budgeted_energies = CellEnergies::new();
         (total_budgeted,
          [budgeted_energies.reproduction,
@@ -82,13 +82,13 @@ impl Cell {
 
     #[allow(unused_assignments)]
     fn budget_excluding_reproduction(&mut self) -> (F32Positive, CellEnergies) {
-        let mut total_budgeted = 0.0.into(); // make Rust plugin shut up about uninitialized var
+        let mut total_budgeted = 0.into(); // make Rust plugin shut up about uninitialized var
         let mut budgeted_energies = CellEnergies::new();
         (total_budgeted, [budgeted_energies.eating, budgeted_energies.healing]) =
             budget(self.state.energy,
                    &[self.params.attempted_eating_energy,
                        self.params.attempted_healing_energy]);
-        budgeted_energies.reproduction = 0.0.into();
+        budgeted_energies.reproduction = 0.into();
         (total_budgeted, budgeted_energies)
     }
 
@@ -209,9 +209,9 @@ struct CellEnergies {
 impl CellEnergies {
     fn new() -> Self {
         CellEnergies {
-            reproduction: 0.0.into(),
-            eating: 0.0.into(),
-            healing: 0.0.into(),
+            reproduction: 0.into(),
+            eating: 0.into(),
+            healing: 0.into(),
         }
     }
 }
@@ -222,22 +222,22 @@ mod tests {
 
     #[test]
     fn budgeting_adjusts_downward_proportionally() {
-        let desired: [F32Positive; 2] = [10.0.into(), 5.0.into()];
+        let desired: [F32Positive; 2] = [10.into(), 5.into()];
 
         let (total_budgeted, budgeted) = budget(7.5.into(), &desired);
 
         assert_eq!(total_budgeted, 7.5.into());
-        assert_eq!(budgeted, [5.0.into(), 2.5.into()]);
+        assert_eq!(budgeted, [5.into(), 2.5.into()]);
     }
 
     #[test]
     fn budgeting_leaves_satisfiable_requests_unchanged() {
-        let desired: [F32Positive; 2] = [10.0.into(), 5.0.into()];
+        let desired: [F32Positive; 2] = [10.into(), 5.into()];
 
-        let (total_budgeted, budgeted) = budget(20.0.into(), &desired);
+        let (total_budgeted, budgeted) = budget(20.into(), &desired);
 
-        assert_eq!(total_budgeted, 15.0.into());
-        assert_eq!(budgeted, [10.0.into(), 5.0.into()]);
+        assert_eq!(total_budgeted, 15.into());
+        assert_eq!(budgeted, [10.into(), 5.into()]);
     }
 
     #[test]
@@ -272,7 +272,7 @@ mod tests {
                 attempted_eating_energy: 5.25.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         cell.step(&CellEnvironment::DEFAULT);
 
@@ -284,14 +284,14 @@ mod tests {
         let mut cell = Cell::new(
             &Rc::new(CellConstants::DEFAULT),
             CellParams {
-                attempted_eating_energy: 11.0.into(),
+                attempted_eating_energy: 11.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         cell.step(&CellEnvironment::DEFAULT);
 
-        assert_eq!(cell.energy(), 0.0.into());
+        assert_eq!(cell.energy(), 0.into());
     }
 
     #[test]
@@ -300,7 +300,7 @@ mod tests {
             &Rc::new(CellConstants::DEFAULT),
             CellParams::DEFAULT)
             .with_health(0.0.into())
-            .with_energy(1.0.into());
+            .with_energy(1.into());
 
         assert!(!cell.is_alive());
     }
@@ -311,7 +311,7 @@ mod tests {
             &Rc::new(CellConstants::DEFAULT),
             CellParams::DEFAULT)
             .with_health(1.0.into())
-            .with_energy(0.0.into());
+            .with_energy(0.into());
 
         assert!(cell.is_alive());
     }
@@ -324,102 +324,102 @@ mod tests {
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_eating_energy: 2.0.into(),
+                attempted_eating_energy: 2.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         let (_, food_eaten) = cell.step(&CellEnvironment {
-            food_per_cell: 10.0.into(),
+            food_per_cell: 10.into(),
             ..CellEnvironment::DEFAULT
         });
 
-        assert_eq!(food_eaten, 3.0.into());
+        assert_eq!(food_eaten, 3.into());
     }
 
     #[test]
     fn cell_cannot_eat_more_food_than_is_available() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                food_yield_from_eating: 1.0.into(),
+                food_yield_from_eating: 1.into(),
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_eating_energy: 3.0.into(),
+                attempted_eating_energy: 3.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         let (_, food_eaten) = cell.step(&CellEnvironment {
-            food_per_cell: 2.0.into(),
+            food_per_cell: 2.into(),
             ..CellEnvironment::DEFAULT
         });
 
-        assert_eq!(food_eaten, 2.0.into());
+        assert_eq!(food_eaten, 2.into());
     }
 
     #[test]
     fn cell_expends_energy_eating() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                food_yield_from_eating: 0.0.into(),
+                food_yield_from_eating: 0.into(),
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_eating_energy: 2.0.into(),
+                attempted_eating_energy: 2.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(5.0.into());
+            .with_energy(5.into());
 
         cell.step(&CellEnvironment {
-            food_per_cell: 10.0.into(),
+            food_per_cell: 10.into(),
             ..CellEnvironment::DEFAULT
         });
 
-        assert_eq!(cell.energy(), 3.0.into());
+        assert_eq!(cell.energy(), 3.into());
     }
 
     #[test]
     fn cell_expends_energy_eating_even_when_there_is_no_food() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                food_yield_from_eating: 0.0.into(),
+                food_yield_from_eating: 0.into(),
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_eating_energy: 2.0.into(),
+                attempted_eating_energy: 2.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(5.0.into());
+            .with_energy(5.into());
 
         cell.step(&CellEnvironment {
-            food_per_cell: 0.0.into(),
+            food_per_cell: 0.into(),
             ..CellEnvironment::DEFAULT
         });
 
-        assert_eq!(cell.energy(), 3.0.into());
+        assert_eq!(cell.energy(), 3.into());
     }
 
     #[test]
     fn cell_digests_food() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                food_yield_from_eating: 1.0.into(),
+                food_yield_from_eating: 1.into(),
                 energy_yield_from_digestion: 1.5.into(),
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_eating_energy: 2.0.into(),
+                attempted_eating_energy: 2.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         cell.step(&CellEnvironment {
-            food_per_cell: 10.0.into(),
+            food_per_cell: 10.into(),
             ..CellEnvironment::DEFAULT
         });
 
-        assert_eq!(cell.energy(), 11.0.into());
+        assert_eq!(cell.energy(), 11.into());
     }
 
     #[test]
@@ -430,10 +430,10 @@ mod tests {
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_eating_energy: 2.0.into(),
+                attempted_eating_energy: 2.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         cell.step(&CellEnvironment::DEFAULT);
 
@@ -448,10 +448,10 @@ mod tests {
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_eating_energy: 2.0.into(),
+                attempted_eating_energy: 2.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         cell.step(&CellEnvironment::DEFAULT);
 
@@ -466,11 +466,11 @@ mod tests {
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_healing_energy: 1.0.into(),
+                attempted_healing_energy: 1.into(),
                 ..CellParams::DEFAULT
             })
             .with_health(0.5.into())
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         cell.step(&CellEnvironment::DEFAULT);
 
@@ -486,11 +486,11 @@ mod tests {
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_healing_energy: 1.0.into(),
+                attempted_healing_energy: 1.into(),
                 ..CellParams::DEFAULT
             })
             .with_health(0.5.into())
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         cell.step(&CellEnvironment::DEFAULT);
 
@@ -502,11 +502,11 @@ mod tests {
         let mut cell = Cell::new(
             &Rc::new(CellConstants::DEFAULT),
             CellParams {
-                child_threshold_energy: 4.0.into(),
-                child_threshold_food: 0.0.into(),
+                child_threshold_energy: 4.into(),
+                child_threshold_food: 0.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(3.0.into());
+            .with_energy(3.into());
 
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
 
@@ -518,14 +518,14 @@ mod tests {
         let mut cell = Cell::new(
             &Rc::new(CellConstants::DEFAULT),
             CellParams {
-                child_threshold_energy: 0.0.into(),
-                child_threshold_food: 4.0.into(),
+                child_threshold_energy: 0.into(),
+                child_threshold_food: 4.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(1.0.into());
+            .with_energy(1.into());
 
         let (child, _) = cell.step(&CellEnvironment {
-            food_per_cell: 3.0.into(),
+            food_per_cell: 3.into(),
             ..CellEnvironment::DEFAULT
         });
 
@@ -537,24 +537,24 @@ mod tests {
         let mut cell = Cell::new(
             &Rc::new(CellConstants::DEFAULT),
             CellParams {
-                child_threshold_energy: 1.0.into(),
-                child_threshold_food: 2.0.into(),
-                attempted_eating_energy: 3.0.into(),
-                attempted_healing_energy: 4.0.into(),
+                child_threshold_energy: 1.into(),
+                child_threshold_food: 2.into(),
+                attempted_eating_energy: 3.into(),
+                attempted_healing_energy: 4.into(),
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         let (child, _) = cell.step(&CellEnvironment {
-            food_per_cell: 10.0.into(),
+            food_per_cell: 10.into(),
             ..CellEnvironment::DEFAULT
         });
 
         assert_ne!(child, None);
         assert_eq!(child.unwrap().params, CellParams {
-            child_threshold_energy: 1.0.into(),
-            child_threshold_food: 2.0.into(),
-            attempted_eating_energy: 3.0.into(),
-            attempted_healing_energy: 4.0.into(),
+            child_threshold_energy: 1.into(),
+            child_threshold_food: 2.into(),
+            attempted_eating_energy: 3.into(),
+            attempted_healing_energy: 4.into(),
         });
     }
 
@@ -566,17 +566,17 @@ mod tests {
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                child_threshold_energy: 4.0.into(),
-                child_threshold_food: 0.0.into(),
+                child_threshold_energy: 4.into(),
+                child_threshold_food: 0.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
 
         assert_ne!(child, None);
         assert_eq!(child.unwrap().state.energy, 2.5.into());
-        assert_eq!(cell.energy(), 6.0.into());
+        assert_eq!(cell.energy(), 6.into());
     }
 
     #[test]
@@ -584,12 +584,12 @@ mod tests {
         let mut cell = Cell::new(
             &Rc::new(CellConstants::DEFAULT),
             CellParams {
-                child_threshold_energy: 1.0.into(),
-                child_threshold_food: 0.0.into(),
+                child_threshold_energy: 1.into(),
+                child_threshold_food: 0.into(),
                 ..CellParams::DEFAULT
             })
             .with_health(0.5.into())
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
 
@@ -601,16 +601,16 @@ mod tests {
     fn expending_reproduction_energy_reduces_health() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                create_child_energy: 0.0.into(),
+                create_child_energy: 0.into(),
                 health_reduction_per_energy_expended: 0.125.into(),
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                child_threshold_energy: 2.0.into(),
-                child_threshold_food: 0.0.into(),
+                child_threshold_energy: 2.into(),
+                child_threshold_food: 0.into(),
                 ..CellParams::DEFAULT
             })
-            .with_energy(10.0.into());
+            .with_energy(10.into());
 
         let (child, _) = cell.step(&CellEnvironment::DEFAULT);
 
@@ -622,29 +622,29 @@ mod tests {
     fn cell_behavior_is_limited_by_energy_budget() {
         let mut cell = Cell::new(
             &Rc::new(CellConstants {
-                food_yield_from_eating: 1.0.into(),
-                energy_yield_from_digestion: 0.0.into(),
+                food_yield_from_eating: 1.into(),
+                energy_yield_from_digestion: 0.into(),
                 health_increase_per_healing_energy: 0.25.into(),
                 ..CellConstants::DEFAULT
             }),
             CellParams {
-                attempted_eating_energy: 2.0.into(),
-                attempted_healing_energy: 2.0.into(),
-                child_threshold_energy: 2.0.into(),
-                child_threshold_food: 0.0.into(),
+                attempted_eating_energy: 2.into(),
+                attempted_healing_energy: 2.into(),
+                child_threshold_energy: 2.into(),
+                child_threshold_food: 0.into(),
             })
             .with_health(0.25.into())
-            .with_energy(2.0.into());
+            .with_energy(2.into());
 
         let (child, food_eaten) = cell.step(
             &CellEnvironment {
-                food_per_cell: 10.0.into(),
+                food_per_cell: 10.into(),
                 ..CellEnvironment::DEFAULT
             });
 
         assert_eq!(child, None);
-        assert_eq!(food_eaten, 1.0.into());
+        assert_eq!(food_eaten, 1.into());
         assert_eq!(cell.health(), 0.5.into());
-        assert_eq!(cell.energy(), 0.0.into());
+        assert_eq!(cell.energy(), 0.into());
     }
 }
