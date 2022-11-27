@@ -1,5 +1,5 @@
 use evo2::cell::{Cell, CellConstants, CellParams};
-use evo2::food_sources::ConstantFoodSource;
+use evo2::food_sources::LinearlyGrowingFoodSource;
 use evo2::main_support::run;
 use evo2::world::World;
 use std::rc::Rc;
@@ -28,8 +28,8 @@ fn main() {
         ])
         .with_food(100.into())
         .with_food_sources(vec![
-            Box::new(ConstantFoodSource::new(10.into()))
+            Box::new(LinearlyGrowingFoodSource::new(10.into(), 5.into()))
         ]);
 
-    run(&mut world, 50);
+    run(&mut world, 100);
 }

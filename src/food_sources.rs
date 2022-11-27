@@ -22,7 +22,7 @@ impl FoodSource for ConstantFoodSource {
     }
 }
 
-struct LinearlyGrowingFoodSource {
+pub struct LinearlyGrowingFoodSource {
     next_food: F32Positive,
     food_increase_per_step: F32Positive,
 }
