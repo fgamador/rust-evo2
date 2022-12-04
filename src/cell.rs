@@ -558,6 +558,37 @@ mod tests {
         });
     }
 
+    // #[test]
+    // fn reproduction_mutates_cell_params() {
+    //     let mut cell = Cell::new(
+    //         &Rc::new(CellConstants {
+    //             ..CellConstants::DEFAULT
+    //         }),
+    //         CellParams {
+    //             child_threshold_energy: 1.into(),
+    //             child_threshold_food: 2.into(),
+    //             attempted_eating_energy: 3.into(),
+    //             attempted_healing_energy: 4.into(),
+    //         })
+    //         .with_energy(10.into());
+    //
+    //     let mut mutation_number_source = FixedMutationNumberSource::new(|val, stdev| val + stdev);
+    //     let (child, _) = cell.step(
+    //         &mut mutation_number_source,
+    //         &CellEnvironment {
+    //             food_per_cell: 10.into(),
+    //             ..CellEnvironment::DEFAULT
+    //         });
+    //
+    //     assert_ne!(child, None);
+    //     assert_eq!(child.unwrap().params, CellParams {
+    //         child_threshold_energy: 1.25.into(),
+    //         child_threshold_food: 2.25.into(),
+    //         attempted_eating_energy: 3.25.into(),
+    //         attempted_healing_energy: 4.25.into(),
+    //     });
+    // }
+
     #[test]
     fn cell_passes_energy_to_child() {
         let mut cell = Cell::new(
