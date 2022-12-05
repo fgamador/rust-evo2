@@ -1,7 +1,7 @@
 use rand::distributions::Distribution;
 use rand_distr::Normal;
 use std::rc::Rc;
-use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams};
+use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams, NullMutationNumberSource};
 use crate::food_sources::FoodSource;
 use crate::number_types::F32Positive;
 
@@ -95,8 +95,9 @@ impl World {
     }
 
     fn step_cells(&mut self, environment: &CellEnvironment, new_cells: &mut Vec<Cell>, dead_cell_indexes: &mut Vec<usize>) {
+        let mut mutation_number_source = NullMutationNumberSource::new();
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            let (child, food_eaten) = cell.step(environment);
+            let (child, food_eaten) = cell.step(&mut mutation_number_source, environment);
             if let Some(child) = child {
                 new_cells.push(child);
             }

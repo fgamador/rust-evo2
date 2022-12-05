@@ -39,7 +39,7 @@ impl Cell {
         self.health().value() > 0.0
     }
 
-    pub fn step(&mut self, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
+    pub fn step(&mut self, _mutation_number_source: &mut dyn MutationNumberSource, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         let (total_budgeted, budgeted_energies, child) =
             self.budget_and_maybe_reproduce(environment);
 
@@ -216,6 +216,18 @@ impl CellEnergies {
     }
 }
 
+pub trait MutationNumberSource {}
+
+pub struct NullMutationNumberSource {}
+
+impl NullMutationNumberSource {
+    pub fn new() -> Self {
+        NullMutationNumberSource {}
+    }
+}
+
+impl MutationNumberSource for NullMutationNumberSource {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -258,8 +270,9 @@ mod tests {
             }),
             CellParams::DEFAULT)
             .with_health(1.0.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment::DEFAULT);
+        cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_eq!(cell.health(), 0.75.into());
     }
@@ -273,8 +286,9 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment::DEFAULT);
+        cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_eq!(cell.energy(), 4.75.into());
     }
@@ -288,8 +302,9 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment::DEFAULT);
+        cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_eq!(cell.energy(), 0.into());
     }
@@ -328,11 +343,13 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        let (_, food_eaten) = cell.step(&CellEnvironment {
-            food_per_cell: 10.into(),
-            ..CellEnvironment::DEFAULT
-        });
+        let (_, food_eaten) = cell.step(
+            &mut mutation_number_source, &CellEnvironment {
+                food_per_cell: 10.into(),
+                ..CellEnvironment::DEFAULT
+            });
 
         assert_eq!(food_eaten, 3.into());
     }
@@ -349,11 +366,13 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        let (_, food_eaten) = cell.step(&CellEnvironment {
-            food_per_cell: 2.into(),
-            ..CellEnvironment::DEFAULT
-        });
+        let (_, food_eaten) = cell.step(
+            &mut mutation_number_source, &CellEnvironment {
+                food_per_cell: 2.into(),
+                ..CellEnvironment::DEFAULT
+            });
 
         assert_eq!(food_eaten, 2.into());
     }
@@ -370,11 +389,13 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(5.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment {
-            food_per_cell: 10.into(),
-            ..CellEnvironment::DEFAULT
-        });
+        cell.step(
+            &mut mutation_number_source, &CellEnvironment {
+                food_per_cell: 10.into(),
+                ..CellEnvironment::DEFAULT
+            });
 
         assert_eq!(cell.energy(), 3.into());
     }
@@ -391,11 +412,13 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(5.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment {
-            food_per_cell: 0.into(),
-            ..CellEnvironment::DEFAULT
-        });
+        cell.step(
+            &mut mutation_number_source, &CellEnvironment {
+                food_per_cell: 0.into(),
+                ..CellEnvironment::DEFAULT
+            });
 
         assert_eq!(cell.energy(), 3.into());
     }
@@ -413,11 +436,13 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment {
-            food_per_cell: 10.into(),
-            ..CellEnvironment::DEFAULT
-        });
+        cell.step(
+            &mut mutation_number_source, &CellEnvironment {
+                food_per_cell: 10.into(),
+                ..CellEnvironment::DEFAULT
+            });
 
         assert_eq!(cell.energy(), 11.into());
     }
@@ -434,8 +459,9 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment::DEFAULT);
+        cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_eq!(cell.health(), 0.75.into());
     }
@@ -452,8 +478,9 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment::DEFAULT);
+        cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_eq!(cell.health(), 0.0.into());
     }
@@ -471,8 +498,9 @@ mod tests {
             })
             .with_health(0.5.into())
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment::DEFAULT);
+        cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_eq!(cell.health(), 0.75.into());
     }
@@ -491,8 +519,9 @@ mod tests {
             })
             .with_health(0.5.into())
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        cell.step(&CellEnvironment::DEFAULT);
+        cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_eq!(cell.health(), 1.0.into());
     }
@@ -507,8 +536,9 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(3.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        let (child, _) = cell.step(&CellEnvironment::DEFAULT);
+        let (child, _) = cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_eq!(child, None);
     }
@@ -523,11 +553,13 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(1.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        let (child, _) = cell.step(&CellEnvironment {
-            food_per_cell: 3.into(),
-            ..CellEnvironment::DEFAULT
-        });
+        let (child, _) = cell.step(
+            &mut mutation_number_source, &CellEnvironment {
+                food_per_cell: 3.into(),
+                ..CellEnvironment::DEFAULT
+            });
 
         assert_eq!(child, None);
     }
@@ -543,11 +575,13 @@ mod tests {
                 attempted_healing_energy: 4.into(),
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        let (child, _) = cell.step(&CellEnvironment {
-            food_per_cell: 10.into(),
-            ..CellEnvironment::DEFAULT
-        });
+        let (child, _) = cell.step(
+            &mut mutation_number_source, &CellEnvironment {
+                food_per_cell: 10.into(),
+                ..CellEnvironment::DEFAULT
+            });
 
         assert_ne!(child, None);
         assert_eq!(child.unwrap().params, CellParams {
@@ -602,8 +636,9 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        let (child, _) = cell.step(&CellEnvironment::DEFAULT);
+        let (child, _) = cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_ne!(child, None);
         assert_eq!(child.unwrap().state.energy, 2.5.into());
@@ -621,8 +656,9 @@ mod tests {
             })
             .with_health(0.5.into())
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        let (child, _) = cell.step(&CellEnvironment::DEFAULT);
+        let (child, _) = cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_ne!(child, None);
         assert_eq!(child.unwrap().state.health, 1.0.into());
@@ -642,8 +678,9 @@ mod tests {
                 ..CellParams::DEFAULT
             })
             .with_energy(10.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
-        let (child, _) = cell.step(&CellEnvironment::DEFAULT);
+        let (child, _) = cell.step(&mut mutation_number_source, &CellEnvironment::DEFAULT);
 
         assert_ne!(child, None);
         assert_eq!(cell.health(), 0.75.into());
@@ -666,8 +703,10 @@ mod tests {
             })
             .with_health(0.25.into())
             .with_energy(2.into());
+        let mut mutation_number_source = NullMutationNumberSource::new();
 
         let (child, food_eaten) = cell.step(
+            &mut mutation_number_source,
             &CellEnvironment {
                 food_per_cell: 10.into(),
                 ..CellEnvironment::DEFAULT
