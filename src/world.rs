@@ -1,7 +1,7 @@
 use rand::distributions::Distribution;
 use rand_distr::Normal;
 use std::rc::Rc;
-use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams, NullMutationNumberSource};
+use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams, NullMutationNumberSource, MutationNumberSource};
 use crate::food_sources::FoodSource;
 use crate::number_types::F32Positive;
 
@@ -71,6 +71,8 @@ impl World {
     }
 
     pub fn step(&mut self) -> (usize, usize) {
+        let mut mutation_number_source = NullMutationNumberSource::new();
+
         self.step_food_sources();
 
         let environment = CellEnvironment {
@@ -79,7 +81,7 @@ impl World {
         let mut new_cells = vec![];
         let mut dead_cell_indexes = Vec::with_capacity(self.cells.len());
 
-        self.step_cells(&environment, &mut new_cells, &mut dead_cell_indexes);
+        self.step_cells(&mut mutation_number_source, &environment, &mut new_cells, &mut dead_cell_indexes);
 
         let num_added = new_cells.len();
         self.cells.append(&mut new_cells);
@@ -94,10 +96,9 @@ impl World {
         }
     }
 
-    fn step_cells(&mut self, environment: &CellEnvironment, new_cells: &mut Vec<Cell>, dead_cell_indexes: &mut Vec<usize>) {
-        let mut mutation_number_source = NullMutationNumberSource::new();
+    fn step_cells(&mut self, mutation_number_source: &mut dyn MutationNumberSource, environment: &CellEnvironment, new_cells: &mut Vec<Cell>, dead_cell_indexes: &mut Vec<usize>) {
         for (index, cell) in self.cells.iter_mut().enumerate() {
-            let (child, food_eaten) = cell.step(&mut mutation_number_source, environment);
+            let (child, food_eaten) = cell.step(mutation_number_source, environment);
             if let Some(child) = child {
                 new_cells.push(child);
             }
