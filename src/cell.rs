@@ -145,6 +145,10 @@ pub struct CellConstants {
     pub health_increase_per_healing_energy: F32ZeroToOnePerF32Positive,
     pub health_reduction_from_entropy: F32ZeroToOne,
     pub health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive,
+    pub attempted_eating_energy_mutation_stdev: F32Positive,
+    pub attempted_healing_energy_mutation_stdev: F32Positive,
+    pub child_threshold_energy_mutation_stdev: F32Positive,
+    pub child_threshold_food_mutation_stdev: F32Positive,
 }
 
 impl CellConstants {
@@ -156,6 +160,10 @@ impl CellConstants {
         health_increase_per_healing_energy: F32ZeroToOnePerF32Positive::unchecked(0.0),
         health_reduction_from_entropy: F32ZeroToOne::unchecked(0.0),
         health_reduction_per_energy_expended: F32ZeroToOnePerF32Positive::unchecked(0.0),
+        attempted_eating_energy_mutation_stdev: F32Positive::unchecked(0.0),
+        attempted_healing_energy_mutation_stdev: F32Positive::unchecked(0.0),
+        child_threshold_energy_mutation_stdev: F32Positive::unchecked(0.0),
+        child_threshold_food_mutation_stdev: F32Positive::unchecked(0.0),
     };
 }
 
@@ -596,6 +604,10 @@ mod tests {
     // fn reproduction_mutates_cell_params() {
     //     let mut cell = Cell::new(
     //         &Rc::new(CellConstants {
+    //             child_threshold_energy_mutation_stdev: 0.25.into(),
+    //             child_threshold_food_mutation_stdev: 0.25.into(),
+    //             attempted_eating_energy_mutation_stdev: 0.25.into(),
+    //             attempted_healing_energy_mutation_stdev: 0.25.into(),
     //             ..CellConstants::DEFAULT
     //         }),
     //         CellParams {

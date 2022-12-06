@@ -14,6 +14,7 @@ pub fn create_and_run_world(args: &Args) {
         health_increase_per_healing_energy: args.health_increase_per_healing_energy.into(),
         health_reduction_from_entropy: args.health_reduction_from_entropy.into(),
         health_reduction_per_energy_expended: args.health_reduction_per_energy_expended.into(),
+        ..CellConstants::DEFAULT
     });
 
     let mut world = create_world(args, &cell_constants);
