@@ -605,9 +605,9 @@ mod tests {
     //     let mut cell = Cell::new(
     //         &Rc::new(CellConstants {
     //             child_threshold_energy_mutation_stdev: 0.25.into(),
-    //             child_threshold_food_mutation_stdev: 0.25.into(),
-    //             attempted_eating_energy_mutation_stdev: 0.25.into(),
-    //             attempted_healing_energy_mutation_stdev: 0.25.into(),
+    //             child_threshold_food_mutation_stdev: 0.5.into(),
+    //             attempted_eating_energy_mutation_stdev: 0.75.into(),
+    //             attempted_healing_energy_mutation_stdev: 1.0.into(),
     //             ..CellConstants::DEFAULT
     //         }),
     //         CellParams {
@@ -618,7 +618,7 @@ mod tests {
     //         })
     //         .with_energy(10.into());
     //
-    //     let mut mutation_number_source = FixedMutationNumberSource::new(|val, stdev| val + stdev);
+    //     let mut mutation_number_source = AdditiveMutationNumberSource::new();
     //     let (child, _) = cell.step(
     //         &mut mutation_number_source,
     //         &CellEnvironment {
@@ -629,9 +629,9 @@ mod tests {
     //     assert_ne!(child, None);
     //     assert_eq!(child.unwrap().params, CellParams {
     //         child_threshold_energy: 1.25.into(),
-    //         child_threshold_food: 2.25.into(),
-    //         attempted_eating_energy: 3.25.into(),
-    //         attempted_healing_energy: 4.25.into(),
+    //         child_threshold_food: 2.5.into(),
+    //         attempted_eating_energy: 3.75.into(),
+    //         attempted_healing_energy: 5.0.into(),
     //     });
     // }
 
@@ -729,4 +729,14 @@ mod tests {
         assert_eq!(cell.health(), 0.5.into());
         assert_eq!(cell.energy(), 0.into());
     }
+
+    pub struct AdditiveMutationNumberSource {}
+
+    impl AdditiveMutationNumberSource {
+        pub fn new() -> Self {
+            AdditiveMutationNumberSource {}
+        }
+    }
+
+    impl MutationNumberSource for AdditiveMutationNumberSource {}
 }
