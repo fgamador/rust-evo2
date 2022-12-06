@@ -39,9 +39,9 @@ impl Cell {
         self.health().value() > 0.0
     }
 
-    pub fn step(&mut self, _mutation_number_source: &mut dyn MutationNumberSource, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
+    pub fn step(&mut self, mutation_number_source: &mut dyn MutationNumberSource, environment: &CellEnvironment) -> (Option<Cell>, F32Positive) {
         let (total_budgeted, budgeted_energies, child) =
-            self.budget_and_maybe_reproduce(environment);
+            self.budget_and_maybe_reproduce(mutation_number_source, environment);
 
         self.expend_energy(total_budgeted);
 
@@ -53,11 +53,11 @@ impl Cell {
         (child, food)
     }
 
-    fn budget_and_maybe_reproduce(&mut self, environment: &CellEnvironment) -> (F32Positive, CellEnergies, Option<Cell>) {
+    fn budget_and_maybe_reproduce(&mut self, mutation_number_source: &mut dyn MutationNumberSource, environment: &CellEnvironment) -> (F32Positive, CellEnergies, Option<Cell>) {
         let (total_budgeted, budgeted_energies) = self.budget_including_reproduction();
         if self.can_reproduce(budgeted_energies.reproduction, environment) {
             let child
-                = self.reproduce(budgeted_energies.reproduction);
+                = self.reproduce(budgeted_energies.reproduction, mutation_number_source);
             (total_budgeted, budgeted_energies, child)
         } else {
             let (total_budgeted, budgeted_energies) = self.budget_excluding_reproduction();
@@ -97,11 +97,23 @@ impl Cell {
             && environment.food_per_cell >= self.params.child_threshold_food
     }
 
-    fn reproduce(&mut self, reproduction_energy: F32Positive) -> Option<Cell> {
+    fn reproduce(&mut self, reproduction_energy: F32Positive, mutation_number_source: &mut dyn MutationNumberSource) -> Option<Cell> {
         let mut child = self.clone();
+        child.mutate(mutation_number_source);
         child.state.health = 1.0.into();
         child.state.energy = reproduction_energy - self.constants.create_child_energy;
         Some(child)
+    }
+
+    fn mutate(&mut self, mutation_number_source: &mut dyn MutationNumberSource) {
+        self.params.attempted_eating_energy = mutation_number_source.mutate(
+            self.params.attempted_eating_energy, self.constants.attempted_eating_energy_mutation_stdev);
+        self.params.attempted_healing_energy = mutation_number_source.mutate(
+            self.params.attempted_healing_energy, self.constants.attempted_healing_energy_mutation_stdev);
+        self.params.child_threshold_energy = mutation_number_source.mutate(
+            self.params.child_threshold_energy, self.constants.child_threshold_energy_mutation_stdev);
+        self.params.child_threshold_food = mutation_number_source.mutate(
+            self.params.child_threshold_food, self.constants.child_threshold_food_mutation_stdev);
     }
 
     fn eat(&mut self, eating_energy: F32Positive, food_per_cell: F32Positive) -> F32Positive {
@@ -224,7 +236,9 @@ impl CellEnergies {
     }
 }
 
-pub trait MutationNumberSource {}
+pub trait MutationNumberSource {
+    fn mutate(&mut self, value: F32Positive, stdev: F32Positive) -> F32Positive;
+}
 
 pub struct NullMutationNumberSource {}
 
@@ -234,7 +248,11 @@ impl NullMutationNumberSource {
     }
 }
 
-impl MutationNumberSource for NullMutationNumberSource {}
+impl MutationNumberSource for NullMutationNumberSource {
+    fn mutate(&mut self, value: F32Positive, _stdev: F32Positive) -> F32Positive {
+        value
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -600,40 +618,40 @@ mod tests {
         });
     }
 
-    // #[test]
-    // fn reproduction_mutates_cell_params() {
-    //     let mut cell = Cell::new(
-    //         &Rc::new(CellConstants {
-    //             child_threshold_energy_mutation_stdev: 0.25.into(),
-    //             child_threshold_food_mutation_stdev: 0.5.into(),
-    //             attempted_eating_energy_mutation_stdev: 0.75.into(),
-    //             attempted_healing_energy_mutation_stdev: 1.0.into(),
-    //             ..CellConstants::DEFAULT
-    //         }),
-    //         CellParams {
-    //             child_threshold_energy: 1.into(),
-    //             child_threshold_food: 2.into(),
-    //             attempted_eating_energy: 3.into(),
-    //             attempted_healing_energy: 4.into(),
-    //         })
-    //         .with_energy(10.into());
-    //
-    //     let mut mutation_number_source = AdditiveMutationNumberSource::new();
-    //     let (child, _) = cell.step(
-    //         &mut mutation_number_source,
-    //         &CellEnvironment {
-    //             food_per_cell: 10.into(),
-    //             ..CellEnvironment::DEFAULT
-    //         });
-    //
-    //     assert_ne!(child, None);
-    //     assert_eq!(child.unwrap().params, CellParams {
-    //         child_threshold_energy: 1.25.into(),
-    //         child_threshold_food: 2.5.into(),
-    //         attempted_eating_energy: 3.75.into(),
-    //         attempted_healing_energy: 5.0.into(),
-    //     });
-    // }
+    #[test]
+    fn reproduction_mutates_cell_params() {
+        let mut cell = Cell::new(
+            &Rc::new(CellConstants {
+                child_threshold_energy_mutation_stdev: 0.25.into(),
+                child_threshold_food_mutation_stdev: 0.5.into(),
+                attempted_eating_energy_mutation_stdev: 0.75.into(),
+                attempted_healing_energy_mutation_stdev: 1.0.into(),
+                ..CellConstants::DEFAULT
+            }),
+            CellParams {
+                child_threshold_energy: 1.into(),
+                child_threshold_food: 2.into(),
+                attempted_eating_energy: 3.into(),
+                attempted_healing_energy: 4.into(),
+            })
+            .with_energy(10.into());
+
+        let mut mutation_number_source = AdditiveMutationNumberSource::new();
+        let (child, _) = cell.step(
+            &mut mutation_number_source,
+            &CellEnvironment {
+                food_per_cell: 10.into(),
+                ..CellEnvironment::DEFAULT
+            });
+
+        assert_ne!(child, None);
+        assert_eq!(child.unwrap().params, CellParams {
+            child_threshold_energy: 1.25.into(),
+            child_threshold_food: 2.5.into(),
+            attempted_eating_energy: 3.75.into(),
+            attempted_healing_energy: 5.0.into(),
+        });
+    }
 
     #[test]
     fn cell_passes_energy_to_child() {
@@ -738,5 +756,9 @@ mod tests {
         }
     }
 
-    impl MutationNumberSource for AdditiveMutationNumberSource {}
+    impl MutationNumberSource for AdditiveMutationNumberSource {
+        fn mutate(&mut self, value: F32Positive, stdev: F32Positive) -> F32Positive {
+            value + stdev
+        }
+    }
 }
