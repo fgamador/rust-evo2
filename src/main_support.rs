@@ -1,7 +1,7 @@
 use clap::Parser;
 use rand_distr::Normal;
 use std::rc::Rc;
-use crate::cell::CellConstants;
+use crate::cell::{CellConstants, NullMutationNumberSource};
 use crate::food_sources::ConstantFoodSource;
 use crate::world;
 use crate::world::World;
@@ -45,8 +45,9 @@ pub fn run(world: &mut World, steps: u32) {
     let mut step = 0;
     print_stats(world, step, 0, 0);
 
+    let mut mutation_number_source = NullMutationNumberSource::new();
     while step < steps && world.num_cells() > 0 {
-        let (num_created, num_died) = world.step();
+        let (num_created, num_died) = world.step(&mut mutation_number_source);
         step += 1;
         print_stats(world, step, num_created, num_died);
     }

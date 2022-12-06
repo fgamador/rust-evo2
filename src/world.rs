@@ -1,7 +1,7 @@
 use rand::distributions::Distribution;
 use rand_distr::Normal;
 use std::rc::Rc;
-use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams, NullMutationNumberSource, MutationNumberSource};
+use crate::cell::{Cell, CellEnvironment, CellConstants, CellParams, MutationNumberSource};
 use crate::food_sources::FoodSource;
 use crate::number_types::F32Positive;
 
@@ -70,9 +70,7 @@ impl World {
         self.food
     }
 
-    pub fn step(&mut self) -> (usize, usize) {
-        let mut mutation_number_source = NullMutationNumberSource::new();
-
+    pub fn step(&mut self, mutation_number_source: &mut dyn MutationNumberSource) -> (usize, usize) {
         self.step_food_sources();
 
         let environment = CellEnvironment {
@@ -81,7 +79,7 @@ impl World {
         let mut new_cells = vec![];
         let mut dead_cell_indexes = Vec::with_capacity(self.cells.len());
 
-        self.step_cells(&mut mutation_number_source, &environment, &mut new_cells, &mut dead_cell_indexes);
+        self.step_cells(mutation_number_source, &environment, &mut new_cells, &mut dead_cell_indexes);
 
         let num_added = new_cells.len();
         self.cells.append(&mut new_cells);
@@ -149,9 +147,10 @@ pub fn generate_cells(
 
 #[cfg(test)]
 mod tests {
+    use crate::cell::NullMutationNumberSource;
     use crate::food_sources::ConstantFoodSource;
-    use super::*;
     use crate::world::generate_cells;
+    use super::*;
 
     #[test]
     fn world_counts_both_living_and_dead_cells() {
@@ -210,7 +209,8 @@ mod tests {
                     })
                     .with_energy(10.0.into()),
             ]);
-        world.step();
+        let mut mutation_number_source = NullMutationNumberSource::new();
+        world.step(&mut mutation_number_source);
         assert_eq!(world.num_cells(), 2);
     }
 
@@ -228,7 +228,8 @@ mod tests {
                 Cell::new(&constants, params).with_energy(10.0.into()),
                 Cell::new(&constants, params).with_energy(10.0.into()),
             ]);
-        let (num_added, _) = world.step();
+        let mut mutation_number_source = NullMutationNumberSource::new();
+        let (num_added, _) = world.step(&mut mutation_number_source);
         assert_eq!(num_added, 2);
     }
 
@@ -241,7 +242,8 @@ mod tests {
                 Cell::new(&constants, CellParams::DEFAULT).with_health(1.0.into()),
                 Cell::new(&constants, CellParams::DEFAULT).with_health(0.0.into()),
             ]);
-        world.step();
+        let mut mutation_number_source = NullMutationNumberSource::new();
+        world.step(&mut mutation_number_source);
         assert_eq!(world.num_cells(), 1);
     }
 
@@ -260,7 +262,8 @@ mod tests {
             Cell::new(&constants, hungry_params).with_energy(5.0.into()),
             Cell::new(&constants, hungry_params).with_energy(5.0.into()),
         ]);
-        let (_, num_died) = world.step();
+        let mut mutation_number_source = NullMutationNumberSource::new();
+        let (_, num_died) = world.step(&mut mutation_number_source);
         assert_eq!(num_died, 2);
     }
 
@@ -288,7 +291,8 @@ mod tests {
                     })
                     .with_energy(10.0.into()),
             ]);
-        world.step();
+        let mut mutation_number_source = NullMutationNumberSource::new();
+        world.step(&mut mutation_number_source);
         assert_eq!(world.food().value(), 5.0);
     }
 
@@ -316,7 +320,8 @@ mod tests {
                     })
                     .with_energy(10.0.into()),
             ]);
-        world.step();
+        let mut mutation_number_source = NullMutationNumberSource::new();
+        world.step(&mut mutation_number_source);
         assert_eq!(world.food().value(), 1.0);
     }
 
@@ -328,7 +333,8 @@ mod tests {
                 Box::new(ConstantFoodSource::new(2.0.into())),
                 Box::new(ConstantFoodSource::new(3.0.into())),
             ]);
-        world.step();
+        let mut mutation_number_source = NullMutationNumberSource::new();
+        world.step(&mut mutation_number_source);
         assert_eq!(world.food().value(), 5.0);
     }
 }
