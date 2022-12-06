@@ -1,3 +1,5 @@
+use rand::rngs::ThreadRng;
+use rand_distr::{Normal, Distribution};
 use std::rc::Rc;
 use crate::number_types::{F32Positive, F32ZeroToOne, F32ZeroToOnePerF32Positive};
 
@@ -251,6 +253,30 @@ impl NullMutationNumberSource {
 impl MutationNumberSource for NullMutationNumberSource {
     fn mutate(&mut self, value: F32Positive, _stdev: F32Positive) -> F32Positive {
         value
+    }
+}
+
+pub struct RandomMutationNumberSource {
+    rng: ThreadRng,
+}
+
+impl RandomMutationNumberSource {
+    pub fn new() -> Self {
+        RandomMutationNumberSource {
+            rng: rand::thread_rng(),
+        }
+    }
+}
+
+impl MutationNumberSource for RandomMutationNumberSource {
+    fn mutate(&mut self, value: F32Positive, stdev: F32Positive) -> F32Positive {
+        let normal = Normal::new(value.value(), stdev.value()).unwrap();
+        loop {
+            let mutated = normal.sample(&mut self.rng);
+            if mutated >= 0.0 {
+                return F32Positive::unchecked(mutated);
+            }
+        }
     }
 }
 
